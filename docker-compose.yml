@@ -1,0 +1,66 @@
+mysqldata:
+  image: busybox
+  volumes:
+    - /var/lib/mysql/
+
+mysql:
+  image: mysql:5.6
+  command: --sql_mode=NO_ENGINE_SUBSTITUTION --character-set-server=utf8 --collation-server=utf8_general_ci
+  volumes_from:
+    - mysqldata
+  ports:
+   - "3306:3306"
+  environment:
+    - MYSQL_ROOT_PASSWORD=password
+    - MYSQL_DATABASE=application
+
+memcached:
+  image: memcached:1.4
+
+redisdata:
+  image: busybox
+  volumes:
+    - /data/
+
+redis:
+  image: redis:2.8
+  command: redis-server --appendonly yes
+  volumes_from:
+    - redisdata
+
+mongodata:
+  image: busybox
+  volumes:
+    - /data/db/
+
+mongo:
+  image: mongo:2.6
+  ports:
+    - "27017:27017"
+  volumes_from:
+    - mongodata
+
+supervisor:
+  build: .
+  command: /usr/bin/supervisord
+  links:
+   - mysql
+   - memcached
+   - redis
+   - mongo
+  ports:
+   - "8080"
+  volumes:
+   - .:/var/www/
+   - ./docker/php.ini:/etc/php5/cli/conf.d/25-configuration-php.ini:ro
+   - ./docker/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+
+nginx:
+  image: nginx:1.7
+  links:
+   - supervisor
+  ports:
+   - "80:80"
+  volumes:
+   - .:/var/www/
+   - ./docker/nginx.conf:/etc/nginx/nginx.conf:ro
