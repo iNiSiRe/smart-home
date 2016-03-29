@@ -1,0 +1,53 @@
+[POST] /units
+
+units:
+	1:
+		name: kitchen_common
+		room: kitchen,
+		sensors: ['temperature', 'humidity', 'passing', 'leakage.water', 'leakage.gas', 'leakage.smoke'],
+		controls: ['light.working_surface', 'light.main']
+		ip: 192.168.1.101
+	2:
+		name: hallway_common
+		room: hallway
+		sensors: ['temperature', 'humidity', 'passing']
+		controls: ['light.main', 'light.backlight']
+	3:
+		name: badroom_common
+		room: badroom
+		sensors: ['temperature', 'humidity', 'passing']
+		controls: ['light.night', 'light.main']
+
+[POST] /sensors/{id}
+
+sensors:
+	1:
+		name: kitchen_temperature
+		class: temperature
+		room: kitchen
+		value: 0
+		unit: 1
+	2:
+		name: kitchen_passing
+		class: passing
+		room: kitchen
+		value: 0
+		unit: 1
+
+[POST] /controls/{id}
+
+controls:
+	1: 
+		name: kitchen_light_working_surface
+		class: light
+		room: kitchen
+		value: 0
+		unit: 1
+
+
+
+logic:
+	1:
+		event: kitchen_passing.changed
+		handler: handler.passing
+
