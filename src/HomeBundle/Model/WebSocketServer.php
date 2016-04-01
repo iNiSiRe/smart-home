@@ -9,11 +9,10 @@
 namespace HomeBundle\Model;
 
 use Doctrine\ORM\EntityManager;
+use Evenement\EventEmitter;
 use HomeBundle\Entity\Room;
 use HomeBundle\Entity\Sensor;
 use HomeBundle\Entity\Unit;
-use HomeBundle\Event\SensorEvent;
-use HomeBundle\HomeEvents;
 use HomeBundle\Listener\SensorEventListener;
 use Ratchet\ConnectionInterface;
 use Ratchet\Http\HttpServer;
@@ -36,6 +35,11 @@ class WebSocketServer implements MessageComponentInterface
      * @var \SplObjectStorage|
      */
     protected $clients;
+
+    /**
+     * @var EventEmitter
+     */
+    protected $emitter;
 
     /**
      * @var EntityManager
@@ -74,6 +78,8 @@ class WebSocketServer implements MessageComponentInterface
         $this->entityManager = $entityManager;
         $this->dispatcher = $dispatcher;
         $this->sensorEventListener = $sensorEventListener;
+
+        $this->emitter = new EventEmitter();
     }
 
     /**
@@ -86,8 +92,6 @@ class WebSocketServer implements MessageComponentInterface
     function onOpen(ConnectionInterface $conn)
     {
         $this->clients->attach($conn);
-
-        echo 'connected' . PHP_EOL;
     }
 
     /**
@@ -113,7 +117,22 @@ class WebSocketServer implements MessageComponentInterface
      */
     function onError(ConnectionInterface $conn, \Exception $e)
     {
-        // TODO: Implement onError() method.
+        if ($this->clients->offsetExists($conn)) {
+            $conn->close();
+            $this->clients->detach($conn);
+        }
+    }
+
+    /**
+     * @param ConnectionInterface $connection
+     *
+     * @return Unit
+     */
+    protected function getUnit(ConnectionInterface $connection)
+    {
+        return $this->clients->offsetExists($connection)
+            ? $this->clients->offsetGet($connection)
+            : null;
     }
 
     /**
@@ -127,9 +146,10 @@ class WebSocketServer implements MessageComponentInterface
     function onMessage(ConnectionInterface $from, $msg)
     {
         $request = json_decode($msg, true);
-        $type = $request['type'];
 
-        switch ($type) {
+        $action = $request['action'];
+
+        switch ($action) {
             case 'register':
 
                 $room = $this->entityManager->getRepository('HomeBundle:Room')->findOneBy(['name' => $request['room']]);
@@ -161,19 +181,45 @@ class WebSocketServer implements MessageComponentInterface
 
                 break;
 
-            case 'sensor':
-                $sensor = $this->entityManager->getRepository('HomeBundle:Sensor')->findOneBy(['name' => $request['name']]);
-
-                if (!$sensor) {
+            case 'login':
+                if (!$unit = $this->entityManager->getRepository('HomeBundle:Unit')->find($request['unit']['id'])) {
                     break;
                 }
+                $this->clients->offsetSet($from, $unit);
+                break;
 
-                $this->dispatcher->dispatch(HomeEvents::SENSOR_EVENT, new SensorEvent($sensor, $request['value']));
-
+            case 'emit':
+                if (!$unit = $this->getUnit($from)) {
+                    break;
+                }
+                $resource = $request['resource'];
+                switch ($resource) {
+                    case 'sensor':
+                        $room = $unit->getRoom()->getName();
+                        $sensor = $request['name'];
+                        $event = sprintf('sensor.%s.%s.update', $room, $sensor);
+                        $value = $request['value'];
+                        $this->emitter->emit($event, [
+                            $room,
+                            $sensor,
+                            $value
+                        ]);
+                        break;
+                }
                 break;
 
             case 'listen':
-                $this->sensorEventListener->subscribe($from);
+                $room = $request['room'];
+                foreach ($request['sensors'] as $sensor) {
+                    $this->emitter->on(sprintf('sensor.%s.%s.update', $room, $sensor), function ($room, $sensor, $value) use ($from) {
+                        $data = [
+                            'room' => $room,
+                            'sensor' => $sensor,
+                            'value' => $value
+                        ];
+                        $from->send(json_encode($data));
+                    });
+                }
                 break;
         }
     }

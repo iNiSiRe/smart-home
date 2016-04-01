@@ -1,0 +1,53 @@
+[
+  {
+    "action": "register",
+    "room": "some_room",
+    "unit": {
+      "name": "some_room_unit_1"
+    },
+    "sensors": [
+      {
+        "name": "temperature.main",
+        "class": "temperature"
+      }
+    ],
+    "controls": [
+      {
+        "name": "light.main",
+        "class": "light"
+      },
+      {
+        "name": "backlight",
+        "class": "light"
+      }
+    ]
+  },
+
+  {
+    "action": "login",
+    "unit": {
+      "id": 1
+    }
+  },
+
+  {
+    "action": "emit",
+    "resource": "sensor",
+    "name": "temperature.main",
+    "value": 10
+  },
+
+  {
+    "action": "control",
+    "name": "backlight",
+    "value": "10"
+  },
+
+  {
+    "action": "listen",
+    "room": "some_room",
+    "sensors": [
+      "main_temperature"
+    ]
+  }
+]

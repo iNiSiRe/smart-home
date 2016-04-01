@@ -34,9 +34,9 @@ class Room
     /**
      * @var Unit[]
      *
-     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\Unit", mappedBy="room")
+     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\Sensor", mappedBy="room")
      */
-    private $units;
+    private $sensors;
 
     /**
      * Get id
@@ -78,39 +78,5 @@ class Room
     public function __construct()
     {
         $this->units = new ArrayCollection();
-    }
-
-    /**
-     * Add unit
-     *
-     * @param Unit $unit
-     *
-     * @return Room
-     */
-    public function addUnit(Unit $unit)
-    {
-        $this->units[] = $unit;
-
-        return $this;
-    }
-
-    /**
-     * Remove unit
-     *
-     * @param Unit $unit
-     */
-    public function removeUnit(Unit $unit)
-    {
-        $this->units->removeElement($unit);
-    }
-
-    /**
-     * Get units
-     *
-     * @return Collection
-     */
-    public function getUnits()
-    {
-        return $this->units;
     }
 }

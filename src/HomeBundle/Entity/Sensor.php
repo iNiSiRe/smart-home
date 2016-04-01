@@ -49,6 +49,12 @@ class Sensor
      */
     private $unit;
 
+    /**
+     * @var Room
+     *
+     * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Room", inversedBy="sensors")
+     */
+    private $room;
 
     /**
      * Get id
