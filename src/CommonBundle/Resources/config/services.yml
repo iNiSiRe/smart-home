@@ -1,0 +1,10 @@
+services:
+  loop:
+    class: React\EventLoop\LibEventLoop
+    factory_class: React\EventLoop\Factory
+    factory_method: create
+
+  http_server:
+    class: CommonBundle\Server\HttpServer
+    arguments:
+      - "@loop"

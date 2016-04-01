@@ -10,11 +10,20 @@ namespace HomeBundle\Model;
 
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\Room;
+use HomeBundle\Entity\Sensor;
 use HomeBundle\Entity\Unit;
+use HomeBundle\Event\SensorEvent;
+use HomeBundle\HomeEvents;
+use HomeBundle\Listener\SensorEventListener;
 use Ratchet\ConnectionInterface;
+use Ratchet\Http\HttpServer;
 use Ratchet\MessageComponentInterface;
 use Ratchet\Server\IoServer;
 use Ratchet\WebSocket\WsServer;
+use React\EventLoop\LoopInterface;
+use React\Socket\Server;
+use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 class WebSocketServer implements MessageComponentInterface
 {
@@ -27,30 +36,44 @@ class WebSocketServer implements MessageComponentInterface
      * @var \SplObjectStorage|
      */
     protected $clients;
+
     /**
      * @var EntityManager
      */
     private $entityManager;
 
     /**
-     * WebSocketServer constructor
-     *
-     * @param EntityManager $entityManager
+     * @var EventDispatcher
      */
-    public function __construct(EntityManager $entityManager)
-    {
-        $ws = new WsServer($this);
-        $this->server = IoServer::factory($ws, 8000);
-        $this->clients = new \SplObjectStorage();
-        $this->entityManager = $entityManager;
-    }
+    private $dispatcher;
 
     /**
-     * Run server
+     * @var SensorEventListener
      */
-    public function run()
+    private $sensorEventListener;
+
+    /**
+     * WebSocketServer constructor
+     *
+     * @param LoopInterface       $loop
+     * @param EntityManager       $entityManager
+     * @param EventDispatcherInterface     $dispatcher
+     * @param SensorEventListener $sensorEventListener
+     */
+    public function __construct(LoopInterface $loop, EntityManager $entityManager, EventDispatcherInterface $dispatcher, SensorEventListener $sensorEventListener)
     {
-        $this->server->run();
+        $ws = new WsServer($this);
+
+        $socket = new Server($loop);
+        $socket->listen(8000, '0.0.0.0');
+
+        $this->server = new IoServer(new HttpServer($ws), $socket, $loop);
+
+        $this->clients = new \SplObjectStorage();
+
+        $this->entityManager = $entityManager;
+        $this->dispatcher = $dispatcher;
+        $this->sensorEventListener = $sensorEventListener;
     }
 
     /**
@@ -63,6 +86,8 @@ class WebSocketServer implements MessageComponentInterface
     function onOpen(ConnectionInterface $conn)
     {
         $this->clients->attach($conn);
+
+        echo 'connected' . PHP_EOL;
     }
 
     /**
@@ -101,27 +126,54 @@ class WebSocketServer implements MessageComponentInterface
      */
     function onMessage(ConnectionInterface $from, $msg)
     {
-        $data = json_decode($msg, true);
-        $type = $data['type'];
+        $request = json_decode($msg, true);
+        $type = $request['type'];
 
         switch ($type) {
             case 'register':
 
-                $room = $this->entityManager->getRepository('HomeBundle:Room')->findOneBy(['name' => $data['room']]);
+                $room = $this->entityManager->getRepository('HomeBundle:Room')->findOneBy(['name' => $request['room']]);
                 if (!$room) {
                     $room = (new Room())
-                        ->setName($data['room']);
+                        ->setName($request['room']);
                     $this->entityManager->persist($room);
                     $this->entityManager->flush($room);
                 }
 
-                foreach ($data['sensors'] as $sensorData) {
-
-                }
-
                 $unit = (new Unit())
                     ->setRoom($room)
-                    ->setName($data['unit']['name']);
+                    ->setName($request['unit']['name']);
+
+                foreach ($request['sensors'] as $data) {
+                    $sensor = (new Sensor())
+                        ->setName($data['name'])
+                        ->setClass($data['class'])
+                        ->setUnit($unit);
+
+                    $this->entityManager->persist($sensor);
+                    $this->entityManager->flush($sensor);
+
+                    $unit->addSensor($sensor);
+                }
+
+                $this->entityManager->persist($unit);
+                $this->entityManager->flush($unit);
+
+                break;
+
+            case 'sensor':
+                $sensor = $this->entityManager->getRepository('HomeBundle:Sensor')->findOneBy(['name' => $request['name']]);
+
+                if (!$sensor) {
+                    break;
+                }
+
+                $this->dispatcher->dispatch(HomeEvents::SENSOR_EVENT, new SensorEvent($sensor, $request['value']));
+
+                break;
+
+            case 'listen':
+                $this->sensorEventListener->subscribe($from);
                 break;
         }
     }

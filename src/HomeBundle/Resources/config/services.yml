@@ -1,4 +1,14 @@
 services:
-#    home.example:
-#        class: HomeBundle\Example
-#        arguments: ["@service_id", "plain_value", %parameter%]
+  home.listener.sensor:
+    class: HomeBundle\Listener\SensorEventListener
+    tags:
+      - { name: kernel.event_listener, event: home.event.sensor, method: onSensor }
+
+  home.web_socket_server:
+    class: HomeBundle\Model\WebSocketServer
+    arguments:
+      - "@loop"
+      - '@doctrine.orm.entity_manager'
+      - '@event_dispatcher'
+      - '@home.listener.sensor'
+

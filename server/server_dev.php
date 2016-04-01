@@ -13,12 +13,16 @@ $kernel = new AppKernel('dev', true);
 //$kernel->loadClassCache();
 $kernel->boot();
 
-$http = $kernel->getContainer()->get('http_server');
-$loop = $http->getLoop();
+$container = $kernel->getContainer();
+
+$loop = $container->get('loop');
+$http = $container->get('http_server');
+$webSocketServer = $container->get('home.web_socket_server');
+
 $socket = $http->getSocket();
 
 // Warm up container
-$kernel->handle(Request::create('/'));
+//$kernel->handle(Request::create('/'));
 
 $requestsQuantity = 0;
 

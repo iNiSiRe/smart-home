@@ -50,6 +50,7 @@ supervisor:
    - mongo
   ports:
    - "8080"
+   - "8000:8000"
   volumes:
    - .:/var/www/
    - ./docker/php.ini:/etc/php5/cli/conf.d/25-configuration-php.ini:ro
