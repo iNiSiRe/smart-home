@@ -9,13 +9,13 @@
 namespace HomeBundle\Event;
 
 
-use HomeBundle\Entity\Sensor;
+use HomeBundle\Entity\Unit;
 use Symfony\Component\EventDispatcher\Event;
 
 class SensorEvent extends Event
 {
     /**
-     * @var Sensor
+     * @var Unit
      */
     protected $sensor;
 
@@ -27,17 +27,17 @@ class SensorEvent extends Event
     /**
      * SensorEvent constructor.
      *
-     * @param Sensor $sensor
+     * @param Unit   $sensor
      * @param        $value
      */
-    public function __construct(Sensor $sensor, $value)
+    public function __construct(Unit $sensor, $value)
     {
         $this->sensor = $sensor;
         $this->value = $value;
     }
 
     /**
-     * @return Sensor
+     * @return Unit
      */
     public function getSensor()
     {

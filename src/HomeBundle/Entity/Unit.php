@@ -2,20 +2,19 @@
 
 namespace HomeBundle\Entity;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use HomeBundle\Entity\Room;
-use HomeBundle\Entity\Sensor;
 
 /**
- * Unit
+ * Sensor
  *
- * @ORM\Table(name="unit")
- * @ORM\Entity(repositoryClass="HomeBundle\Repository\UnitRepository")
+ * @ORM\Table(name="units")
+ * @ORM\Entity()
  */
 class Unit
 {
+    const TYPE_SENSOR = 1;
+    const TYPE_CONTROLLER = 2;
+
     /**
      * @var int
      *
@@ -33,25 +32,25 @@ class Unit
     private $name;
 
     /**
-     * @var bool
+     * @var string
      *
-     * @ORM\Column(name="connected", type="boolean", nullable=true)
+     * @ORM\Column(name="class", type="string", length=255)
      */
-    private $connected;
+    private $class;
 
     /**
      * @var string
      *
-     * @ORM\Column(name="address", type="string", length=255, unique=true)
+     * @ORM\Column(name="value", type="string", length=255, nullable=true)
      */
-    private $address;
+    private $value;
 
     /**
-     * @var Sensor[]
+     * @var Module
      *
-     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\Sensor", mappedBy="unit")
+     * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Module", inversedBy="units")
      */
-    private $sensors;
+    private $module;
 
     /**
      * @var Room
@@ -59,6 +58,13 @@ class Unit
      * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Room", inversedBy="units")
      */
     private $room;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $type;
 
     /**
      * Get id
@@ -95,93 +101,75 @@ class Unit
     }
 
     /**
-     * Set connected
+     * Set class
      *
-     * @param boolean $connected
+     * @param string $class
      *
      * @return Unit
      */
-    public function setConnected($connected)
+    public function setClass($class)
     {
-        $this->connected = $connected;
+        $this->class = $class;
 
         return $this;
     }
 
     /**
-     * Get connected
-     *
-     * @return bool
-     */
-    public function getConnected()
-    {
-        return $this->connected;
-    }
-
-    /**
-     * Set address
-     *
-     * @param string $address
-     *
-     * @return Unit
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * Get address
+     * Get class
      *
      * @return string
      */
-    public function getAddress()
+    public function getClass()
     {
-        return $this->address;
+        return $this->class;
     }
 
     /**
-     * Constructor
-     */
-    public function __construct()
-    {
-        $this->sensors = new ArrayCollection();
-    }
-
-    /**
-     * Add sensor
+     * Set value
      *
-     * @param Sensor $sensor
+     * @param string $value
      *
      * @return Unit
      */
-    public function addSensor(Sensor $sensor)
+    public function setValue($value)
     {
-        $this->sensors[] = $sensor;
+        $this->value = $value;
 
         return $this;
     }
 
     /**
-     * Remove sensor
+     * Get value
      *
-     * @param Sensor $sensor
+     * @return string
      */
-    public function removeSensor(Sensor $sensor)
+    public function getValue()
     {
-        $this->sensors->removeElement($sensor);
+        return $this->value;
     }
 
     /**
-     * Get sensors
+     * Set unit
      *
-     * @return Collection
+     * @param Module $module
+     *
+     * @return Unit
      */
-    public function getSensors()
+    public function setModule(Module $module = null)
     {
-        return $this->sensors;
+        $this->module = $module;
+
+        return $this;
+    }
+
+    /**
+     * Get unit
+     *
+     * @return Module
+     */
+    public function getModule()
+    {
+        return $this->module;
     }
 
     /**
@@ -206,5 +194,25 @@ class Unit
     public function getRoom()
     {
         return $this->room;
+    }
+
+    /**
+     * @return int
+     */
+    public function getType()
+    {
+        return $this->type;
+    }
+
+    /**
+     * @param int $type
+     *
+     * @return $this
+     */
+    public function setType($type)
+    {
+        $this->type = $type;
+
+        return $this;
     }
 }

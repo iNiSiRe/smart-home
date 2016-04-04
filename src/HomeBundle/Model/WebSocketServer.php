@@ -11,8 +11,8 @@ namespace HomeBundle\Model;
 use Doctrine\ORM\EntityManager;
 use Evenement\EventEmitter;
 use HomeBundle\Entity\Room;
-use HomeBundle\Entity\Sensor;
 use HomeBundle\Entity\Unit;
+use HomeBundle\Entity\Module;
 use HomeBundle\Listener\SensorEventListener;
 use Ratchet\ConnectionInterface;
 use Ratchet\Http\HttpServer;
@@ -91,6 +91,8 @@ class WebSocketServer implements MessageComponentInterface
      */
     function onOpen(ConnectionInterface $conn)
     {
+        echo 'open' . PHP_EOL;
+
         $this->clients->attach($conn);
     }
 
@@ -103,6 +105,8 @@ class WebSocketServer implements MessageComponentInterface
      */
     function onClose(ConnectionInterface $conn)
     {
+        echo 'close' . PHP_EOL;
+
         $this->clients->detach($conn);
     }
 
@@ -117,6 +121,8 @@ class WebSocketServer implements MessageComponentInterface
      */
     function onError(ConnectionInterface $conn, \Exception $e)
     {
+        echo 'error:' . get_class($e) . ' : ' . $e->getMessage() . PHP_EOL;
+
         if ($this->clients->offsetExists($conn)) {
             $conn->close();
             $this->clients->detach($conn);
@@ -126,7 +132,7 @@ class WebSocketServer implements MessageComponentInterface
     /**
      * @param ConnectionInterface $connection
      *
-     * @return Unit
+     * @return Module
      */
     protected function getUnit(ConnectionInterface $connection)
     {
@@ -152,6 +158,9 @@ class WebSocketServer implements MessageComponentInterface
         switch ($action) {
             case 'register':
 
+                echo 'register' . PHP_EOL;
+
+                // Room
                 $room = $this->entityManager->getRepository('HomeBundle:Room')->findOneBy(['name' => $request['room']]);
                 if (!$room) {
                     $room = (new Room())
@@ -160,58 +169,112 @@ class WebSocketServer implements MessageComponentInterface
                     $this->entityManager->flush($room);
                 }
 
-                $unit = (new Unit())
-                    ->setRoom($room)
-                    ->setName($request['unit']['name']);
+                // Module
+                $module = $this->entityManager->getRepository('HomeBundle:Module')->findOneBy([
+                    'room' => $room,
+                    'name' => $request['module']
+                ]);
 
-                foreach ($request['sensors'] as $data) {
-                    $sensor = (new Sensor())
+                if (!$module) {
+                    $module = (new Module())
+                        ->setAddress('0.0.0.0')
+                        ->setRoom($room)
+                        ->setName($request['module']);
+                    $this->entityManager->persist($module);
+                    $this->entityManager->flush($module);
+                }
+
+                // Units
+                foreach ($request['units'] as $data) {
+
+                    if ($module->hasUnit($data['name']))  {
+                        continue;
+                    }
+
+                    $unit = (new Unit())
+                        ->setType($data['type'] == 'sensor' ? Unit::TYPE_SENSOR : Unit::TYPE_CONTROLLER)
                         ->setName($data['name'])
                         ->setClass($data['class'])
-                        ->setUnit($unit);
+                        ->setModule($module)
+                        ->setRoom($room);
 
-                    $this->entityManager->persist($sensor);
-                    $this->entityManager->flush($sensor);
+                    $this->entityManager->persist($unit);
+                    $this->entityManager->flush($unit);
 
-                    $unit->addSensor($sensor);
+                    $module->addUnit($unit);
                 }
 
-                $this->entityManager->persist($unit);
-                $this->entityManager->flush($unit);
+                $this->entityManager->persist($module);
+                $this->entityManager->flush($module);
 
-                break;
+                $this->clients->offsetSet($from, $module);
 
-            case 'login':
-                if (!$unit = $this->entityManager->getRepository('HomeBundle:Unit')->find($request['unit']['id'])) {
-                    break;
+                $from->send('done');
+
+                foreach ($module->getUnits() as $unit) {
+                    if ($unit->getType() !== Unit::TYPE_CONTROLLER) {
+                        continue;
+                    }
+
+                    echo 'Add listener to input' . PHP_EOL;
+
+                    $listener = function ($room, $unit, $value) use ($from) {
+
+                        echo 'Perform listener' . PHP_EOL;
+
+                        $from->send(json_encode([
+                            'action' => 'emit',
+                            'resource' => 'input',
+                            'room' => $room,
+                            'unit' => $unit,
+                            'value' => $value
+                        ]));
+                    };
+
+                    $this->emitter->on(
+                        sprintf(
+                            'input.%s.%s.update',
+                            $unit->getRoom()->getName(),
+                            $unit->getName()),
+                        $listener
+                    );
                 }
-                $this->clients->offsetSet($from, $unit);
+
                 break;
 
             case 'emit':
-                if (!$unit = $this->getUnit($from)) {
-                    break;
-                }
                 $resource = $request['resource'];
                 switch ($resource) {
                     case 'sensor':
-                        $room = $unit->getRoom()->getName();
-                        $sensor = $request['name'];
-                        $event = sprintf('sensor.%s.%s.update', $room, $sensor);
+
+                        if (!$module = $this->getUnit($from)) {
+                            break;
+                        }
+
+                        $room = $module->getRoom()->getName();
+                        $unit = $request['name'];
+                        $event = sprintf('sensor.%s.%s.update', $room, $unit);
                         $value = $request['value'];
-                        $this->emitter->emit($event, [
-                            $room,
-                            $sensor,
-                            $value
-                        ]);
+                        $this->emitter->emit($event, [$room, $unit, $value]);
+                        break;
+
+                    case 'input':
+                        $room = $request['room'];
+                        $unit = $request['name'];
+                        $value = $request['value'];
+                        $event = sprintf('input.%s.%s.update', $room, $unit);
+
+                        echo sprintf('emit input event %s, %s, %s', $room, $unit, $value) . PHP_EOL;
+
+                        $this->emitter->emit($event, [$room, $unit, $value]);
                         break;
                 }
                 break;
 
             case 'listen':
                 $room = $request['room'];
-                foreach ($request['sensors'] as $sensor) {
-                    $this->emitter->on(sprintf('sensor.%s.%s.update', $room, $sensor), function ($room, $sensor, $value) use ($from) {
+                foreach ($request['sensors'] as $unit) {
+                    $this->emitter->on(sprintf('sensor.%s.%s.update', $room, $unit), function ($room, $sensor, $value) use ($from) {
                         $data = [
                             'room' => $room,
                             'sensor' => $sensor,

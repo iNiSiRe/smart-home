@@ -2,10 +2,8 @@
   {
     "action": "register",
     "room": "some_room",
-    "unit": {
-      "name": "some_room_unit_1"
-    },
-    "sensors": [
+    "module_name": "unit",
+    "units": [
       {
         "name": "temperature.main",
         "class": "temperature"
@@ -21,13 +19,6 @@
         "class": "light"
       }
     ]
-  },
-
-  {
-    "action": "login",
-    "unit": {
-      "id": 1
-    }
   },
 
   {

@@ -12,6 +12,8 @@ class DefaultController extends Controller
      */
     public function indexAction()
     {
-        return $this->render('HomeBundle:Default:index.html.twig');
+        $rooms = $this->get('doctrine.orm.entity_manager')->getRepository('HomeBundle:Room')->findAll();
+
+        return $this->render('HomeBundle:Default:index.html.twig', ['rooms' => $rooms]);
     }
 }

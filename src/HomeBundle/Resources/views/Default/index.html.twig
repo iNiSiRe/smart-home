@@ -39,33 +39,39 @@
     </div>
 </nav>
 
-<div class="container theme-showcase" role="main" style="margin-top: 30px">
+<div class="container theme-showcase" role="main" style="margin-top: 60px">
+    {% for room in rooms %}
+        <div data-room data-room-name="{{ room.name }}">
+            <h1>{{ room.name }}</h1>
+            <div class="row">
+                <div class="col-sm-4">
+                    {% for unit in room.units %}
+                        {% if unit.type == 1 %}
+                            <div class="panel panel-primary" data-sensor data-sensor-name="{{ unit.name }}">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">{{ unit.name }}</h3>
+                                </div>
+                                <div class="panel-body">
+                                    {{ unit.value }}
+                                </div>
+                            </div>
+                        {% endif %}
 
-    <div class="row">
-
-        <div class="col-sm-4">
-
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel title</h3>
-                </div>
-                <div class="panel-body">
-                    Panel content
+                        {% if unit.type == 2 %}
+                            <div class="panel panel-danger" data-controller data-controller-name="{{ unit.name }}">
+                                <div class="panel-heading">
+                                    <h3 class="panel-title">{{ unit.name }}</h3>
+                                </div>
+                                <div class="panel-body">
+                                    <input type="range" min="0" max="1" step="0.01" value="0" name="{{ unit.name }}">
+                                </div>
+                            </div>
+                        {% endif %}
+                    {% endfor %}
                 </div>
             </div>
-
-            <div class="panel panel-primary">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Panel title</h3>
-                </div>
-                <div class="panel-body">
-                    Panel content
-                </div>
-            </div>
-
         </div>
-    </div>
-
+    {% endfor %}
 </div> <!-- /container -->
 
 
@@ -74,13 +80,7 @@
 <!-- Placed at the end of the document so the pages load faster -->
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>
 <script src="/js/bootstrap.min.js"></script>
-
-<script>
-    var ws = new WebSocket('ws://home.local:8000')
-    ws.onopen = function (event) {
-        console.log('connected', event);
-    }
-</script>
+<script src="{{ asset('js/socket.client.js') }}"></script>
 
 </body>
 </html>

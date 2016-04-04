@@ -3,15 +3,13 @@
 namespace HomeBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use HomeBundle\Entity\Unit;
 
 /**
  * Room
  *
- * @ORM\Table(name="room")
- * @ORM\Entity(repositoryClass="HomeBundle\Repository\RoomRepository")
+ * @ORM\Table(name="rooms")
+ * @ORM\Entity()
  */
 class Room
 {
@@ -32,11 +30,11 @@ class Room
     private $name;
 
     /**
-     * @var Unit[]
+     * @var Module[]
      *
-     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\Sensor", mappedBy="room")
+     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\Unit", mappedBy="room")
      */
-    private $sensors;
+    private $units;
 
     /**
      * Get id
@@ -78,5 +76,39 @@ class Room
     public function __construct()
     {
         $this->units = new ArrayCollection();
+    }
+
+    /**
+     * Add unit
+     *
+     * @param Unit $unit
+     *
+     * @return Room
+     */
+    public function addUnit(Unit $unit)
+    {
+        $this->units[] = $unit;
+
+        return $this;
+    }
+
+    /**
+     * Remove unit
+     *
+     * @param Unit $sensor
+     */
+    public function removeUnit(Unit $sensor)
+    {
+        $this->units->removeElement($sensor);
+    }
+
+    /**
+     * Get unit
+     *
+     * @return \Doctrine\Common\Collections\Collection
+     */
+    public function getUnits()
+    {
+        return $this->units;
     }
 }
