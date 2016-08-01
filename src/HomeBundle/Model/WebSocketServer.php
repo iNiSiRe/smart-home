@@ -10,6 +10,7 @@ namespace HomeBundle\Model;
 
 use Doctrine\ORM\EntityManager;
 use Evenement\EventEmitter;
+use HomeBundle\Actions;
 use HomeBundle\Entity\Room;
 use HomeBundle\Entity\Unit;
 use HomeBundle\Entity\Module;
@@ -156,7 +157,7 @@ class WebSocketServer implements MessageComponentInterface
         $action = $request['action'];
 
         switch ($action) {
-            case 'register':
+            case Actions::ACTION_REGISTER:
 
                 echo 'register' . PHP_EOL;
 
@@ -223,7 +224,7 @@ class WebSocketServer implements MessageComponentInterface
                         echo 'Perform listener' . PHP_EOL;
 
                         $from->send(json_encode([
-                            'action' => 'emit',
+                            'action' => Actions::ACTION_CONTROL,
                             'resource' => 'input',
                             'room' => $room,
                             'unit' => $unit,

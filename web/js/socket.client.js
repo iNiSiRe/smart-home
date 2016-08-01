@@ -1,4 +1,4 @@
-var ws = new WebSocket('ws://192.168.1.109:8000')
+var ws = new WebSocket('ws://192.168.31.234:8000')
 ws.onopen = function (event) {
     var room = $('[data-room]:first')[0];
     var sensors = $(room).find('[data-sensor]');
