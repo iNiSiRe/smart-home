@@ -1,4 +1,5 @@
-var ws = new WebSocket('ws://192.168.31.234:8000')
+var ws = new WebSocket('ws://' + WS_SERVER);
+
 ws.onopen = function (event) {
     var room = $('[data-room]:first')[0];
     var sensors = $(room).find('[data-sensor]');
@@ -32,7 +33,6 @@ ws.onopen = function (event) {
 };
 
 ws.onmessage = function (event) {
-
     if (event.data == 'ping') {
         return;
     }
