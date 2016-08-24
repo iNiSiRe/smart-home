@@ -16,6 +16,7 @@ $kernel->boot();
 $http = $kernel->getContainer()->get('http_server');
 $loop = $http->getLoop();
 $socket = $http->getSocket();
+$webSocketServer = $kernel->getContainer()->get('home.web_socket_server');
 
 // Warm up container
 $kernel->handle(Request::create('/'));
