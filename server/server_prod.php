@@ -132,6 +132,11 @@ if (count($argv) > 1) {
     $port = 8080;
 }
 
-$socket->listen($port, '0.0.0.0');
+$loop->addPeriodicTimer(60, function () use ($kernel) {
+    $connection = $kernel->getContainer()->get('doctrine.orm.entity_manager')->getConnection();
+    $connection->close();
+    $connection->connect();
+});
 
+$socket->listen($port, '0.0.0.0');
 $loop->run();
