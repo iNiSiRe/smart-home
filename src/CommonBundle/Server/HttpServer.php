@@ -13,6 +13,11 @@ class HttpServer extends Server
     protected $socket;
 
     /**
+     * @var LoopInterface
+     */
+    private $loop;
+
+    /**
      * HttpServer constructor
      *
      * @param LoopInterface $loop
@@ -21,6 +26,7 @@ class HttpServer extends Server
     {
         $this->socket = new \React\Socket\Server($loop);
         parent::__construct($this->socket);
+        $this->loop = $loop;
     }
 
     /**
@@ -29,5 +35,13 @@ class HttpServer extends Server
     public function getSocket()
     {
         return $this->socket;
+    }
+
+    /**
+     * @return LoopInterface
+     */
+    public function getLoop()
+    {
+        return $this->loop;
     }
 }
