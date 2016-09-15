@@ -14,6 +14,7 @@ class RoomAdmin extends AbstractAdmin
             ->add('id')
             ->add('name')
             ->add('units')
+            ->add('inhabitants')
         ;
     }
 
@@ -22,6 +23,7 @@ class RoomAdmin extends AbstractAdmin
         $list
             ->addIdentifier('id')
             ->addIdentifier('name')
+            ->add('inhabitants')
         ;
 
     }
