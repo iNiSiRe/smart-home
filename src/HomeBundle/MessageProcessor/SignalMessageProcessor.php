@@ -88,10 +88,10 @@ class SignalMessageProcessor extends AbstractMessageProcessor
                 if ($room->getInhabitants() <= 0) {
                     $room->setInhabitants(0);
                     $this->logger->info("Disable light");
-                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getModule()->getId(), 0]);
+                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getName(), 0]);
                 } else {
                     $this->logger->info("Enable light");
-                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getModule()->getId(), 1]);
+                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getName(), 1]);
                 }
 
                 $this->logger->info("Inhabitants: {$room->getInhabitants()}");
