@@ -1,6 +1,7 @@
 [
   {
     "action": "register",
+    "uid": "unique_id",
     "room": "some_room",
     "module_name": "unit",
     "units": [

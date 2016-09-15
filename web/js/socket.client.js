@@ -4,7 +4,7 @@ ws.onopen = function (event) {
     var sensors = $(room).find('[data-sensor]');
 
     var data = {
-        action: "listen",
+        action: 5,
         room: room.getAttribute('data-room-name'),
         sensors: []
     };
@@ -17,17 +17,21 @@ ws.onopen = function (event) {
 
     var controllers = $('[data-controller]');
     for (i = 0; i < controllers.length; i++) {
-        $(controllers[i]).find('input[type=range]').on('change', function () {
-            var value = $(this).val();
-            var data = {
-                "action": "emit",
-                "resource": "input",
-                "room": room.getAttribute('data-room-name'),
-                "name": this.getAttribute('name'),
-                "value": value
-            };
-            ws.send(JSON.stringify(data));
-        });
+
+        $(controllers[i]).find('input[type=range]').on('change', function (controller) {
+            return function () {
+                var value = $(this).val();
+                var data = {
+                    "action": 2,
+                    "resource": "input",
+                    "id": controller.getAttribute('data-module-id'),
+                    "name": this.getAttribute('name'),
+                    "value": value
+                };
+                ws.send(JSON.stringify(data));
+            }
+        }(controllers[i])
+        );
     }
 };
 
@@ -42,4 +46,5 @@ ws.onmessage = function (event) {
     var room = data['room'];
     var value = data['value'];
     $('[data-sensor-name=' + sensor + '] .panel-body').html(value);
-}
+
+};

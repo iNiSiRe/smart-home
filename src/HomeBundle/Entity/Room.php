@@ -111,4 +111,12 @@ class Room
     {
         return $this->units;
     }
+
+    /**
+     * @return string
+     */
+    public function __toString()
+    {
+        return '#' . (string) $this->id;
+    }
 }
