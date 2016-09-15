@@ -3,6 +3,7 @@
 namespace HomeBundle\MessageProcessor;
 
 use HomeBundle\Actions;
+use HomeBundle\Entity\Unit;
 use Ratchet\ConnectionInterface;
 
 class SignalMessageProcessor extends AbstractMessageProcessor
@@ -41,6 +42,53 @@ class SignalMessageProcessor extends AbstractMessageProcessor
                 ]));
 
                 break;
+
+            case 'sensor':
+
+                if ($message['class'] !== "transit") {
+                    return;
+                }
+
+                $id = $message['id'];
+
+                $module = $this->entityManager->getRepository('HomeBundle:Module')->find($id);
+
+                if (!$module) {
+                    return;
+                }
+
+                $lightUnit = null;
+
+                foreach ($module->getUnits() as $unit) {
+                    if ($unit->getClass() == "light") {
+                        $lightUnit = $unit;
+                        break;
+                    }
+                }
+
+                if (!$lightUnit) {
+                    return;
+                }
+
+                $event = sprintf('unit.%s.%s.command.control', $lightUnit->getModule()->getId(), $lightUnit->getName());
+
+                $room = $module->getRoom();
+
+                if ($message['value'] == 1) {
+                    $room->incrementInhabitants();
+                } elseif ($message['value'] == 2) {
+                    $room->incrementInhabitants(-1);
+                }
+
+                if ($room->getInhabitants() <= 0) {
+                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getModule()->getId(), 0]);
+                } else {
+                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getModule()->getId(), 1]);
+                }
+
+                break;
+
+            default: break;
         }
     }
 

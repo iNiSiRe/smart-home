@@ -37,6 +37,13 @@ class Room
     private $units;
 
     /**
+     * @var int
+     *
+     * @ORM\Column(type="integer", nullable=true)
+     */
+    private $inhabitants = 0;
+
+    /**
      * Get id
      *
      * @return int
@@ -118,5 +125,29 @@ class Room
     public function __toString()
     {
         return '#' . (string) $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getInhabitants()
+    {
+        return $this->inhabitants;
+    }
+
+    /**
+     * @param int $inhabitants
+     */
+    public function setInhabitants($inhabitants)
+    {
+        $this->inhabitants = $inhabitants;
+    }
+
+    /**
+     * @param int $count
+     */
+    public function incrementInhabitants($count = 1)
+    {
+        $this->inhabitants += $count;
     }
 }
