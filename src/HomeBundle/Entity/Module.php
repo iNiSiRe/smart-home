@@ -56,7 +56,7 @@ class Module
     /**
      * @var Room
      *
-     * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Room", inversedBy="units")
+     * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Room")
      */
     private $room;
 

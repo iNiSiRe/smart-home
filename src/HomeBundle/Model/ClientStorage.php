@@ -2,6 +2,8 @@
 
 namespace HomeBundle\Model;
 
+use Ratchet\ConnectionInterface;
+
 class ClientStorage
 {
     /**
@@ -9,12 +11,34 @@ class ClientStorage
      */
     private $clients;
 
+    /** @var \SplObjectStorage */
+    private $storage;
+
+    /**
+     * ClientStorage constructor.
+     */
+    public function __construct()
+    {
+        $this->storage = new \SplObjectStorage();
+    }
+
     /**
      * @param Client $client
      */
     public function add(Client $client)
     {
         $this->clients[$client->getId()] = $client;
+        $this->storage->attach($client->getConnection(), $client);
+    }
+
+    /**
+     * @param ConnectionInterface $connection
+     *
+     * @return Client
+     */
+    public function getByConnection(ConnectionInterface $connection)
+    {
+        return $this->storage->offsetGet($connection);
     }
 
     /**

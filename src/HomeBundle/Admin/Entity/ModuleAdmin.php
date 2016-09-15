@@ -16,6 +16,8 @@ class ModuleAdmin extends AbstractAdmin
         $form
             ->add('id')
             ->add('name')
+            ->add('units')
+            ->add('room')
         ;
     }
 

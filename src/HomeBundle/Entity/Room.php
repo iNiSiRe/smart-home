@@ -112,7 +112,7 @@ class Room
     /**
      * Get unit
      *
-     * @return \Doctrine\Common\Collections\Collection
+     * @return Unit[]|ArrayCollection
      */
     public function getUnits()
     {
