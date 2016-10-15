@@ -1,13 +1,6 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inisire
- * Date: 14.09.16
- * Time: 0:10
- */
 
 namespace HomeBundle\MessageProcessor;
-
 
 use HomeBundle\Actions;
 use HomeBundle\Entity\Unit;
@@ -32,17 +25,32 @@ class LoginMessageProcessor extends AbstractMessageProcessor
 
         $this->clientStorage->add(new Client($connection, 0, $id));
 
-        foreach ($module->getUnits() as $unit) {
+        foreach ($module->getUnits() as $entityUnit) {
 
-            if ($unit->getType() !== Unit::TYPE_CONTROLLER) {
+            if ($entityUnit->getType() !== Unit::TYPE_CONTROLLER) {
                 continue;
             }
 
             $this->logger->info('Add listener to input');
 
-            $listener = function ($id, $unit, $value) use ($connection) {
+            $event = sprintf('unit.%s.%s.command.control', $module->getId(), $entityUnit->getName());
+
+            $listener = function ($id, $unit, $value) use ($connection, $event, $entityUnit) {
+
+                $client = $this->clientStorage->getByConnection($connection);
+
+                if (!$client) {
+                    $this->logger->info("Client disconnected, remove control listener");
+                    $this->emitter->removeAllListeners($event);
+                    return;
+                }
 
                 $this->logger->info('Perform listener');
+
+                $entityUnit = $this->entityManager->getRepository('HomeBundle:Unit')->find($entityUnit->getId());
+                $entityUnit->setValue($value);
+                $this->entityManager->persist($entityUnit);
+                $this->entityManager->flush();
 
                 $connection->send(json_encode([
                     'action' => Actions::ACTION_CONTROL,
@@ -52,14 +60,7 @@ class LoginMessageProcessor extends AbstractMessageProcessor
                 ]));
             };
 
-            $this->emitter->on(
-                sprintf(
-                    'unit.%s.%s.command.control',
-                    $module->getId(),
-                    $unit->getName()
-                ),
-                $listener
-            );
+            $this->emitter->on($event, $listener);
         }
 
         $this->logger->info("Module #{$id} login success");
