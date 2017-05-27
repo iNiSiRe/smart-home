@@ -19,14 +19,22 @@ class SignalMessageProcessor extends AbstractMessageProcessor
         switch ($resource) {
 
             case 'input':
-                $id = $message['id'];
-                $unit = $message['name'];
+                $id = $message['unit'];
                 $value = $message['value'];
-                $event = sprintf('unit.%s.%s.command.control', $id, $unit);
+                $event = sprintf('module.%s', $id);
 
-                $this->logger->info(sprintf('emit input event %s, %s, %s', $id, $unit, $value));
+                $this->logger->info(sprintf('emit input event %s, %s', $id, $value));
 
-                $this->emitter->emit($event, [$id, $unit, $value]);
+                $unit = $this->entityManager->getRepository('HomeBundle:Unit')->find($id);
+
+                $message = [
+                    "action" => Actions::ACTION_CONTROL,
+                    "mode" => $unit->getMode(),
+                    "pin" => $unit->getPin(),
+                    "value" => $value
+                ];
+
+                $this->emitter->emit($event, [$message]);
                 break;
 
             case 'update':

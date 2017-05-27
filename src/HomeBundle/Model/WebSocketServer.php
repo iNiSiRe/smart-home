@@ -136,9 +136,15 @@ class WebSocketServer implements MessageComponentInterface
      */
     function onMessage(ConnectionInterface $from, $msg)
     {
+        $this->logger->info('message: ' . $msg);
+
         $request = json_decode($msg, true);
 
         $action = $request['action'];
+
+        if ($action == Actions::ACTION_PING) {
+            return;
+        }
 
         $processor = $this->messageProcessorFactory->create($action);
 

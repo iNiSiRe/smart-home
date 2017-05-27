@@ -11,9 +11,10 @@ class UnitAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $form)
     {
         $form
-            ->add('id')
             ->add('name')
             ->add('class')
+            ->add('mode')
+            ->add('pin')
             ->add('value')
             ->add('module')
             ->add('room')

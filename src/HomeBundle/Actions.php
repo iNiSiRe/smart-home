@@ -18,4 +18,6 @@ class Actions
     const ACTION_SIGNAL = 2;
     const ACTION_LOGIN = 4;
     const ACTION_LISTEN = 5;
+
+    const ACTION_PING = 10;
 }

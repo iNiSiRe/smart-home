@@ -14,7 +14,6 @@ class ModuleAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $form)
     {
         $form
-            ->add('id')
             ->add('name')
             ->add('units')
             ->add('room')

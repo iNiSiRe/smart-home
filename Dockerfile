@@ -15,11 +15,12 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 
 RUN pecl install channel://pecl.php.net/libevent-0.1.0
 
-# Add application directory
-RUN mkdir -p /var/www
+# install composer
+ENV COMPOSER_HOME=/tmp/.composer
 
-# Starting directory
-WORKDIR /var/www/
+RUN curl -XGET https://getcomposer.org/installer > composer-setup.php && \
+    php composer-setup.php --install-dir=/bin --filename=composer --version=1.3.0 && \
+    rm composer-setup.php
 
 # Add users
 RUN adduser user --home /home/user --shell /bin/bash --disabled-password --gecos ""
@@ -27,5 +28,7 @@ RUN adduser user --home /home/user --shell /bin/bash --disabled-password --gecos
 # Add users to sudoers, so no need to ask for password
 RUN echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 
-# Make port 80 accessible
-#EXPOSE 8080
+EXPOSE 8080
+EXPOSE 8000
+
+WORKDIR /var/www/

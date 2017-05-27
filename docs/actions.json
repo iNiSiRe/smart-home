@@ -41,5 +41,17 @@
     "sensors": [
       "main_temperature"
     ]
+  },
+
+  {
+    "action": "login",
+    "module": 1
+  },
+
+  {
+    "action": "control",
+    "pin": 4,
+    "mode": "digital",
+    "value": 1
   }
 ]

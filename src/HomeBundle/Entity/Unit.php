@@ -15,6 +15,9 @@ class Unit
     const TYPE_SENSOR = 1;
     const TYPE_CONTROLLER = 2;
 
+    const MODE_DIGITAL = 1;
+    const MODE_ANALOG = 2;
+
     /**
      * @var int
      *
@@ -65,6 +68,20 @@ class Unit
      * @ORM\Column(type="integer")
      */
     private $type;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $pin;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $mode;
 
     /**
      * Get id
@@ -222,5 +239,45 @@ class Unit
     public function __toString()
     {
         return '#' . (string) $this->id;
+    }
+
+    /**
+     * @return int
+     */
+    public function getPin()
+    {
+        return $this->pin;
+    }
+
+    /**
+     * @param int $pin
+     *
+     * @return Unit
+     */
+    public function setPin($pin)
+    {
+        $this->pin = $pin;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getMode()
+    {
+        return $this->mode;
+    }
+
+    /**
+     * @param int $mode
+     *
+     * @return Unit
+     */
+    public function setMode($mode)
+    {
+        $this->mode = $mode;
+
+        return $this;
     }
 }
