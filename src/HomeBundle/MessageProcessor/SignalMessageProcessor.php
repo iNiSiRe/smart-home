@@ -9,32 +9,47 @@ use Ratchet\ConnectionInterface;
 class SignalMessageProcessor extends AbstractMessageProcessor
 {
     /**
+     * @param int   $id
+     * @param array $message
+     */
+    private function sentToModule($id, array $message)
+    {
+        $client = $this->clientStorage->get($id);
+
+        if (!$client) {
+            $this->logger->error(sprintf('Client #%s not found', $id));
+
+            return;
+        }
+
+        $client->getConnection()->send(json_encode($message));
+    }
+
+    /**
      * @param ConnectionInterface $connection
-     * @param $message
+     * @param                     $message
      */
     public function process(ConnectionInterface $connection, $message)
     {
         $resource = $message['resource'];
-        
+
         switch ($resource) {
 
             case 'input':
                 $id = $message['unit'];
                 $value = $message['value'];
-                $event = sprintf('module.%s', $id);
-
-                $this->logger->info(sprintf('emit input event %s, %s', $id, $value));
 
                 $unit = $this->entityManager->getRepository('HomeBundle:Unit')->find($id);
 
                 $message = [
                     "action" => Actions::ACTION_CONTROL,
-                    "mode" => $unit->getMode(),
-                    "pin" => $unit->getPin(),
-                    "value" => $value
+                    "mode"   => $unit->getMode(),
+                    "pin"    => $unit->getPin(),
+                    "value"  => $value,
                 ];
 
-                $this->emitter->emit($event, [$message]);
+                $this->sentToModule($id, $message);
+
                 break;
 
             case 'update':
@@ -46,7 +61,7 @@ class SignalMessageProcessor extends AbstractMessageProcessor
                 }
 
                 $client->getConnection()->send(json_encode([
-                    'action' => Actions::ACTION_UPDATE
+                    'action' => Actions::ACTION_UPDATE,
                 ]));
 
                 break;
@@ -60,7 +75,6 @@ class SignalMessageProcessor extends AbstractMessageProcessor
 //                }
 
                 $id = $this->clientStorage->getByConnection($connection)->getId();
-
                 $module = $this->entityManager->getRepository('HomeBundle:Module')->find($id);
 
                 if (!$module) {
@@ -68,7 +82,6 @@ class SignalMessageProcessor extends AbstractMessageProcessor
                 }
 
                 $lightUnit = null;
-
                 $room = $module->getRoom();
 
                 foreach ($room->getUnits() as $unit) {
@@ -80,10 +93,9 @@ class SignalMessageProcessor extends AbstractMessageProcessor
 
                 if (!$lightUnit) {
                     $this->logger->info("Light unit not found");
+
                     return;
                 }
-
-                $event = sprintf('unit.%s.%s.command.control', $lightUnit->getModule()->getId(), $lightUnit->getName());
 
                 if ($message['value'] == 1) {
                     $this->logger->info("Increment inhabitants");
@@ -93,14 +105,22 @@ class SignalMessageProcessor extends AbstractMessageProcessor
                     $room->incrementInhabitants(-1);
                 }
 
+                $message = [
+                    "action" => Actions::ACTION_CONTROL,
+                    "mode"   => $lightUnit->getMode(),
+                    "pin"    => $lightUnit->getPin()
+                ];
+
                 if ($room->getInhabitants() <= 0) {
                     $room->setInhabitants(0);
                     $this->logger->info("Disable light");
-                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getName(), 0]);
+                    $message['value'] = 0;
                 } else {
                     $this->logger->info("Enable light");
-                    $this->emitter->emit($event, [$lightUnit->getModule()->getId(), $lightUnit->getName(), 1]);
+                    $message['value'] = 1;
                 }
+
+                $this->sentToModule($lightUnit->getModule()->getId(), $message);
 
                 $this->logger->info("Inhabitants: {$room->getInhabitants()}");
 
@@ -108,7 +128,8 @@ class SignalMessageProcessor extends AbstractMessageProcessor
 
                 break;
 
-            default: break;
+            default:
+                break;
         }
     }
 

@@ -2,6 +2,7 @@
 
 namespace HomeBundle\Model;
 
+use Doctrine\DBAL\Driver\DrizzlePDOMySql\Connection;
 use Ratchet\ConnectionInterface;
 
 class Client
@@ -52,7 +53,7 @@ class Client
     }
 
     /**
-     * @return mixed
+     * @return ConnectionInterface
      */
     public function getConnection()
     {
