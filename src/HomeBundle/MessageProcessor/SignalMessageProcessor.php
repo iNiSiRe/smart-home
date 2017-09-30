@@ -48,7 +48,10 @@ class SignalMessageProcessor extends AbstractMessageProcessor
                     "value"  => $value,
                 ];
 
-                $this->sentToModule($id, $message);
+                $unit->setValue($value);
+                $this->entityManager->flush();
+
+                $this->sentToModule($unit->getModule()->getId(), $message);
 
                 break;
 
