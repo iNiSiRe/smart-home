@@ -14,10 +14,24 @@ class LoginMessageProcessor extends AbstractMessageProcessor
      */
     public function process(ConnectionInterface $connection, $message)
     {
-        $module = $this->entityManager->getRepository('HomeBundle:Module')->find($message['module']);
+        if (isset($message['mac'])) {
+            $module = $this->entityManager->getRepository('HomeBundle:Module')->findOneBy(['mac' => $message['mac']]);
+        } else {
+            $module = $this->entityManager->getRepository('HomeBundle:Module')->find($message['module']);
+        }
 
         if (!$module) {
             return;
+        }
+
+        $units = [];
+
+        foreach ($module->getUnits() as $unit) {
+            $units[] = [
+                'id' => $unit->getId(),
+                'type' => $unit->getType(),
+                'class' => $unit->getClass()
+            ];
         }
 
         $this->clientStorage->add(new Client($connection, 0, $module->getId()));

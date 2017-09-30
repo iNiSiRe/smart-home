@@ -61,6 +61,13 @@ class Module
     private $room;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string")
+     */
+    private $mac;
+
+    /**
      * Get id
      *
      * @return int
@@ -228,6 +235,26 @@ class Module
     public function getRoom()
     {
         return $this->room;
+    }
+
+    /**
+     * @return string
+     */
+    public function getMac()
+    {
+        return $this->mac;
+    }
+
+    /**
+     * @param string $mac
+     *
+     * @return Module
+     */
+    public function setMac($mac)
+    {
+        $this->mac = $mac;
+        
+        return $this;
     }
 
     /**
