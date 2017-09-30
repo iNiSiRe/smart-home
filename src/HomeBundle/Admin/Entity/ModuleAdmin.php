@@ -17,6 +17,7 @@ class ModuleAdmin extends AbstractAdmin
             ->add('name')
             ->add('units')
             ->add('room')
+            ->add('mac')
         ;
     }
 
@@ -29,6 +30,7 @@ class ModuleAdmin extends AbstractAdmin
             ->addIdentifier('id')
             ->addIdentifier('name')
             ->add('uid')
+            ->add('mac')
         ;
     }
 
