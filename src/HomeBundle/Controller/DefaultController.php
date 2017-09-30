@@ -5,6 +5,7 @@ namespace HomeBundle\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
 class DefaultController extends Controller
@@ -24,9 +25,12 @@ class DefaultController extends Controller
      * @Method({"POST"})
      *
      * @param Request $request
+     * @return JsonResponse
      */
     public function messageAction(Request $request)
     {
         $this->get('logger')->debug($request->getContent());
+
+        return new JsonResponse(['success' => true]);
     }
 }
