@@ -24,7 +24,7 @@
     ],
     "require": {
         "php": ">=5.5.9",
-        "symfony/symfony": "3.0.*",
+        "symfony/symfony": "3.3.*",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
@@ -61,7 +61,7 @@
     },
     "config": {
         "platform": {
-            "php": "5.5.9"
+            "php": "7.0"
         }
     },
     "extra": {

@@ -1,29 +1,34 @@
-FROM ubuntu:15.10
-ENV REFRESHED_AT 2015-06-08
+FROM php:7.0-cli
 
-RUN apt-get dist-upgrade
-RUN apt-get -qq update
+ENV REFRESHED_AT 2017-10-02
 
+# install additional soft
 RUN export DEBIAN_FRONTEND=noninteractive && \
-    apt-get -y install curl php5 php5-cli php5-dev php5-curl php5-gd php5-mysql \
-    php5-intl php5-mcrypt php5-memcached supervisor \
-    php5-redis \
-    php5-mongo \
-    php5-xdebug \
-    git \
-    libevent-dev
+    apt-get -qq update && \
+    apt-get -y install zip unzip git zlib1g-dev libmemcached-dev supervisor git libevent-dev && \
+    rm -rf /var/lib/apt/lists/*
 
-RUN pecl install channel://pecl.php.net/libevent-0.1.0
+
+# install extensions
+RUN docker-php-ext-install pdo_mysql
+
+RUN pecl install xdebug-2.5.0
+RUN docker-php-ext-enable xdebug
+
+RUN pecl install memcached-2.2.0
+RUN docker-php-ext-enable memcached
 
 # install composer
 ENV COMPOSER_HOME=/tmp/.composer
 
 RUN curl -XGET https://getcomposer.org/installer > composer-setup.php && \
-    php composer-setup.php --install-dir=/bin --filename=composer --version=1.3.0 && \
+    php composer-setup.php --install-dir=/bin --filename=composer && \
     rm composer-setup.php
 
-# Add users
-RUN adduser user --home /home/user --shell /bin/bash --disabled-password --gecos ""
+RUN usermod -u 1000 www-data && \
+    mkdir -p /var/www/html && \
+    chown -R www-data:www-data /var/www/html && \
+    chown -R www-data:www-data /tmp/.composer
 
 # Add users to sudoers, so no need to ask for password
 RUN echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -31,4 +36,5 @@ RUN echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 EXPOSE 8080
 EXPOSE 8000
 
-WORKDIR /var/www/
+USER www-data
+WORKDIR /var/www/html
