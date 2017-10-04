@@ -16,12 +16,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "git",
-            "url": "https://github.com/iNiSiRe/http"
-        }
-    ],
     "require": {
         "php": ">=5.5.9",
         "symfony/symfony": "3.3.*",
@@ -33,9 +27,11 @@
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
-        "react/http": "dev-master",
-        "cboden/ratchet": "^0.3.4",
-        "sonata-project/doctrine-orm-admin-bundle": "3.0.5"
+        "react/http": "^0.7.4",
+        "cboden/ratchet": "^0.4",
+        "sonata-project/doctrine-orm-admin-bundle": "3.0.5",
+        "symfony/psr-http-message-bridge": "^1.0",
+        "zendframework/zend-diactoros": "^1.6"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

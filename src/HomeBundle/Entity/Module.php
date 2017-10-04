@@ -68,6 +68,13 @@ class Module
     private $mac;
 
     /**
+     * @var Firmware
+     *
+     * @ORM\Embedded(class="HomeBundle\Entity\Firmware")
+     */
+    private $firmware;
+
+    /**
      * Get id
      *
      * @return int
@@ -254,6 +261,26 @@ class Module
     {
         $this->mac = $mac;
         
+        return $this;
+    }
+
+    /**
+     * @return Firmware
+     */
+    public function getFirmware()
+    {
+        return $this->firmware;
+    }
+
+    /**
+     * @param Firmware $firmware
+     *
+     * @return $this
+     */
+    public function setFirmware($firmware)
+    {
+        $this->firmware = $firmware;
+
         return $this;
     }
 

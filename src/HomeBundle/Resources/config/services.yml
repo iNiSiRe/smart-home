@@ -7,7 +7,7 @@ services:
   home.web_socket_server:
     class: HomeBundle\Model\WebSocketServer
     arguments:
-      - "@loop"
+      - "@react.loop"
       - '@logger'
       - '@home.message.processor.factory'
 

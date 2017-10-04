@@ -8,14 +8,13 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -y install zip unzip git zlib1g-dev libmemcached-dev supervisor git libevent-dev && \
     rm -rf /var/lib/apt/lists/*
 
-
 # install extensions
 RUN docker-php-ext-install pdo_mysql
 
 RUN pecl install xdebug-2.5.0
 RUN docker-php-ext-enable xdebug
 
-RUN pecl install memcached-2.2.0
+RUN pecl install memcached-3.0.2
 RUN docker-php-ext-enable memcached
 
 # install composer
@@ -36,5 +35,6 @@ RUN echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 EXPOSE 8080
 EXPOSE 8000
 
-USER www-data
-WORKDIR /var/www/html
+USER root
+
+WORKDIR /var/www

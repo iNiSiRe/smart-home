@@ -1,9 +1,2 @@
 services:
-  loop:
-    class: React\EventLoop\ExtEventLoop
-    factory: ['React\EventLoop\Factory', create]
-
-  http_server:
-    class: CommonBundle\Server\HttpServer
-    arguments:
-      - "@loop"
+  file_uploa

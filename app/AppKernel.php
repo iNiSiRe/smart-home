@@ -24,6 +24,7 @@ class AppKernel extends Kernel
 
             new HomeBundle\HomeBundle(),
             new CommonBundle\CommonBundle(),
+            new inisire\ReactBundle\ReactBundle(),
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {

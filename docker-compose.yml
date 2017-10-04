@@ -53,7 +53,7 @@ supervisor:
    - "8000:8000"
   volumes:
    - .:/var/www/
-   - ./docker/php.ini:/etc/php5/cli/conf.d/25-configuration-php.ini:ro
+   - ./docker/php.ini:/usr/local/etc/php/conf.d/25-configuration-php.ini:ro
    - ./docker/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
 
 nginx:
