@@ -28,6 +28,11 @@ class Firmware
     private $file;
 
     /**
+     * @var UploadedFile
+     */
+    private $uploadedFile;
+
+    /**
      * @return string
      */
     public function getVersion()
@@ -63,6 +68,26 @@ class Firmware
     public function setFile($file)
     {
         $this->file = $file;
+
+        return $this;
+    }
+
+    /**
+     * @return UploadedFile
+     */
+    public function getUploadedFile()
+    {
+        return $this->uploadedFile;
+    }
+
+    /**
+     * @param UploadedFile $uploadedFile
+     *
+     * @return $this
+     */
+    public function setUploadedFile(UploadedFile $uploadedFile)
+    {
+        $this->uploadedFile = $uploadedFile;
 
         return $this;
     }

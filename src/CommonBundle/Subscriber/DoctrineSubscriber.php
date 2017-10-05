@@ -35,8 +35,6 @@ class DoctrineSubscriber implements EventSubscriber
         return array(
             Events::prePersist,
             Events::preUpdate,
-            Events::postPersist,
-            Events::postUpdate,
             Events::postRemove
         );
     }
@@ -52,7 +50,7 @@ class DoctrineSubscriber implements EventSubscriber
             return;
         }
 
-        $file = $object->getFirmware()->getFile();
+        $file = $object->getFirmware()->getUploadedFile();
 
         if (!$file instanceof UploadedFile) {
             return;
@@ -73,7 +71,7 @@ class DoctrineSubscriber implements EventSubscriber
             return;
         }
 
-        $file = $object->getFirmware()->getFile();
+        $file = $object->getFirmware()->getUploadedFile();
 
         if (!$file instanceof UploadedFile) {
             return;

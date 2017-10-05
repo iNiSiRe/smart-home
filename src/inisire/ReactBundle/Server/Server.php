@@ -2,10 +2,14 @@
 
 namespace inisire\ReactBundle\Server;
 
+use inisire\ReactBundle\Middleware\UploadedFilesProcessor;
 use Monolog\Logger;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\LoopInterface;
+use React\Http\Middleware\RequestBodyBufferMiddleware;
+use React\Http\Middleware\RequestBodyParserMiddleware;
+use React\Http\MiddlewareRunner;
 use React\Http\Server as HttpServer;
 use React\Socket\Server as SocketServer;
 use Symfony\Bridge\PsrHttpMessage\Factory\DiactorosFactory;
@@ -67,7 +71,14 @@ class Server
     {
         $this->loop = $loop;
         $this->socketServer = $socketServer;
-        $this->httpServer = new HttpServer([$this, 'handleRequest']);
+
+        $this->httpServer = new HttpServer(new MiddlewareRunner([
+            new RequestBodyBufferMiddleware(16 * 1024 * 1024),
+            new RequestBodyParserMiddleware(),
+            new UploadedFilesProcessor($this->loop),
+            [$this, 'handleRequest']]
+        ));
+
         $this->kernel = $kernel;
         $this->foundationFactory = $foundationFactory;
         $this->diactorosFactory = $diactorosFactory;
@@ -127,10 +138,11 @@ class Server
 
     /**
      * @param ServerRequestInterface $request
+     * @param callable               $next
      *
      * @return ResponseInterface
      */
-    public function handleRequest(ServerRequestInterface $request)
+    public function handleRequest(ServerRequestInterface $request, callable $next)
     {
         try {
             $sfRequest = $this->foundationFactory->createRequest($request);

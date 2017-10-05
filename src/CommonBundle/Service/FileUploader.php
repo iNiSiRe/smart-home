@@ -18,8 +18,8 @@ class FileUploader
      */
     public function __construct($targetDir)
     {
-        if (substr($targetDir, -1, 1) != '/') {
-            $targetDir .= '/';
+        if (substr($targetDir, -1, 1) == '/') {
+            $targetDir = substr($targetDir, 0, -1);
         }
 
         $this->targetDir = $targetDir;
@@ -33,7 +33,7 @@ class FileUploader
     public function upload(UploadedFile $file)
     {
         $hash = md5(uniqid());
-        $path = substr($hash, 2, 0) . '/' . substr($hash, 2, 2) . '/';
+        $path = '/' . substr($hash, 2, 0) . '/' . substr($hash, 2, 2) . '/';
         $fileName = $hash . '.' . $file->guessExtension();
 
         $file->move($this->getTargetDir() . $path, $fileName);
@@ -43,10 +43,18 @@ class FileUploader
 
     /**
      * @param string $file
+     *
+     * @return bool
      */
     public function remove(string $file)
     {
+        if (file_exists($this->getTargetDir() . $file)) {
+            unlink($file);
 
+            return true;
+        }
+
+        return false;
     }
 
     /**

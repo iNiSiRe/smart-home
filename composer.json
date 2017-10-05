@@ -27,7 +27,7 @@
         "sensio/distribution-bundle": "^5.0",
         "sensio/framework-extra-bundle": "^3.0.2",
         "incenteev/composer-parameter-handler": "^2.0",
-        "react/http": "^0.7.4",
+        "react/http": "dev-master",
         "cboden/ratchet": "^0.4",
         "sonata-project/doctrine-orm-admin-bundle": "3.0.5",
         "symfony/psr-http-message-bridge": "^1.0",

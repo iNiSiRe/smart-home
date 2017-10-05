@@ -2,6 +2,7 @@
 
 namespace HomeBundle\Admin\Entity;
 
+use HomeBundle\Form\FirmwareType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -18,6 +19,7 @@ class ModuleAdmin extends AbstractAdmin
             ->add('units')
             ->add('room')
             ->add('mac')
+            ->add('firmware', FirmwareType::class, ['required' => false])
         ;
     }
 

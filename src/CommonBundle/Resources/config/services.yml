@@ -1,2 +1,13 @@
 services:
-  file_uploa
+  CommonBundle\:
+    resource: '../../../../src/CommonBundle/*'
+    exclude: '../../../../src/CommonBundle/{Entity,Repository}'
+
+  CommonBundle\Service\FileUploader:
+    arguments:
+      $targetDir: "%upload_dir%"
+
+  CommonBundle\Subscriber\DoctrineSubscriber:
+    autowire: true
+    tags:
+      - { name: doctrine.event_subscriber }
