@@ -31,7 +31,8 @@
         "cboden/ratchet": "^0.4",
         "sonata-project/doctrine-orm-admin-bundle": "3.0.5",
         "symfony/psr-http-message-bridge": "^1.0",
-        "zendframework/zend-diactoros": "^1.6"
+        "zendframework/zend-diactoros": "^1.6",
+        "private-dev/utils": "^1.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
