@@ -12,8 +12,8 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Unit
 {
-    const TYPE_SENSOR = 1;
-    const TYPE_CONTROLLER = 2;
+    const TYPE_OUTPUT = 1;
+    const TYPE_INPUT = 2;
 
     const MODE_DIGITAL = 1;
     const MODE_ANALOG = 2;

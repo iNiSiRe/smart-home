@@ -33,8 +33,8 @@ class FileUploader
     public function upload(UploadedFile $file)
     {
         $hash = md5(uniqid());
-        $path = '/' . substr($hash, 2, 0) . '/' . substr($hash, 2, 2) . '/';
-        $fileName = $hash . '.' . $file->guessExtension();
+        $path = '/' . substr($hash, 0, 2) . '/' . substr($hash, 2, 2) . '/';
+        $fileName = $hash . '.' . ($file->guessExtension() ?? $file->getClientOriginalExtension());
 
         $file->move($this->getTargetDir() . $path, $fileName);
 

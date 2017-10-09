@@ -11,7 +11,9 @@ class ClientStorage
      */
     private $clients;
 
-    /** @var \SplObjectStorage */
+    /**
+     * @var \SplObjectStorage
+     */
     private $storage;
 
     /**

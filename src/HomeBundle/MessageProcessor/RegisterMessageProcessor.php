@@ -28,7 +28,7 @@ class RegisterMessageProcessor extends AbstractMessageProcessor
         foreach ($message['units'] as $data) {
 
             $unit = (new Unit())
-                ->setType($data['type'] == 'sensor' ? Unit::TYPE_SENSOR : Unit::TYPE_CONTROLLER)
+                ->setType($data['type'] == 'sensor' ? Unit::TYPE_OUTPUT : Unit::TYPE_INPUT)
                 ->setName($data['name'])
                 ->setClass($data['class'])
                 ->setModule($module)
