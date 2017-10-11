@@ -1,23 +1,11 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inisire
- * Date: 01.08.16
- * Time: 8:03
- */
 
 namespace HomeBundle;
 
-
 class Actions
 {
-    const ACTION_REGISTER = 1;
-    const ACTION_CONTROL = 2;
-    const ACTION_UPDATE = 3;
-
-    const ACTION_SIGNAL = 2;
-    const ACTION_LOGIN = 4;
-    const ACTION_LISTEN = 5;
-
-    const ACTION_PING = 10;
+    const ACTION_PING = 1;
+    const ACTION_LOGIN = 2;
+    const ACTION_CONFIG = 3;
+    const ACTION_UNIT = 4;
 }

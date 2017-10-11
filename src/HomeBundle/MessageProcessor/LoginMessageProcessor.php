@@ -14,11 +14,9 @@ class LoginMessageProcessor extends AbstractMessageProcessor
      */
     public function process(ConnectionInterface $connection, $message)
     {
-        if (isset($message['mac'])) {
-            $module = $this->entityManager->getRepository('HomeBundle:Module')->findOneBy(['mac' => $message['mac']]);
-        } else {
-            $module = $this->entityManager->getRepository('HomeBundle:Module')->find($message['module']);
-        }
+        $module = $this->entityManager
+            ->getRepository('HomeBundle:Module')
+            ->findOneBy(['mac' => $message['mac']]);
 
         if (!$module) {
             return;

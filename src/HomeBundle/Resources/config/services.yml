@@ -1,13 +1,9 @@
 services:
-  home.listener.sensor:
-    class: HomeBundle\Listener\SensorEventListener
-    tags:
-      - { name: kernel.event_listener, event: home.event.sensor, method: onSensor }
-
   home.web_socket_server:
+    autowire: true
     class: HomeBundle\Model\WebSocketServer
     arguments:
-      - "@react.loop"
+      - "$loop:@react.loop"
       - '@logger'
       - '@home.message.processor.factory'
 

@@ -3,6 +3,7 @@
 namespace CommonBundle\Bridge;
 
 use Symfony\Bundle\FrameworkBundle\Routing\Router;
+use Symfony\Component\HttpFoundation\Request;
 
 class WebSocketHttpBridge
 {
@@ -21,8 +22,8 @@ class WebSocketHttpBridge
         $this->router = $router;
     }
 
-    public function handleRequest()
+    public function handleRequest(Request $request)
     {
-
+        $array = $this->router->matchRequest($request);
     }
 }

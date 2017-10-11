@@ -8,6 +8,7 @@
 
 namespace HomeBundle\Model;
 
+use CommonBundle\Bridge\WebSocketHttpBridge;
 use Doctrine\ORM\EntityManager;
 use Evenement\EventEmitter;
 use HomeBundle\Actions;
@@ -26,6 +27,7 @@ use React\Socket\Server;
 use Symfony\Bridge\Monolog\Logger;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpFoundation\Request;
 
 class WebSocketServer implements MessageComponentInterface
 {
@@ -50,23 +52,29 @@ class WebSocketServer implements MessageComponentInterface
     private $messageProcessorFactory;
 
     /**
+     * @var WebSocketHttpBridge
+     */
+    private $httpBridge;
+
+    /**
      * WebSocketServer constructor
      *
      * @param LoopInterface $loop
      * @param Logger $logger
      * @param MessageProcessorFactory $messageProcessorFactory
      */
-    public function __construct(LoopInterface $loop, Logger $logger, MessageProcessorFactory $messageProcessorFactory)
+    public function __construct(LoopInterface $loop, Logger $logger, MessageProcessorFactory $messageProcessorFactory, WebSocketHttpBridge $httpBridge)
     {
         $ws = new WsServer($this);
 
-        $socket = new Server($loop);
+        $socket = new Server("0.0.0.0:8000", $loop);
         $socket->listen(8000, '0.0.0.0');
 
         $this->server = new IoServer(new HttpServer($ws), $socket, $loop);
         $this->clients = new \SplObjectStorage();
         $this->logger = $logger;
         $this->messageProcessorFactory = $messageProcessorFactory;
+        $this->httpBridge = $httpBridge;
     }
 
     /**
@@ -138,16 +146,15 @@ class WebSocketServer implements MessageComponentInterface
     {
         $this->logger->info('message: ' . $msg);
 
-        $request = json_decode($msg, true);
+        $data = json_decode($msg, true);
 
-        $action = $request['action'];
+        $action = $data['action'];
 
         if ($action == Actions::ACTION_PING) {
             return;
         }
 
-        $processor = $this->messageProcessorFactory->create($action);
-
-        $processor->process($from, $request);
+        $request = Request::create($data['action'], $data['method']);
+        $response = $this->httpBridge->handleRequest($request);
     }
 }
