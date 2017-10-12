@@ -43,7 +43,6 @@ class RegisterMessageProcessor extends AbstractMessageProcessor
 
         $connection->send(json_encode([
             'type' => 2, // response
-            'action' => Actions::ACTION_REGISTER,
             'success' => true,
             'id' => $module->getId()
         ]));
@@ -53,6 +52,6 @@ class RegisterMessageProcessor extends AbstractMessageProcessor
 
     public function getMessageType()
     {
-        return Actions::ACTION_REGISTER;
+        return 10;
     }
 }

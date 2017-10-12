@@ -17,7 +17,6 @@ use Symfony\Component\Form\FormInterface;
  */
 class UnitController extends CRUDController
 {
-
     /**
      * Get repository of the Entity
      *

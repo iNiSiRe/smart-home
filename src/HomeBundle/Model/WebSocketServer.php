@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: inisire
- * Date: 31.03.16
- * Time: 14:53
- */
 
 namespace HomeBundle\Model;
 
@@ -47,11 +41,6 @@ class WebSocketServer implements MessageComponentInterface
     private $logger;
 
     /**
-     * @var MessageProcessorFactory
-     */
-    private $messageProcessorFactory;
-
-    /**
      * @var WebSocketHttpBridge
      */
     private $httpBridge;
@@ -59,21 +48,21 @@ class WebSocketServer implements MessageComponentInterface
     /**
      * WebSocketServer constructor
      *
-     * @param LoopInterface $loop
-     * @param Logger $logger
-     * @param MessageProcessorFactory $messageProcessorFactory
+     * @param LoopInterface       $loop
+     * @param Logger              $logger
+     * @param WebSocketHttpBridge $httpBridge
+     *
+     * @internal param MessageProcessorFactory $messageProcessorFactory
      */
-    public function __construct(LoopInterface $loop, Logger $logger, MessageProcessorFactory $messageProcessorFactory, WebSocketHttpBridge $httpBridge)
+    public function __construct(LoopInterface $loop, Logger $logger, WebSocketHttpBridge $httpBridge)
     {
         $ws = new WsServer($this);
 
         $socket = new Server("0.0.0.0:8000", $loop);
-        $socket->listen(8000, '0.0.0.0');
 
         $this->server = new IoServer(new HttpServer($ws), $socket, $loop);
         $this->clients = new \SplObjectStorage();
         $this->logger = $logger;
-        $this->messageProcessorFactory = $messageProcessorFactory;
         $this->httpBridge = $httpBridge;
     }
 
@@ -154,7 +143,7 @@ class WebSocketServer implements MessageComponentInterface
             return;
         }
 
-        $request = Request::create($data['action'], $data['method']);
+        $request = Request::create($data['action'], mb_strtoupper($data['method']), $data['data'], [], [], ['WS_CONNECTION' => $from]);
         $response = $this->httpBridge->handleRequest($request);
     }
 }

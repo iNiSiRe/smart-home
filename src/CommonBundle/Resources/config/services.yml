@@ -11,3 +11,8 @@ services:
     autowire: true
     tags:
       - { name: doctrine.event_subscriber }
+
+  CommonBundle\Bridge\WebSocketHttpBridge:
+    arguments:
+      - "@router"
+      - "@service_container"

@@ -3,9 +3,8 @@ services:
     autowire: true
     class: HomeBundle\Model\WebSocketServer
     arguments:
-      - "$loop:@react.loop"
-      - '@logger'
-      - '@home.message.processor.factory'
+      - "@react.loop"
+      - "@logger"
 
   home.admin.module:
     class: HomeBundle\Admin\Entity\ModuleAdmin
@@ -60,10 +59,10 @@ services:
     parent: home.abstract.message.processor
     public: false
 
-  home.message.processor.factory:
-    class: HomeBundle\MessageProcessor\MessageProcessorFactory
-    calls:
-      - [register, ['@home.register.message.processor']]
-      - [register, ['@home.login.message.processor']]
-      - [register, ['@home.signal.message.processor']]
-      - [register, ['@home.listen.message.processor']]
+#  home.message.processor.factory:
+#    class: HomeBundle\MessageProcessor\MessageProcessorFactory
+#    calls:
+#      - [register, ['@home.register.message.processor']]
+#      - [register, ['@home.login.message.processor']]
+#      - [register, ['@home.signal.message.processor']]
+#      - [register, ['@home.listen.message.processor']]

@@ -10,3 +10,4 @@ services:
   response.builder:
     class: PrivateDev\Utils\Json\TransformableJsonResponseBuilder
     arguments: ["@fractal"]
+    shared: false

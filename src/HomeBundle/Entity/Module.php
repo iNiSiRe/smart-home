@@ -75,6 +75,13 @@ class Module
     private $firmware;
 
     /**
+     * @var array
+     *
+     * @ORM\Column(type="json_array")
+     */
+    private $config;
+
+    /**
      * Get id
      *
      * @return int
@@ -191,7 +198,7 @@ class Module
     /**
      * Get sensors
      *
-     * @return Collection[]|Unit[]
+     * @return Unit[]
      */
     public function getUnits()
     {
@@ -290,5 +297,25 @@ class Module
     public function __toString()
     {
         return '#' . (string) $this->id;
+    }
+
+    /**
+     * @return array
+     */
+    public function getConfig()
+    {
+        return $this->config;
+    }
+
+    /**
+     * @param array $config
+     *
+     * @return Module
+     */
+    public function setConfig($config)
+    {
+        $this->config = $config;
+
+        return $this;
     }
 }

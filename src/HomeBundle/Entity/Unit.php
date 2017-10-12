@@ -12,12 +12,6 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Unit
 {
-    const TYPE_OUTPUT = 1;
-    const TYPE_INPUT = 2;
-
-    const MODE_DIGITAL = 1;
-    const MODE_ANALOG = 2;
-
     /**
      * @var int
      *
@@ -42,13 +36,6 @@ class Unit
     private $class;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="value", type="string", length=255, nullable=true)
-     */
-    private $value;
-
-    /**
      * @var Module
      *
      * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Module", inversedBy="units")
@@ -63,25 +50,18 @@ class Unit
     private $room;
 
     /**
-     * @var int
+     * @var array
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="json_array")
      */
-    private $type;
+    private $config;
 
     /**
-     * @var int
+     * @var array
      *
-     * @ORM\Column(type="integer")
+     * @ORM\Column(type="json_array")
      */
-    private $pin;
-
-    /**
-     * @var int
-     *
-     * @ORM\Column(type="integer")
-     */
-    private $mode;
+    private $variables;
 
     /**
      * Get id
@@ -142,30 +122,6 @@ class Unit
     }
 
     /**
-     * Set value
-     *
-     * @param string $value
-     *
-     * @return Unit
-     */
-    public function setValue($value)
-    {
-        $this->value = $value;
-
-        return $this;
-    }
-
-    /**
-     * Get value
-     *
-     * @return string
-     */
-    public function getValue()
-    {
-        return $this->value;
-    }
-
-    /**
      * Set unit
      *
      * @param Module $module
@@ -214,26 +170,6 @@ class Unit
     }
 
     /**
-     * @return int
-     */
-    public function getType()
-    {
-        return $this->type;
-    }
-
-    /**
-     * @param int $type
-     *
-     * @return $this
-     */
-    public function setType($type)
-    {
-        $this->type = $type;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function __toString()
@@ -242,41 +178,41 @@ class Unit
     }
 
     /**
-     * @return int
+     * @return array
      */
-    public function getPin()
+    public function getConfig()
     {
-        return $this->pin;
+        return $this->config;
     }
 
     /**
-     * @param int $pin
+     * @param array $config
      *
      * @return Unit
      */
-    public function setPin($pin)
+    public function setConfig($config)
     {
-        $this->pin = $pin;
+        $this->config = $config;
 
         return $this;
     }
 
     /**
-     * @return int
+     * @return array
      */
-    public function getMode()
+    public function getVariables()
     {
-        return $this->mode;
+        return $this->variables;
     }
 
     /**
-     * @param int $mode
+     * @param array $variables
      *
      * @return Unit
      */
-    public function setMode($mode)
+    public function setVariables($variables)
     {
-        $this->mode = $mode;
+        $this->variables = $variables;
 
         return $this;
     }
