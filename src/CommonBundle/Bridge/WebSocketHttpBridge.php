@@ -6,6 +6,7 @@ use Symfony\Bundle\FrameworkBundle\Routing\Router;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class WebSocketHttpBridge
 {
@@ -31,19 +32,30 @@ class WebSocketHttpBridge
         $this->container = $container;
     }
 
+    /**
+     * @param Request $request
+     *
+     * @return Response
+     */
     public function handleRequest(Request $request)
     {
-        $this->router->getContext()->fromRequest($request);
-        $array = $this->router->matchRequest($request);
+        return $this->container->get('kernel')->handle($request);
 
-        list ($controller, $action) = explode('::', $array['_controller']);
+//        $this->container->get('request_stack')->push($request);
+//
+//        $this->router->getContext()->fromRequest($request);
+//        $array = $this->router->matchRequest($request);
+//
+//        list ($controller, $action) = explode('::', $array['_controller']);
+//
+//        $instance = new $controller;
+//
+//        if ($instance instanceof ContainerAwareInterface) {
+//            $instance->setContainer($this->container);
+//        }
+//
+//        $this->container->get('request_stack')->pop();
 
-        $instance = new $controller;
-
-        if ($instance instanceof ContainerAwareInterface) {
-            $instance->setContainer($this->container);
-        }
-
-        $response = $instance->$action($request);
+//        return $instance->$action($request);
     }
 }

@@ -40,7 +40,11 @@ class ClientStorage
      */
     public function getByConnection(ConnectionInterface $connection)
     {
-        return $this->storage->offsetGet($connection);
+        try {
+            return $this->storage->offsetGet($connection);
+        } catch (\UnexpectedValueException $e) {
+            return null;
+        }
     }
 
     /**

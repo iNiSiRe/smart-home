@@ -3,10 +3,7 @@
 namespace HomeBundle\Entity;
 
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use HomeBundle\Entity\Room;
-use HomeBundle\Entity\Unit;
 
 /**
  * Unit
@@ -31,20 +28,6 @@ class Module
      * @ORM\Column(name="name", type="string", length=255, nullable=true)
      */
     private $name;
-
-    /**
-     * @var bool
-     *
-     * @ORM\Column(name="connected", type="boolean", nullable=true)
-     */
-    private $connected;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(name="address", type="string", length=255, nullable=true)
-     */
-    private $address;
 
     /**
      * @var Unit[]
@@ -82,6 +65,13 @@ class Module
     private $config;
 
     /**
+     * @var LogRecord[]
+     *
+     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\LogRecord", mappedBy="module")
+     */
+    private $logs;
+
+    /**
      * Get id
      *
      * @return int
@@ -116,59 +106,12 @@ class Module
     }
 
     /**
-     * Set connected
-     *
-     * @param boolean $connected
-     *
-     * @return Module
-     */
-    public function setConnected($connected)
-    {
-        $this->connected = $connected;
-
-        return $this;
-    }
-
-    /**
-     * Get connected
-     *
-     * @return bool
-     */
-    public function getConnected()
-    {
-        return $this->connected;
-    }
-
-    /**
-     * Set address
-     *
-     * @param string $address
-     *
-     * @return Module
-     */
-    public function setAddress($address)
-    {
-        $this->address = $address;
-
-        return $this;
-    }
-
-    /**
-     * Get address
-     *
-     * @return string
-     */
-    public function getAddress()
-    {
-        return $this->address;
-    }
-
-    /**
      * Constructor
      */
     public function __construct()
     {
         $this->units = new ArrayCollection();
+        $this->logs = new ArrayCollection();
     }
 
     /**
@@ -315,6 +258,50 @@ class Module
     public function setConfig($config)
     {
         $this->config = $config;
+
+        return $this;
+    }
+
+    /**
+     * @return LogRecord[]
+     */
+    public function getLogs()
+    {
+        return $this->logs;
+    }
+
+    /**
+     * @param LogRecord[] $logs
+     *
+     * @return Module
+     */
+    public function setLogs($logs)
+    {
+        $this->logs = $logs;
+
+        return $this;
+    }
+
+    /**
+     * @param $log
+     *
+     * @return $this
+     */
+    public function addLog($log)
+    {
+        $this->logs->add($log);
+
+        return $this;
+    }
+
+    /**
+     * @param $log
+     *
+     * @return $this
+     */
+    public function removeLog($log)
+    {
+        $this->logs->removeElement($log);
 
         return $this;
     }

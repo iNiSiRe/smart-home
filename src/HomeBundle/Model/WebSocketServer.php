@@ -143,7 +143,13 @@ class WebSocketServer implements MessageComponentInterface
             return;
         }
 
-        $request = Request::create($data['action'], mb_strtoupper($data['method']), $data['data'], [], [], ['WS_CONNECTION' => $from]);
-        $response = $this->httpBridge->handleRequest($request);
+        $this->logger->error("Bad request: " . $msg);
+
+        $action = $data['action'] ?? null;
+        $method = strtoupper($data['method'] ?? null);
+        $data = $data['data'] ?? [];
+
+        $request = Request::create($action, $method, $data, [], [], ['WS_CONNECTION' => $from]);
+        $this->httpBridge->handleRequest($request);
     }
 }
