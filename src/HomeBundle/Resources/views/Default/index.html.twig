@@ -46,8 +46,8 @@
             <div class="row">
                 <div class="col-sm-4">
                     {% for unit in room.units %}
-                        {% if unit.type == 1 %}
-                            <div class="panel panel-primary" data-sensor data-sensor-name="{{ unit.name }}">
+                        {% if unit.class == 'TemperatureSensor' %}
+                            <div class="panel panel-primary" data-sensor-name="{{ unit.name }}">
                                 <div class="panel-heading">
                                     <h3 class="panel-title">{{ unit.name }}</h3>
                                 </div>
@@ -57,13 +57,13 @@
                             </div>
                         {% endif %}
 
-                        {% if unit.type == 2 %}
-                            <div class="panel panel-danger" data-controller data-unit-id="{{ unit.id }}">
+                        {% if unit.class == 'Switch' %}
+                            <div class="panel panel-danger" data-unit="Switch" data-unit-id="{{ unit.id }}">
                                 <div class="panel-heading">
                                     <h3 class="panel-title">{{ unit.name }}</h3>
                                 </div>
                                 <div class="panel-body">
-                                    <input type="range" min="0" max="1" step="1" value="{{ unit.value }}" name="{{ unit.name }}">
+                                    <input type="range" min="0" max="1" step="1" value="{{ unit.variables.enabled == true ? 1 : 0 }}" name="{{ unit.name }}">
                                 </div>
                             </div>
                         {% endif %}
@@ -85,6 +85,7 @@
     var WS_SERVER = "{{ ws_server }}";
 </script>
 
+<script src="https://unpkg.com/mqtt@2.13.1/dist/mqtt.min.js"></script>
 <script src="{{ asset('js/socket.client.js') }}"></script>
 
 </body>

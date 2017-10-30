@@ -48,6 +48,7 @@ supervisor:
    - memcached
    - redis
    - mongo
+   - mosquitto
   ports:
    - "8080:8080"
    - "8000:8000"
@@ -55,6 +56,14 @@ supervisor:
    - .:/var/www/
    - ./docker/php.ini:/usr/local/etc/php/conf.d/25-configuration-php.ini:ro
    - ./docker/supervisord.conf:/etc/supervisor/conf.d/supervisord.conf:ro
+
+mosquitto:
+  image: eclipse-mosquitto:latest
+  ports:
+    - "1883:1883"
+    - "1884:1884"
+  volumes:
+    - ./docker/mosquitto.conf:/mosquitto/config/mosquitto.conf:ro
 
 nginx:
   image: nginx:1.7

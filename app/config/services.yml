@@ -11,3 +11,14 @@ services:
     class: PrivateDev\Utils\Json\TransformableJsonResponseBuilder
     arguments: ["@fractal"]
     shared: false
+
+  react_connector:
+    class: React\Socket\Connector
+    arguments: ["@react.loop", {'dns': '127.0.0.11'}]
+
+  Doctrine\ORM\EntityManager: '@doctrine.orm.default_entity_manager'
+
+  BinSoul\Net\Mqtt\Client\React\ReactMqttClient:
+    class: BinSoul\Net\Mqtt\Client\React\ReactMqttClient
+    arguments: ["@react_connector", "@react.loop"]
+    public: true

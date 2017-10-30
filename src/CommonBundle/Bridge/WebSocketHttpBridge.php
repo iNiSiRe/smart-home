@@ -11,11 +11,6 @@ use Symfony\Component\HttpFoundation\Response;
 class WebSocketHttpBridge
 {
     /**
-     * @var Router
-     */
-    private $router;
-
-    /**
      * @var ContainerInterface
      */
     private $container;
@@ -23,12 +18,10 @@ class WebSocketHttpBridge
     /**
      * WebSocketHttpBridge constructor.
      *
-     * @param Router             $router
      * @param ContainerInterface $container
      */
-    public function __construct(Router $router, ContainerInterface $container)
+    public function __construct(ContainerInterface $container)
     {
-        $this->router = $router;
         $this->container = $container;
     }
 

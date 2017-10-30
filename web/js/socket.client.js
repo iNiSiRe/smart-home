@@ -1,49 +1,54 @@
-var ws = new WebSocket('ws://' + WS_SERVER);
+var client = mqtt.connect('ws://' + WS_SERVER);
 
-ws.onopen = function (event) {
-    var room = $('[data-room]:first')[0];
-    var sensors = $(room).find('[data-sensor]');
+var room = $('[data-room]:first')[0];
+var units = $(room).find('[data-unit]');
+var handlers = [];
 
-    // var data = {
-    //     action: 5,
-    //     room: room.getAttribute('data-room-name'),
-    //     sensors: []
-    // };
-    //
-    // for (var i = 0; i < sensors.length; i++) {
-    //     data.sensors.push(sensors[i].getAttribute('data-sensor-name'));
-    // }
-    //
-    // ws.send(JSON.stringify(data));
+client.on('connect', function () {
 
-    var controllers = $('[data-controller]');
-    for (var i = 0; i < controllers.length; i++) {
+    for (var i = 0; i < units.length; i++) {
+        var topic = "units/" + units[i].getAttribute('data-unit-id');
 
-        $(controllers[i]).find('input[type=range]').on('change', function (controller) {
-            return function () {
-                var value = $(this).val();
-                var data = {
-                    "action": 2,
-                    "resource": "input",
-                    "unit": controller.getAttribute('data-unit-id'),
-                    "value": value
+        client.subscribe(topic);
+
+        switch (units[i].getAttribute('data-unit')) {
+
+            case 'Switch': {
+
+                var context = {
+                    topic: topic,
+                    unit: units[i]
                 };
-                ws.send(JSON.stringify(data));
-            }
-        }(controllers[i])
-        );
+
+                var callback = (function (context) {
+                  return function () {
+                      var message = {
+                          variables: {
+                              enabled: !!(1 == $(this).val())
+                          }
+                      };
+                      client.publish(context.topic, JSON.stringify(message));
+                  }
+                })(context);
+
+                $(units[i]).find('input[type=range]').on('change', callback);
+
+                handlers[topic] = function (topic, payload) {
+                    console.log([topic, payload].join(':'));
+                };
+
+            } break;
+        }
     }
-};
 
-ws.onmessage = function (event) {
-    if (event.data == 'ping') {
-        return;
+});
+
+client.on('message', function (topic, payload) {
+
+    if (handlers.indexOf(topic) === -1) {
+        return true;
     }
 
-    var data = JSON.parse(event.data);
-    var sensor = data['sensor'];
-    var room = data['room'];
-    var value = data['value'];
-    $('[data-sensor-name=' + sensor + '] .panel-body').html(value);
+    handlers[topic](topic, payload);
 
-};
+});

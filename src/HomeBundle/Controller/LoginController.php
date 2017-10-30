@@ -54,10 +54,6 @@ class LoginController extends Controller
                 ];
             }
 
-            /**
-             * @var ConnectionInterface $connection
-             */
-            $connection = $request->server->get('WS_CONNECTION');
 
             $this->get('home.client.storage')->add(new Client($connection, 0, $module->getId()));
 

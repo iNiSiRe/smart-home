@@ -24,45 +24,7 @@ services:
     tags:
       - { name: sonata.admin, manager_type: orm, label: Unit }
 
-  home.client.storage:
-    class: HomeBundle\Model\ClientStorage
-
-  home.event_emitter:
-    class: Evenement\EventEmitter
-
-  home.abstract.message.processor:
-    class: HomeBundle\MessageProcessor\AbstractMessageProcessor
-    public: false
-    arguments:
-      - "@logger"
-      - "@doctrine.orm.entity_manager"
-      - "@home.client.storage"
-      - "@home.event_emitter"
-
-  home.register.message.processor:
-    class: HomeBundle\MessageProcessor\RegisterMessageProcessor
-    parent: home.abstract.message.processor
-    public: false
-
-  home.login.message.processor:
-    class: HomeBundle\MessageProcessor\LoginMessageProcessor
-    parent: home.abstract.message.processor
-    public: false
-
-  home.signal.message.processor:
-    class: HomeBundle\MessageProcessor\SignalMessageProcessor
-    parent: home.abstract.message.processor
-    public: false
-
-  home.listen.message.processor:
-    class: HomeBundle\MessageProcessor\ListenMessageProcessor
-    parent: home.abstract.message.processor
-    public: false
-
-#  home.message.processor.factory:
-#    class: HomeBundle\MessageProcessor\MessageProcessorFactory
-#    calls:
-#      - [register, ['@home.register.message.processor']]
-#      - [register, ['@home.login.message.processor']]
-#      - [register, ['@home.signal.message.processor']]
-#      - [register, ['@home.listen.message.processor']]
+  HomeBundle\Service\Bootstrap:
+    class: HomeBundle\Service\Bootstrap
+    autowire: true
+    public: true

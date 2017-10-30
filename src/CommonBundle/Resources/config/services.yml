@@ -1,4 +1,5 @@
 services:
+
   CommonBundle\:
     resource: '../../../../src/CommonBundle/*'
     exclude: '../../../../src/CommonBundle/{Entity,Repository}'
@@ -14,5 +15,10 @@ services:
 
   CommonBundle\Bridge\WebSocketHttpBridge:
     arguments:
-      - "@router"
       - "@service_container"
+
+  CommonBundle\Handler\MqttHandler:
+    autowire: true
+    public: true
+    arguments:
+      $mqttServer: "%mqtt_server%"

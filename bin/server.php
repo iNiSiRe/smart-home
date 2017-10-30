@@ -11,4 +11,8 @@ $container = $kernel->getContainer();
 
 $container->get('react.http.server')->start();
 $container->get('home.web_socket_server');
+
+$container->get('HomeBundle\Service\Bootstrap')->boot();
+$container->get('CommonBundle\Handler\MqttHandler')->start();
+
 $container->get('react.loop')->run();

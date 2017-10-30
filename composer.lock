@@ -4,8 +4,116 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "279503d58b365c9ce00f27b9479194d6",
+    "content-hash": "632808dcfdb4370824edcbcca48cccc6",
     "packages": [
+        {
+            "name": "binsoul/net-mqtt",
+            "version": "0.2.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/binsoul/net-mqtt.git",
+                "reference": "286b28e6014739b19e0e7ce0cd5871cdd0cef9b3"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/binsoul/net-mqtt/zipball/286b28e6014739b19e0e7ce0cd5871cdd0cef9b3",
+                "reference": "286b28e6014739b19e0e7ce0cd5871cdd0cef9b3",
+                "shasum": ""
+            },
+            "require": {
+                "php": "~5.6|~7.0"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~1.0",
+                "phpunit/phpunit": "~4.0||~5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "BinSoul\\Net\\Mqtt\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Mößler",
+                    "email": "code@binsoul.de",
+                    "homepage": "https://github.com/binsoul",
+                    "role": "Developer"
+                }
+            ],
+            "description": "MQTT protocol implementation",
+            "homepage": "https://github.com/binsoul/net-mqtt",
+            "keywords": [
+                "mqtt",
+                "net"
+            ],
+            "time": "2017-04-03T20:17:02+00:00"
+        },
+        {
+            "name": "binsoul/net-mqtt-client-react",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/binsoul/net-mqtt-client-react.git",
+                "reference": "091bee26c230bafffd8fade5efdda1d1ff040591"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/binsoul/net-mqtt-client-react/zipball/091bee26c230bafffd8fade5efdda1d1ff040591",
+                "reference": "091bee26c230bafffd8fade5efdda1d1ff040591",
+                "shasum": ""
+            },
+            "require": {
+                "binsoul/net-mqtt": "~0.2",
+                "php": "~5.6|~7.0",
+                "react/promise": "~2.0",
+                "react/socket": "~0.8"
+            },
+            "require-dev": {
+                "friendsofphp/php-cs-fixer": "~1.0",
+                "phpunit/phpunit": "~4.0||~5.0"
+            },
+            "type": "library",
+            "extra": {
+                "branch-alias": {
+                    "dev-master": "1.0-dev"
+                }
+            },
+            "autoload": {
+                "psr-4": {
+                    "BinSoul\\Net\\Mqtt\\Client\\React\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "MIT"
+            ],
+            "authors": [
+                {
+                    "name": "Sebastian Mößler",
+                    "email": "code@binsoul.de",
+                    "homepage": "https://github.com/binsoul",
+                    "role": "Developer"
+                }
+            ],
+            "description": "Asynchronous MQTT client built on React",
+            "homepage": "https://github.com/binsoul/net-mqtt-client-react",
+            "keywords": [
+                "client",
+                "mqtt",
+                "net"
+            ],
+            "time": "2017-05-17T18:12:43+00:00"
+        },
         {
             "name": "cboden/ratchet",
             "version": "v0.4",
@@ -1165,6 +1273,41 @@
             "time": "2015-11-10T17:04:01+00:00"
         },
         {
+            "name": "inisire/react-bundle",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iNiSiRe/react-bundle.git",
+                "reference": "977294a76c7fb8e588cd50a6bb2b9720c44972fa"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iNiSiRe/react-bundle/zipball/977294a76c7fb8e588cd50a6bb2b9720c44972fa",
+                "reference": "977294a76c7fb8e588cd50a6bb2b9720c44972fa",
+                "shasum": ""
+            },
+            "require": {
+                "php": ">=7.0.0",
+                "react/http": "dev-master"
+            },
+            "bin": [
+                "bin/server.php"
+            ],
+            "type": "library",
+            "autoload": {
+                "psr-4": {
+                    "inisire\\ReactBundle\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "description": "React Bundle",
+            "keywords": [
+                "reactphp",
+                "symfony"
+            ],
+            "time": "2017-10-20T13:42:42+00:00"
+        },
+        {
             "name": "jdorn/sql-formatter",
             "version": "v1.2.17",
             "source": {
@@ -2023,12 +2166,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/http.git",
-                "reference": "ed0fc63c428b8becc14ca422c805a8a3ebbaa3d2"
+                "reference": "6f7b324711532e2b4739dc8da3b7961f869f6e1b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/http/zipball/ed0fc63c428b8becc14ca422c805a8a3ebbaa3d2",
-                "reference": "ed0fc63c428b8becc14ca422c805a8a3ebbaa3d2",
+                "url": "https://api.github.com/repos/reactphp/http/zipball/6f7b324711532e2b4739dc8da3b7961f869f6e1b",
+                "reference": "6f7b324711532e2b4739dc8da3b7961f869f6e1b",
                 "shasum": ""
             },
             "require": {
@@ -2064,7 +2207,7 @@
                 "server",
                 "streaming"
             ],
-            "time": "2017-10-02T14:12:33+00:00"
+            "time": "2017-10-13T08:10:01+00:00"
         },
         {
             "name": "react/promise",
@@ -4091,9 +4234,10 @@
         }
     ],
     "aliases": [],
-    "minimum-stability": "stable",
+    "minimum-stability": "dev",
     "stability-flags": {
-        "react/http": 20
+        "inisire/react-bundle": 20,
+        "binsoul/net-mqtt-client-react": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,
