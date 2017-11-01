@@ -9,6 +9,9 @@ use Doctrine\ORM\Mapping as ORM;
  *
  * @ORM\Table(name="units")
  * @ORM\Entity()
+ * @ORM\InheritanceType("SINGLE_TABLE")
+ * @ORM\DiscriminatorColumn(name="discriminator", type="integer")
+ * @ORM\DiscriminatorMap({1 = "Unit", 5 = "BoilerUnit"})
  */
 class Unit
 {
@@ -213,6 +216,29 @@ class Unit
     public function setVariables($variables)
     {
         $this->variables = $variables;
+
+        return $this;
+    }
+
+    /**
+     * @param $name
+     *
+     * @return mixed|null
+     */
+    public function getVariable($name)
+    {
+        return $this->variables[$name] ?? null;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setVariable($name, $value)
+    {
+        $this->variables[$name] = $value;
 
         return $this;
     }

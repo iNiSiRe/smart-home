@@ -37,11 +37,11 @@ class Room
     private $units;
 
     /**
-     * @var int
+     * @var array
      *
-     * @ORM\Column(type="integer", nullable=true)
+     * @ORM\Column(type="json_array")
      */
-    private $inhabitants = 0;
+    private $variables;
 
     /**
      * Get id
@@ -128,26 +128,45 @@ class Room
     }
 
     /**
-     * @return int
+     * @return array
      */
-    public function getInhabitants()
+    public function getVariables()
     {
-        return $this->inhabitants;
+        return $this->variables;
     }
 
     /**
-     * @param int $inhabitants
+     * @param array $variables
+     *
+     * @return Room
      */
-    public function setInhabitants($inhabitants)
+    public function setVariables($variables)
     {
-        $this->inhabitants = $inhabitants;
+        $this->variables = $variables;
+
+        return $this;
     }
 
     /**
-     * @param int $count
+     * @param $name
+     *
+     * @return mixed|null
      */
-    public function incrementInhabitants($count = 1)
+    public function getVariable($name)
     {
-        $this->inhabitants += $count;
+        return $this->variables[$name] ?? null;
+    }
+
+    /**
+     * @param $name
+     * @param $value
+     *
+     * @return $this
+     */
+    public function setVariable($name, $value)
+    {
+        $this->variables[$name] = $value;
+
+        return $this;
     }
 }

@@ -48,7 +48,7 @@ class Bootstrap
             switch ($unit->getClass()) {
                 case 'BeamIntersectionSensor': {
 
-                    $this->handler->registerHandler(new BeamIntersectionSensorHandler($unit, $this->manager));
+                    $this->handler->registerHandler(new BeamIntersectionSensorHandler($unit, $this->manager, $this->client));
 
                 } break;
 
