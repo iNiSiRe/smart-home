@@ -16,6 +16,11 @@ class BoilerUnit extends Unit
     /**
      * @var boolean
      */
+    private $auto;
+
+    /**
+     * @var boolean
+     */
     private $enabled;
 
     /**
@@ -79,6 +84,26 @@ class BoilerUnit extends Unit
     public function setSensors($sensors)
     {
         $this->sensors = $sensors;
+
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isAuto()
+    {
+        return $this->auto;
+    }
+
+    /**
+     * @param bool $auto
+     *
+     * @return BoilerUnit
+     */
+    public function setAuto($auto)
+    {
+        $this->auto = $auto;
 
         return $this;
     }

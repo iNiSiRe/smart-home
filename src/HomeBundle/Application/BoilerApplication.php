@@ -2,7 +2,9 @@
 
 namespace HomeBundle\Application;
 
+use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
 use HomeBundle\Entity\BoilerUnit;
+use HomeBundle\Model\Boiler;
 use React\EventLoop\Timer\TimerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
@@ -15,6 +17,11 @@ class BoilerApplication
 
     /**
      * @var BoilerUnit
+     */
+    private $boilerUnit;
+
+    /**
+     * @var Boiler
      */
     private $boiler;
 
@@ -37,19 +44,48 @@ class BoilerApplication
     public function __construct(ContainerInterface $container, BoilerUnit $boiler)
     {
         $this->container = $container;
-        $this->boiler = $boiler;
+        $this->boilerUnit = $boiler;
         $this->manager = $this->container->get('doctrine.orm.entity_manager');
+        $this->boiler = new Boiler($boiler, $this->container->get(ReactMqttClient::class));
+    }
+
+    public function isSatisfiedByTemperature()
+    {
+        $sensor = $this->boilerUnit->getSensors()[0];
+
+        if ($sensor->getTemperature() < $this->boilerUnit->getTemperature() - 2) {
+            return true;
+        } elseif ($sensor->getTemperature() > $this->boilerUnit->getTemperature()) {
+            return false;
+        }
+
+        return false;
+    }
+
+    public function isSatisfiedBySchedule()
+    {
+        $time = new \DateTime('now', new \DateTimeZone('Europe/Kiev'));
+        $hours = $time->format('H');
+
+        if ($hours >= 0 && $hours <=8) {
+            return true;
+        } elseif ($hours > 8 && $hours < 0) {
+            return false;
+        }
+
+        return false;
     }
 
     public function loop()
     {
-       $this->manager->refresh($this->boiler);
+       $this->manager->refresh($this->boilerUnit);
 
-       $time = new \DateTime('now', new \DateTimeZone('Europe/Kiev'));
-       $hours = $time->format('H');
+       $enable = $this->isSatisfiedBySchedule() && $this->isSatisfiedByTemperature();
 
-       if ($this->boiler->isEnabled() && ($hours >= 0 && $hours <=8)) {
-
+       if ($this->boilerUnit->isEnabled() && $enable === false) {
+           $this->boiler->disable();
+       } elseif ($this->boilerUnit->isEnabled() == false && $enable === true) {
+           $this->boiler->enable();
        }
     }
 

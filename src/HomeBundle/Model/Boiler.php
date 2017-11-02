@@ -3,6 +3,7 @@
 namespace HomeBundle\Model;
 
 use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
+use BinSoul\Net\Mqtt\DefaultMessage;
 use HomeBundle\Entity\BoilerUnit;
 
 class Boiler
@@ -31,11 +32,17 @@ class Boiler
 
     public function enable()
     {
-
+        $this->client->publish(new DefaultMessage(
+            'units/' . $this->boiler->getId(),
+            json_encode(['enabled' => true])
+        ));
     }
 
     public function disable()
     {
-
+        $this->client->publish(new DefaultMessage(
+            'units/' . $this->boiler->getId(),
+            json_encode(['enabled' => false])
+        ));
     }
 }
