@@ -11,7 +11,7 @@ use Doctrine\ORM\Mapping as ORM;
  * @ORM\Entity()
  * @ORM\InheritanceType("SINGLE_TABLE")
  * @ORM\DiscriminatorColumn(name="discriminator", type="integer")
- * @ORM\DiscriminatorMap({1 = "Unit", 5 = "BoilerUnit"})
+ * @ORM\DiscriminatorMap({1 = "Unit", 2 = "SwitchUnit", 3 = "BeamIntersectionSensor", 4 = "TemperatureHumidityUnit", 5 = "BoilerUnit"})
  */
 class Unit
 {
@@ -51,20 +51,6 @@ class Unit
      * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Room", inversedBy="units")
      */
     private $room;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(type="json_array")
-     */
-    private $config;
-
-    /**
-     * @var array
-     *
-     * @ORM\Column(type="json_array")
-     */
-    private $variables;
 
     /**
      * Get id

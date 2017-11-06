@@ -77,11 +77,11 @@ class RequestConfigurationHandler extends AbstractHandler
         }
 
         $message = json_encode($module->getConfig());
-        $topic = 'modules/' . $module->getMac() . '/configuration';
+        $topic = 'modules/' . $module->getCode() . '/configuration';
         $this->client->publish(new DefaultMessage($topic, $message));
 
         $message = json_encode($units);
-        $topic = 'modules/' . $module->getMac() . '/units';
+        $topic = 'modules/' . $module->getCode() . '/units';
         $this->client->publish(new DefaultMessage($topic, $message));
     }
 }

@@ -11,11 +11,15 @@ class TemperatureHumidityUnit extends Unit
 {
     /**
      * @var float
+     *
+     * @ORM\Column(type="float")
      */
     private $temperature;
 
     /**
      * @var float
+     *
+     * @ORM\Column(type="float")
      */
     private $humidity;
 

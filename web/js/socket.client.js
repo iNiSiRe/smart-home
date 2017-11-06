@@ -11,16 +11,18 @@ client.on('connect', function () {
 
         client.subscribe(topic);
 
+        var context, callback;
+
         switch (units[i].getAttribute('data-unit')) {
 
             case 'Switch': {
 
-                var context = {
+                context = {
                     topic: topic,
                     unit: units[i]
                 };
 
-                var callback = (function (context) {
+                callback = (function (context) {
                   return function () {
                       var message = {
                           variables: {
@@ -31,7 +33,41 @@ client.on('connect', function () {
                   }
                 })(context);
 
-                $(units[i]).find('input[type=range]').on('change', callback);
+                $(units[i]).find('input[type=checkbox]').on('change', callback);
+
+                handlers[topic] = function (topic, payload) {
+                    console.log([topic, payload].join(':'));
+                };
+
+            } break;
+
+            case 'TemperatureSensor': {
+
+                handlers[topic] = function (topic, payload) {
+                    console.log([topic, payload].join(':'));
+                };
+
+            } break;
+
+            case 'Boiler': {
+
+                context = {
+                    topic: topic,
+                    unit: units[i]
+                };
+
+                callback = (function (context) {
+                    return function () {
+                        var message = {
+                            variables: {
+                                enabled: !!(1 == $(this).val())
+                            }
+                        };
+                        client.publish(context.topic, JSON.stringify(message));
+                    }
+                })(context);
+
+                $(units[i]).find('input[type=checkbox]').on('change', callback);
 
                 handlers[topic] = function (topic, payload) {
                     console.log([topic, payload].join(':'));

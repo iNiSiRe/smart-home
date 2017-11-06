@@ -5,12 +5,13 @@ namespace HomeBundle\Handler;
 use BinSoul\Net\Mqtt\Message;
 use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
+use HomeBundle\Entity\SwitchUnit;
 use HomeBundle\Entity\Unit;
 
 class SwitchHandler extends AbstractHandler
 {
     /**
-     * @var Unit
+     * @var SwitchUnit
      */
     private $unit;
 
@@ -22,10 +23,10 @@ class SwitchHandler extends AbstractHandler
     /**
      * SwitchHandler constructor.
      *
-     * @param Unit          $unit
+     * @param SwitchUnit    $unit
      * @param EntityManager $manager
      */
-    public function __construct(Unit $unit, EntityManager $manager)
+    public function __construct(SwitchUnit $unit, EntityManager $manager)
     {
         $this->unit = $unit;
         $this->manager = $manager;
@@ -50,9 +51,7 @@ class SwitchHandler extends AbstractHandler
 
         $this->manager->refresh($this->unit);
 
-        $variables = $this->unit->getVariables();
-        $variables['enabled'] = $data['variables']['enabled'] ?? false;
-        $this->unit->setVariables($variables);
+        $this->unit->setEnabled((bool) ($data['enabled'] ?? false));
 
         $this->manager->flush($this->unit);
     }

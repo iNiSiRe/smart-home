@@ -6,25 +6,26 @@ use Doctrine\ORM\Mapping as ORM;
 /**
  * @ORM\Entity()
  */
-class BoilerUnit extends Unit
+class BoilerUnit extends SwitchUnit
 {
     /**
      * @var float
+     *
+     * @ORM\Column(type="float")
      */
     private $temperature;
 
     /**
-     * @var boolean
+     * @var BoilerManualMode
+     *
+     * @ORM\Embedded(class="HomeBundle\Entity\BoilerManualMode")
      */
-    private $auto;
-
-    /**
-     * @var boolean
-     */
-    private $enabled;
+    private $manual;
 
     /**
      * @var TemperatureHumidityUnit[]
+     *
+     * @ORM\ManyToMany(targetEntity="HomeBundle\Entity\TemperatureHumidityUnit")
      */
     private $sensors;
 
@@ -44,26 +45,6 @@ class BoilerUnit extends Unit
     public function setTemperature($temperature)
     {
         $this->temperature = $temperature;
-
-        return $this;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isEnabled()
-    {
-        return $this->enabled;
-    }
-
-    /**
-     * @param bool $enabled
-     *
-     * @return BoilerUnit
-     */
-    public function setEnabled($enabled)
-    {
-        $this->enabled = $enabled;
 
         return $this;
     }
@@ -89,21 +70,21 @@ class BoilerUnit extends Unit
     }
 
     /**
-     * @return bool
+     * @return BoilerManualMode
      */
-    public function isAuto()
+    public function getManual()
     {
-        return $this->auto;
+        return $this->manual;
     }
 
     /**
-     * @param bool $auto
+     * @param BoilerManualMode $manual
      *
      * @return BoilerUnit
      */
-    public function setAuto($auto)
+    public function setManual($manual)
     {
-        $this->auto = $auto;
+        $this->manual = $manual;
 
         return $this;
     }

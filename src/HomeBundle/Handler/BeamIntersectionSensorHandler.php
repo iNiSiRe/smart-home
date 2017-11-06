@@ -8,12 +8,13 @@ use BinSoul\Net\Mqtt\Message;
 use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Bridge\BeamIntersectionSensorBridge;
+use HomeBundle\Entity\BeamIntersectionSensor;
 use HomeBundle\Entity\Unit;
 
 class BeamIntersectionSensorHandler extends AbstractHandler
 {
     /**
-     * @var Unit
+     * @var BeamIntersectionSensor
      */
     private $unit;
 
@@ -30,11 +31,11 @@ class BeamIntersectionSensorHandler extends AbstractHandler
     /**
      * BeamIntersectionSensorHandler constructor.
      *
-     * @param Unit            $unit
-     * @param EntityManager   $manager
-     * @param ReactMqttClient $client
+     * @param BeamIntersectionSensor $unit
+     * @param EntityManager          $manager
+     * @param ReactMqttClient        $client
      */
-    function __construct(Unit $unit, EntityManager $manager, ReactMqttClient $client)
+    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client)
     {
         $this->unit = $unit;
         $this->manager = $manager;
@@ -56,15 +57,6 @@ class BeamIntersectionSensorHandler extends AbstractHandler
      */
     function onMessage(Message $message)
     {
-        $bridge = new BeamIntersectionSensorBridge($this->unit);
-
-//        $roomFrom = $this->manager->getRepository('HomeBundle:Room')->findOneBy($bridge->getRoomFrom());
-        $roomTo = $this->manager->getRepository('HomeBundle:Room')->findOneBy($bridge->getRoomTo());
-
-        if ($roomTo === null) {
-            return;
-        }
-
         $data = json_decode($message->getPayload(), true);
         $direction = $data['direction'] ?? null;
 
@@ -72,34 +64,21 @@ class BeamIntersectionSensorHandler extends AbstractHandler
             return;
         }
 
-        $inhabitantsTo = $roomTo->getVariable('inhabitants');
-
-        if ($inhabitantsTo === null) {
-            $inhabitantsTo = 0;
-        }
-
         if ($direction == 'in') {
-            $inhabitantsTo++;
+            $this->unit->getRoomTo()->incrementInhabitants(1);
+        } else {
+            $this->unit->getRoomTo()->incrementInhabitants(-1);
         }
 
-        $lightTo = $this->manager->getRepository('HomeBundle:Unit')->find($roomTo->getVariable('main_light'));
-
-        if ($lightTo === null) {
-            return;
-        }
-
-        if ($inhabitantsTo > 0 && $lightTo->getVariable('enabled') == false) {
-            $topic = 'units/' . $lightTo->getId();
+        if ($this->unit->getRoomTo()->getInhabitants() > 0 && $this->unit->getLight()->isEnabled() == false) {
+            $topic = 'units/' . $this->unit->getLight()->getId();
             $payload = json_encode(['enabled' => true]);
             $this->client->publish(new DefaultMessage($topic, $payload));
-        } elseif ($inhabitantsTo <= 0 && $lightTo->getVariable('enabled') == true) {
-            $inhabitantsTo = 0;
-            $topic = 'units/' . $lightTo->getId();
+        } elseif ($this->unit->getRoomTo()->getInhabitants() <= 0 && $this->unit->getLight()->isEnabled() == true) {
+            $topic = 'units/' . $this->unit->getLight()->getId();
             $payload = json_encode(['enabled' => false]);
             $this->client->publish(new DefaultMessage($topic, $payload));
         }
-
-        $roomTo->setVariable('inhabitants', $inhabitantsTo);
 
         $this->manager->flush();
     }

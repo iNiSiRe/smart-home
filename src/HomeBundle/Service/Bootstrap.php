@@ -5,8 +5,14 @@ namespace HomeBundle\Service;
 use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
 use CommonBundle\Handler\MqttHandler;
 use Doctrine\ORM\EntityManager;
+use HomeBundle\Application\BoilerApplication;
+use HomeBundle\Entity\BeamIntersectionSensor;
+use HomeBundle\Entity\BoilerUnit;
+use HomeBundle\Entity\SwitchUnit;
 use HomeBundle\Handler\BeamIntersectionSensorHandler;
+use HomeBundle\Handler\BoilerHandler;
 use HomeBundle\Handler\SwitchHandler;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Bootstrap
 {
@@ -26,17 +32,21 @@ class Bootstrap
     private $client;
 
     /**
+     * @var ContainerInterface
+     */
+    private $container;
+
+    /**
      * Bootstrap constructor.
      *
-     * @param EntityManager   $manager
-     * @param MqttHandler     $handler
-     * @param ReactMqttClient $client
+     * @param ContainerInterface $container
      */
-    public function __construct(EntityManager $manager, MqttHandler $handler, ReactMqttClient $client)
+    public function __construct(ContainerInterface $container)
     {
-        $this->manager = $manager;
-        $this->handler = $handler;
-        $this->client = $client;
+        $this->manager = $container->get(EntityManager::class);
+        $this->handler = $container->get(MqttHandler::class);
+        $this->client = $container->get(ReactMqttClient::class);
+        $this->container = $container;
     }
 
     public function boot()
@@ -45,16 +55,24 @@ class Bootstrap
 
         foreach ($units as $unit) {
 
-            switch ($unit->getClass()) {
-                case 'BeamIntersectionSensor': {
+            switch (true) {
+                case ($unit instanceof BeamIntersectionSensor): {
 
                     $this->handler->registerHandler(new BeamIntersectionSensorHandler($unit, $this->manager, $this->client));
 
                 } break;
 
-                case 'Switch': {
+                case ($unit instanceof SwitchUnit): {
 
                     $this->handler->registerHandler(new SwitchHandler($unit, $this->manager));
+
+                } break;
+
+                case ($unit instanceof BoilerUnit): {
+
+                    $this->handler->registerHandler(new BoilerHandler($unit));
+                    $application = new BoilerApplication($this->container, $unit);
+                    $application->start();
 
                 } break;
 

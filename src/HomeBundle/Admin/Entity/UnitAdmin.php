@@ -3,6 +3,10 @@
 namespace HomeBundle\Admin\Entity;
 
 use Doctrine\DBAL\Types\JsonArrayType;
+use HomeBundle\Entity\BeamIntersectionSensor;
+use HomeBundle\Entity\BoilerUnit;
+use HomeBundle\Entity\SwitchUnit;
+use HomeBundle\Entity\TemperatureHumidityUnit;
 use HomeBundle\Form\ArrayElementType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
@@ -20,26 +24,31 @@ class UnitAdmin extends AbstractAdmin
             ->add('class')
             ->add('module')
             ->add('room')
-            ->add('variables', TextType::class)
-            ->add('config', TextType::class)
         ;
 
-        $form->get('variables')->addModelTransformer(new CallbackTransformer(function ($data) {
+        switch (true) {
 
-            if (!$data) {
-                return null;
-            }
+            case ($this->getSubject() instanceof SwitchUnit): {
+                $form->add('enabled');
+            } break;
 
-            return json_encode($data);
+            case ($this->getSubject() instanceof TemperatureHumidityUnit): {
+                $form->add('temperature');
+                $form->add('humidity');
+            } break;
 
-        }, function ($data) {
+            case ($this->getSubject() instanceof BeamIntersectionSensor): {
+                $form->add('roomFrom');
+                $form->add('roomTo');
+                $form->add('light');
+            } break;
 
-            if (!$data) {
-                return null;
-            }
-
-            return json_decode($data, true);
-        }));
+            case ($this->getSubject() instanceof BoilerUnit): {
+                $form->add('enabled');
+                $form->add('temperature');
+                $form->add('sensors');
+            } break;
+        }
     }
 
     protected function configureListFields(ListMapper $list)

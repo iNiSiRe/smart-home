@@ -76,11 +76,32 @@ class BoilerApplication
         return false;
     }
 
+    /**
+     * @return bool
+     */
+    public function isSatisfiedByInhabitantsCount()
+    {
+        return false;
+    }
+
+    /**
+     * @return bool
+     */
+    public function isSatisfiedByManualMode()
+    {
+        return $this->boilerUnit->getManual()->isEnabled();
+    }
+
     public function loop()
     {
        $this->manager->refresh($this->boilerUnit);
 
-       $enable = $this->isSatisfiedBySchedule() && $this->isSatisfiedByTemperature();
+       $enable = $this->isSatisfiedByManualMode()
+           || (
+               $this->isSatisfiedByInhabitantsCount()
+               && $this->isSatisfiedBySchedule()
+               && $this->isSatisfiedByTemperature()
+           );
 
        if ($this->boilerUnit->isEnabled() && $enable === false) {
            $this->boiler->disable();

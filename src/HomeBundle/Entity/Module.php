@@ -48,7 +48,7 @@ class Module
      *
      * @ORM\Column(type="string")
      */
-    private $mac;
+    private $code;
 
     /**
      * @var Firmware
@@ -197,19 +197,19 @@ class Module
     /**
      * @return string
      */
-    public function getMac()
+    public function getCode()
     {
-        return $this->mac;
+        return $this->code;
     }
 
     /**
-     * @param string $mac
+     * @param string $code
      *
      * @return Module
      */
-    public function setMac($mac)
+    public function setCode($code)
     {
-        $this->mac = $mac;
+        $this->code = $code;
         
         return $this;
     }

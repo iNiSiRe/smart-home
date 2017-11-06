@@ -21,6 +21,16 @@ services:
   home.admin.unit:
     class: HomeBundle\Admin\Entity\UnitAdmin
     arguments: [~, 'HomeBundle\Entity\Unit', ~]
+    calls:
+      - [addSubClass, ['HomeBundle\Entity\SwitchUnit']]
+      - [addSubClass, ['HomeBundle\Entity\BoilerUnit']]
+      - [addSubClass, ['HomeBundle\Entity\BeamIntersectionSensor']]
+      - [setSubClasses, [{
+          'Switch':'HomeBundle\Entity\SwitchUnit',
+          'BeamIntersection':'HomeBundle\Entity\BeamIntersectionSensor',
+          'Temperature': 'HomeBundle\Entity\TemperatureHumidityUnit',
+          'Boiler': 'HomeBundle\Entity\BoilerUnit'
+        }]]
     tags:
       - { name: sonata.admin, manager_type: orm, label: Unit }
 
