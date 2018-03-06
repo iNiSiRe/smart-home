@@ -66,7 +66,7 @@ class Bootstrap
 
                 case ($unit instanceof BoilerUnit): {
 
-                    $this->handler->registerHandler(new BoilerHandler($unit));
+                    $this->handler->registerHandler(new BoilerHandler($unit, $this->manager));
                     $application = new BoilerApplication($this->container, $unit);
                     $application->start();
 
