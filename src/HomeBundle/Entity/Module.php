@@ -58,13 +58,6 @@ class Module
     private $firmware;
 
     /**
-     * @var array
-     *
-     * @ORM\Column(type="json_array")
-     */
-    private $config;
-
-    /**
      * @var LogRecord[]
      *
      * @ORM\OneToMany(targetEntity="HomeBundle\Entity\LogRecord", mappedBy="module")
@@ -240,26 +233,6 @@ class Module
     public function __toString()
     {
         return '#' . (string) $this->id;
-    }
-
-    /**
-     * @return array
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @param array $config
-     *
-     * @return Module
-     */
-    public function setConfig($config)
-    {
-        $this->config = $config;
-
-        return $this;
     }
 
     /**

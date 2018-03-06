@@ -18,7 +18,7 @@ class ModuleAdmin extends AbstractAdmin
             ->add('name')
             ->add('units')
             ->add('room')
-            ->add('mac')
+            ->add('code')
             ->add('firmware', FirmwareType::class, ['required' => false])
         ;
     }
@@ -31,8 +31,7 @@ class ModuleAdmin extends AbstractAdmin
         $list
             ->addIdentifier('id')
             ->addIdentifier('name')
-            ->add('uid')
-            ->add('mac')
+            ->add('code')
         ;
     }
 

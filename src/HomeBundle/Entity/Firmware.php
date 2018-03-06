@@ -14,14 +14,14 @@ class Firmware
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $version;
 
     /**
      * @var string|UploadedFile
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      *
      * @Assert\File(mimeTypes={"application/octet-stream"})
      */
