@@ -9,8 +9,6 @@ client.on('connect', function () {
     for (var i = 0; i < units.length; i++) {
         var topic = "units/" + units[i].getAttribute('data-unit-id');
 
-        client.subscribe(topic);
-
         var context, callback;
 
         switch (units[i].getAttribute('data-unit')) {
@@ -24,28 +22,44 @@ client.on('connect', function () {
 
                 callback = (function (context) {
                   return function () {
+
                       var message = {
-                          variables: {
-                              enabled: !!(1 == $(this).val())
-                          }
+                          enabled: this.checked
                       };
                       client.publish(context.topic, JSON.stringify(message));
+
+                      return true;
                   }
                 })(context);
 
                 $(units[i]).find('input[type=checkbox]').on('change', callback);
 
-                handlers[topic] = function (topic, payload) {
-                    console.log([topic, payload].join(':'));
-                };
+                handlers[topic] = ( function ( unit ) {
+
+                    return function (topic, payload) {
+                        console.log([topic, payload].join(':'));
+                        $(unit).find('input[type=checkbox]').checked = JSON.parse(payload).enabled;
+                    }
+
+                })(units[i]);
 
             } break;
 
             case 'TemperatureSensor': {
 
-                handlers[topic] = function (topic, payload) {
-                    console.log([topic, payload].join(':'));
-                };
+                topic = "units/" + units[i].getAttribute('data-unit-id') + "/indicators";
+
+                handlers[topic] = ( function ( unit ) {
+
+                    return function (topic, payload) {
+                        console.log([topic, payload].join(':'));
+
+                        var value = parseFloat(JSON.parse(payload).temperature).toFixed(2);
+
+                        $(unit).find('span#temperature').html(value);
+                    }
+
+                })(units[i]);
 
             } break;
 
@@ -59,29 +73,37 @@ client.on('connect', function () {
                 callback = (function (context) {
                     return function () {
                         var message = {
-                            variables: {
-                                enabled: !!(1 == $(this).val())
-                            }
+                            enabled: this.checked
                         };
+
+                        console.log(['publish', context.topic, message].join(':'));
+
                         client.publish(context.topic, JSON.stringify(message));
                     }
                 })(context);
 
                 $(units[i]).find('input[type=checkbox]').on('change', callback);
 
-                handlers[topic] = function (topic, payload) {
-                    console.log([topic, payload].join(':'));
-                };
+                handlers[topic] = ( function ( unit ) {
+
+                    return function (topic, payload) {
+                        console.log([topic, payload].join(':'));
+                        $(unit).find('input[type=checkbox]')[0].checked = JSON.parse(payload).enabled;
+                    }
+
+                })(units[i]);
 
             } break;
         }
+
+        client.subscribe(topic);
     }
 
 });
 
 client.on('message', function (topic, payload) {
 
-    if (handlers.indexOf(topic) === -1) {
+    if (handlers.hasOwnProperty(topic) === false) {
         return true;
     }
 

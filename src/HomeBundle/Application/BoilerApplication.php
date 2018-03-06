@@ -54,9 +54,9 @@ class BoilerApplication
         $sensor = $this->boilerUnit->getSensors()[0];
 
         if ($sensor->getTemperature() < $this->boilerUnit->getTemperature() - 2) {
-            return true;
-        } elseif ($sensor->getTemperature() > $this->boilerUnit->getTemperature()) {
             return false;
+        } elseif ($sensor->getTemperature() > $this->boilerUnit->getTemperature()) {
+            return true;
         }
 
         return false;
@@ -81,7 +81,7 @@ class BoilerApplication
      */
     public function isSatisfiedByInhabitantsCount()
     {
-        return false;
+        return true;
     }
 
     /**
@@ -96,18 +96,23 @@ class BoilerApplication
     {
        $this->manager->refresh($this->boilerUnit);
 
-       $enable = $this->isSatisfiedByManualMode()
-           || (
-               $this->isSatisfiedByInhabitantsCount()
-               && $this->isSatisfiedBySchedule()
-               && $this->isSatisfiedByTemperature()
-           );
 
-       if ($this->boilerUnit->isEnabled() && $enable === false) {
-           $this->boiler->disable();
-       } elseif ($this->boilerUnit->isEnabled() == false && $enable === true) {
-           $this->boiler->enable();
+       $this->container->get('logger')->debug('BoilerApplication::loop -> begin');
+
+       if ($this->boilerUnit->getManual()->isEnabled()) {
+           $this->container->get('logger')->debug('BoilerApplication::loop -> manual mode');
+           return;
        }
+
+       if (!$this->isSatisfiedByTemperature()) {
+           $this->container->get('logger')->debug('BoilerApplication::loop -> not satisfied by temp');
+           $this->boiler->enable();
+       } else {
+           $this->container->get('logger')->debug('BoilerApplication::loop -> satisfied by temp');
+           $this->boiler->disable();
+       }
+
+       $this->manager->flush($this->boilerUnit);
     }
 
     public function start()

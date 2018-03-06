@@ -4,10 +4,12 @@ namespace HomeBundle\Admin\Entity;
 
 use Doctrine\DBAL\Types\JsonArrayType;
 use HomeBundle\Entity\BeamIntersectionSensor;
+use HomeBundle\Entity\BoilerManualMode;
 use HomeBundle\Entity\BoilerUnit;
 use HomeBundle\Entity\SwitchUnit;
 use HomeBundle\Entity\TemperatureHumidityUnit;
 use HomeBundle\Form\ArrayElementType;
+use HomeBundle\Form\BoilerManualModeType;
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
@@ -28,6 +30,13 @@ class UnitAdmin extends AbstractAdmin
 
         switch (true) {
 
+            case ($this->getSubject() instanceof BoilerUnit): {
+                $form->add('enabled');
+                $form->add('temperature');
+                $form->add('sensors');
+                $form->add('manual', BoilerManualModeType::class);
+            } break;
+
             case ($this->getSubject() instanceof SwitchUnit): {
                 $form->add('enabled');
             } break;
@@ -43,11 +52,6 @@ class UnitAdmin extends AbstractAdmin
                 $form->add('light');
             } break;
 
-            case ($this->getSubject() instanceof BoilerUnit): {
-                $form->add('enabled');
-                $form->add('temperature');
-                $form->add('sensors');
-            } break;
         }
     }
 

@@ -54,7 +54,7 @@
                                     <div class="switch">
                                         <label>
                                             Off
-                                            <input type="checkbox" checked="checked">
+                                            <input type="checkbox" {% if unit.enabled %}checked="checked"{% endif %}>
                                             <span class="lever"></span> On
                                         </label>
                                     </div>
@@ -74,7 +74,7 @@
                                     <div class="switch">
                                         <label>
                                             Off
-                                            <input type="checkbox" {% if unit.enabled %}checked{% endif %} name="{{ unit.name }}">
+                                            <input type="checkbox" {% if unit.enabled %}checked="checked"{% endif %}>
                                             <span class="lever"></span> On
                                         </label>
                                     </div>

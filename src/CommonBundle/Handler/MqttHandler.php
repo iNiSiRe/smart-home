@@ -75,7 +75,6 @@ class MqttHandler
                 foreach ($this->handlers as $handler) {
                     $this->client->subscribe(new DefaultSubscription($handler->getTopic()));
                 }
-            })
-            ;
+            });
     }
 }

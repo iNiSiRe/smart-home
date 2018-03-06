@@ -9,9 +9,11 @@ use HomeBundle\Application\BoilerApplication;
 use HomeBundle\Entity\BeamIntersectionSensor;
 use HomeBundle\Entity\BoilerUnit;
 use HomeBundle\Entity\SwitchUnit;
+use HomeBundle\Entity\TemperatureHumidityUnit;
 use HomeBundle\Handler\BeamIntersectionSensorHandler;
 use HomeBundle\Handler\BoilerHandler;
 use HomeBundle\Handler\SwitchHandler;
+use HomeBundle\Handler\TemperatureHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Bootstrap
@@ -62,17 +64,23 @@ class Bootstrap
 
                 } break;
 
+                case ($unit instanceof BoilerUnit): {
+
+                    $this->handler->registerHandler(new BoilerHandler($unit));
+                    $application = new BoilerApplication($this->container, $unit);
+                    $application->start();
+
+                } break;
+
                 case ($unit instanceof SwitchUnit): {
 
                     $this->handler->registerHandler(new SwitchHandler($unit, $this->manager));
 
                 } break;
 
-                case ($unit instanceof BoilerUnit): {
+                case ($unit instanceof TemperatureHumidityUnit): {
 
-                    $this->handler->registerHandler(new BoilerHandler($unit));
-                    $application = new BoilerApplication($this->container, $unit);
-                    $application->start();
+                    $this->handler->registerHandler(new TemperatureHandler($unit, $this->manager));
 
                 } break;
 

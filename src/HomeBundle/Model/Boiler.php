@@ -32,6 +32,12 @@ class Boiler
 
     public function enable()
     {
+        if ($this->boiler->isEnabled()) {
+            return;
+        }
+
+        $this->boiler->setEnabled(true);
+
         $this->client->publish(new DefaultMessage(
             'units/' . $this->boiler->getId(),
             json_encode(['enabled' => true])
@@ -40,6 +46,12 @@ class Boiler
 
     public function disable()
     {
+        if (!$this->boiler->isEnabled()) {
+            return;
+        }
+
+        $this->boiler->setEnabled(false);
+
         $this->client->publish(new DefaultMessage(
             'units/' . $this->boiler->getId(),
             json_encode(['enabled' => false])
