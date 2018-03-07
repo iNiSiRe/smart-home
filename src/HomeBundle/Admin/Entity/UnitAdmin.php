@@ -61,6 +61,8 @@ class UnitAdmin extends AbstractAdmin
             ->addIdentifier('id')
             ->addIdentifier('name')
             ->add('class')
+            ->add('ip')
+            ->add('deviceId')
         ;
     }
 
