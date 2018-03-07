@@ -17,12 +17,15 @@
     <nav class="light-blue darken-4">
         <div class="nav-wrapper">
             <ul id="nav-mobile" class="left hide-on-med-and-down">
-                <li><a href="#">Kitchen</a></li>
+                <li><a href="{{ path('home_default_index') }}">Kitchen</a></li>
+                <li><a href="{{ path('home_default_debug') }}">Debug</a></li>
             </ul>
         </div>
     </nav>
 
     <div class="container">
+
+    {% block container %}
 
         {% for room in rooms %}
 
@@ -89,6 +92,8 @@
 
             </div>
             {% endfor %}
+
+        {% endblock %}
 
         </div> <!-- /container -->
     </div>

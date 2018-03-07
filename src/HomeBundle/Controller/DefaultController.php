@@ -21,6 +21,16 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/debug")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function debugAction()
+    {
+        return $this->render('@Home/Default/debug.html.twig');
+    }
+
+    /**
      * @Route("/message")
      * @Method({"POST"})
      *

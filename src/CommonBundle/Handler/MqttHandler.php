@@ -62,7 +62,7 @@ class MqttHandler
             throw new \Exception('Handler not exists');
         }
 
-        $this->logger->debug($message->getPayload(), [$message->getTopic()]);
+        $this->logger->debug("MQTT message received", [$message->getPayload(), $message->getTopic()]);
 
         $this->handlers[$message->getTopic()]->onMessage($message);
     }

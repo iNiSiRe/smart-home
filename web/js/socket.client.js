@@ -4,6 +4,12 @@ var room = $('[data-room]:first')[0];
 var units = $(room).find('[data-unit]');
 var handlers = [];
 
+handlers['stdout'] = function (topic, message) {
+
+    $("#logs").append("<span>" + message + "</span>");
+
+};
+
 client.on('connect', function () {
 
     for (var i = 0; i < units.length; i++) {
