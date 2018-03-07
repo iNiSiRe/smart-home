@@ -10,6 +10,8 @@ handlers['stdout'] = function (topic, message) {
 
 };
 
+client.subscribe('stdout');
+
 client.on('connect', function () {
 
     for (var i = 0; i < units.length; i++) {
