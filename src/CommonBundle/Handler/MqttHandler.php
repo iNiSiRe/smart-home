@@ -5,7 +5,7 @@ namespace CommonBundle\Handler;
 use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
 use BinSoul\Net\Mqtt\DefaultSubscription;
 use BinSoul\Net\Mqtt\Message;
-use CommonBundle\Bridge\WebSocketHttpBridge;
+use Monolog\Logger;
 
 class MqttHandler
 {
@@ -25,12 +25,17 @@ class MqttHandler
     private $mqttServer;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * MqttHandler constructor.
      *
      * @param ReactMqttClient $client
      * @param string          $mqttServer
      */
-    public function __construct(ReactMqttClient $client, $mqttServer)
+    public function __construct(ReactMqttClient $client, $mqttServer, Logger $logger)
     {
         $this->client = $client;
 
@@ -41,6 +46,7 @@ class MqttHandler
         });
 
         $this->mqttServer = $mqttServer;
+        $this->logger = $logger;
     }
 
     /**
@@ -53,6 +59,8 @@ class MqttHandler
         if (!isset($this->handlers[$message->getTopic()])) {
             throw new \Exception('Handler not exists');
         }
+
+        $this->logger->debug($message->getPayload(), [$message->getTopic()]);
 
         $this->handlers[$message->getTopic()]->onMessage($message);
     }
