@@ -43,7 +43,7 @@ class RegisterOnServerHandler extends AbstractHandler
      */
     function getTopic()
     {
-        return '/units/' . $this->unit->getId() . '/register';
+        return 'units/' . $this->unit->getId() . '/register';
     }
 
     /**
