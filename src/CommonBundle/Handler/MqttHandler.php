@@ -6,6 +6,7 @@ use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
 use BinSoul\Net\Mqtt\DefaultSubscription;
 use BinSoul\Net\Mqtt\Message;
 use Monolog\Logger;
+use Psr\Log\LoggerInterface;
 
 class MqttHandler
 {
@@ -34,8 +35,9 @@ class MqttHandler
      *
      * @param ReactMqttClient $client
      * @param string          $mqttServer
+     * @param LoggerInterface $logger
      */
-    public function __construct(ReactMqttClient $client, $mqttServer, Logger $logger)
+    public function __construct(ReactMqttClient $client, $mqttServer, LoggerInterface $logger)
     {
         $this->client = $client;
 
