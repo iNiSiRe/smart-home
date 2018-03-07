@@ -53,6 +53,40 @@ class Unit
     private $room;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $ip;
+
+    /**
+     * @var string
+     *
+     * @ORM\Column(type="string", nullable=true)
+     */
+    private $deviceId;
+
+    /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * @param string $ip
+     *
+     * @return Unit
+     */
+    public function setIp($ip)
+    {
+        $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
      * Get id
      *
      * @return int
@@ -163,68 +197,25 @@ class Unit
      */
     public function __toString()
     {
-        return '#' . (string) $this->id;
+        return sprintf('%s#%s', $this->name, $this->id);
     }
 
     /**
-     * @return array
+     * @return string
      */
-    public function getConfig()
+    public function getDeviceId()
     {
-        return $this->config;
+        return $this->deviceId;
     }
 
     /**
-     * @param array $config
+     * @param string $deviceId
      *
      * @return Unit
      */
-    public function setConfig($config)
+    public function setDeviceId($deviceId)
     {
-        $this->config = $config;
-
-        return $this;
-    }
-
-    /**
-     * @return array
-     */
-    public function getVariables()
-    {
-        return $this->variables;
-    }
-
-    /**
-     * @param array $variables
-     *
-     * @return Unit
-     */
-    public function setVariables($variables)
-    {
-        $this->variables = $variables;
-
-        return $this;
-    }
-
-    /**
-     * @param $name
-     *
-     * @return mixed|null
-     */
-    public function getVariable($name)
-    {
-        return $this->variables[$name] ?? null;
-    }
-
-    /**
-     * @param $name
-     * @param $value
-     *
-     * @return $this
-     */
-    public function setVariable($name, $value)
-    {
-        $this->variables[$name] = $value;
+        $this->deviceId = $deviceId;
 
         return $this;
     }
