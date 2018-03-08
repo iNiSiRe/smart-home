@@ -62,9 +62,11 @@ client.on('connect', function () {
                     return function (topic, payload) {
                         console.log([topic, payload].join(':'));
 
-                        var value = parseFloat(JSON.parse(payload).temperature).toFixed(2);
+                        var t = parseFloat(JSON.parse(payload).temperature).toFixed(2);
+                        var h = parseFloat(JSON.parse(payload).humidity).toFixed(2);
 
-                        $(unit).find('span#temperature').html(value);
+                        $(unit).find('span#temperature').html(t);
+                        $(unit).find('span#humidity').html(h);
                     }
 
                 })(units[i]);

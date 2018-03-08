@@ -61,7 +61,7 @@ class TemperatureHandler extends AbstractHandler
         }
 
         if (isset($data['humidity'])) {
-            $this->unit->setHumidity(round($data['humidity'], 2));
+            $this->unit->setHumidity($data['humidity']);
         }
 
         $this->manager->flush($this->unit);
