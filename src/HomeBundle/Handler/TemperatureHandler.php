@@ -54,10 +54,16 @@ class TemperatureHandler extends AbstractHandler
     {
         $data = json_decode($message->getPayload(), true);
 
+        $this->manager->refresh($this->unit);
+
         if (isset($data['temperature'])) {
-            $this->manager->refresh($this->unit);
             $this->unit->setTemperature(round($data['temperature'], 2));
-            $this->manager->flush($this->unit);
         }
+
+        if (isset($data['humidity'])) {
+            $this->unit->setHumidity(round($data['humidity'], 2));
+        }
+
+        $this->manager->flush($this->unit);
     }
 }

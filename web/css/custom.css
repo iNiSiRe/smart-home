@@ -1,0 +1,9 @@
+.card-title .material-icons {
+    vertical-align: bottom;
+    color: rgba(0,0,0,0.7);
+    margin-right: 5px;
+}
+
+.card .card-content p {
+    color: rgba(0,0,0,0.87);
+}

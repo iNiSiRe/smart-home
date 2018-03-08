@@ -10,16 +10,25 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" media="screen,projection">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
+    <link rel="stylesheet" href="{{ asset('css/custom.css') }}">
 </head>
 
 <body>
 
     <nav class="light-blue darken-4">
-        <div class="nav-wrapper">
+
+        <div class="container nav-wrapper">
+
+            <ul class="left hide-on-med-and-down">
+                <li><a href="{{ path('home_default_index') }}">Kitchen</a></li>
+                <li><a href="{{ path('home_default_debug') }}">Debug</a></li>
+            </ul>
+
             <ul id="nav-mobile" class="left side-nav">
                 <li><a href="{{ path('home_default_index') }}">Kitchen</a></li>
                 <li><a href="{{ path('home_default_debug') }}">Debug</a></li>
             </ul>
+
             <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
         </div>
     </nav>
@@ -42,8 +51,12 @@
 
                             <div class="card" data-unit="TemperatureSensor" data-unit-id="{{ unit.id }}">
                                 <div class="card-content">
-                                    <span class="card-title">{{ unit.name }}</span>
-                                    <span id="temperature">{{ unit.temperature }}</span>
+                                    <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
+                                    <p>
+                                        <span id="temperature">{{ unit.temperature }}</span>&#8451
+                                        <span> / </span>
+                                        <span id="humidity">{{ unit.humidity }}</span>%
+                                    </p>
                                 </div>
                             </div>
 
@@ -54,7 +67,7 @@
                             <div class="card" data-unit="Switch" data-unit-id="{{ unit.id }}">
                                 <div class="card-content">
 
-                                    <span class="card-title">{{ unit.name }}</span>
+                                    <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
                                     <div class="switch">
                                         <label>
                                             Off
@@ -73,7 +86,7 @@
                         {% if unit.class == 'Boiler' %}
                             <div class="card" data-unit="Boiler" data-unit-id="{{ unit.id }}">
                                 <div class="card-content">
-                                    <span class="card-title">{{ unit.name }}</span>
+                                    <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
 
                                     <div class="switch">
                                         <label>
@@ -100,7 +113,7 @@
     </div>
 
     <script type="text/javascript" src="https://code.jquery.com/jquery-3.2.1.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.js"></script>
 
     <script>
         var WS_SERVER = "{{ ws_server }}";
