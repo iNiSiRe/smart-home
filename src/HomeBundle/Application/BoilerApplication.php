@@ -53,10 +53,12 @@ class BoilerApplication
     {
         $sensor = $this->boilerUnit->getSensors()[0];
 
-        if ($sensor->getTemperature() < $this->boilerUnit->getTemperature() - 1) {
-            return false;
-        } elseif ($sensor->getTemperature() > $this->boilerUnit->getTemperature()) {
+        if ($sensor->getTemperature() > $this->boilerUnit->getTemperature()) {
             return true;
+        }
+
+        if (!$this->boilerUnit->isEnabled() && $sensor->getTemperature() <= ($this->boilerUnit->getTemperature() - 1)) {
+            return false;
         }
 
         return true;
