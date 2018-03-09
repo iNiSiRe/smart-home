@@ -61,7 +61,7 @@ class BoilerApplication
             return false;
         }
 
-        return true;
+        return !$this->boilerUnit->isEnabled();
     }
 
     public function isSatisfiedBySchedule()
