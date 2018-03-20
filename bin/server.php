@@ -1,5 +1,8 @@
 <?php
 
+use HomeBundle\Listener\TestListener;
+use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
+
 $loader = require __DIR__ . '/../app/autoload.php';
 
 require_once __DIR__ . '/../app/AppKernel.php';
@@ -14,5 +17,11 @@ $container->get('home.web_socket_server');
 
 $container->get('HomeBundle\Service\Bootstrap')->boot();
 $container->get('CommonBundle\Handler\MqttHandler')->start();
+
+$dispatcher = $container->get(AsynchronousEventDispatcher::class);
+$dispatcher->start();
+
+$listener = new TestListener($container->get('logger'));
+$dispatcher->addListener('test', [$listener, 'onEvent']);
 
 $container->get('react.loop')->run();

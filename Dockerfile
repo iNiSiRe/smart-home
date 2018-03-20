@@ -1,12 +1,15 @@
-FROM php:7.0-cli
+FROM php:7.0-zts
 
-ENV REFRESHED_AT 2017-10-02
+ENV PHP_EXTRA_CONFIGURE_ARGS --enable-sockets
+
+ENV REFRESHED_AT 2018-03-15
 
 # install additional soft
 RUN export DEBIAN_FRONTEND=noninteractive && \
     apt-get -qq update && \
-    apt-get -y install zip unzip git zlib1g-dev libmemcached-dev supervisor git libevent-dev && \
-    rm -rf /var/lib/apt/lists/*
+    apt-get -y install zip unzip git zlib1g-dev libmemcached-dev supervisor git libevent-dev \
+    make \
+    libssl-dev
 
 # install extensions
 RUN docker-php-ext-install pdo_mysql
@@ -16,6 +19,16 @@ RUN docker-php-ext-enable xdebug
 
 RUN pecl install memcached-3.0.2
 RUN docker-php-ext-enable memcached
+
+RUN docker-php-ext-install sockets
+RUN docker-php-ext-enable sockets
+
+#RUN docker-php-ext-enable maintainer-zts
+RUN pecl install pthreads
+RUN docker-php-ext-enable pthreads
+
+RUN pecl install event
+RUN docker-php-ext-enable event
 
 # install composer
 ENV COMPOSER_HOME=/tmp/.composer

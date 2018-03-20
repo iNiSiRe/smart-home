@@ -2,9 +2,13 @@
 
 namespace HomeBundle\Controller;
 
+use HomeBundle\Listener\TestListener;
+use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -32,15 +36,21 @@ class DefaultController extends Controller
 
     /**
      * @Route("/message")
-     * @Method({"POST"})
+     * @Method({"GET"})
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function messageAction(Request $request)
     {
-        $this->get('logger')->debug($request->getContent());
+        $rooms = $this->get('doctrine.orm.entity_manager')->getRepository('HomeBundle:Room')->findAll();
 
-        return new JsonResponse(['success' => true]);
+        $dispatcher = $this->container->get(AsynchronousEventDispatcher::class);
+
+        $dispatcher->dispatch('test', new Event());
+
+        echo 'end dispatch';
+
+        return new JsonResponse(['success' => true, 'class' => get_class($this->container->get('react.loop')), 'rooms' => count($rooms)]);
     }
 }

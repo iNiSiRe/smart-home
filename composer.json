@@ -2,7 +2,6 @@
     "name": "inisire/smart-home",
     "license": "proprietary",
     "type": "project",
-    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "": "src/"
@@ -31,7 +30,6 @@
         "cboden/ratchet": "^0.4",
         "sonata-project/doctrine-orm-admin-bundle": "3.0.5",
         "symfony/psr-http-message-bridge": "^1.0",
-        "zendframework/zend-diactoros": "^1.6",
         "private-dev/utils": "^1.0",
         "inisire/react-bundle": "dev-master",
         "binsoul/net-mqtt-client-react": "^1.0@dev"
