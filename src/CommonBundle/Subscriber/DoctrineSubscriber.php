@@ -7,6 +7,7 @@ use Doctrine\Common\EventSubscriber;
 use Doctrine\Common\Persistence\Event\LifecycleEventArgs;
 use Doctrine\ORM\Event\PreUpdateEventArgs;
 use Doctrine\ORM\Events;
+use HomeBundle\Entity\Firmware;
 use HomeBundle\Entity\Module;
 use Symfony\Component\HttpFoundation\File\UploadedFile;
 
@@ -46,11 +47,11 @@ class DoctrineSubscriber implements EventSubscriber
     {
         $object = $event->getObject();
 
-        if (!$object instanceof Module) {
+        if (!$object instanceof Firmware) {
             return;
         }
 
-        $file = $object->getFirmware()->getUploadedFile();
+        $file = $object->getUploadedFile();
 
         if (!$file instanceof UploadedFile) {
             return;
@@ -67,18 +68,18 @@ class DoctrineSubscriber implements EventSubscriber
     {
         $object = $event->getObject();
 
-        if (!$object instanceof Module) {
+        if (!$object instanceof Firmware) {
             return;
         }
 
-        $file = $object->getFirmware()->getUploadedFile();
+        $file = $object->getUploadedFile();
 
         if (!$file instanceof UploadedFile) {
             return;
         }
 
         $filename = $this->uploader->upload($file);
-        $object->getFirmware()->setFile($filename);
+        $object->setFile($filename);
     }
 
     /**
@@ -88,17 +89,17 @@ class DoctrineSubscriber implements EventSubscriber
     {
         $object = $event->getObject();
 
-        if (!$object instanceof Module) {
+        if (!$object instanceof Firmware) {
             return;
         }
 
-        $file = $object->getFirmware()->getFile();
+        $file = $object->getFile();
 
         if (empty($file)) {
             return;
         }
 
         $this->uploader->remove($file);
-        $object->getFirmware()->setFile(null);
+        $object->setFile(null);
     }
 }

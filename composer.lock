@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "content-hash": "62c31ee560578ef2dd73ec69e19435c7",
+    "content-hash": "a53d5dbb28008138af8369a9c50fd5bd",
     "packages": [
         {
             "name": "binsoul/net-mqtt",
@@ -1280,12 +1280,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/iNiSiRe/react-bundle.git",
-                "reference": "59fb6562b58addf4af6ff21ffad0ad4eecb9802d"
+                "reference": "93c3bfd4da888ca66fdf4a3f861cfd4d1af99ec1"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/iNiSiRe/react-bundle/zipball/59fb6562b58addf4af6ff21ffad0ad4eecb9802d",
-                "reference": "59fb6562b58addf4af6ff21ffad0ad4eecb9802d",
+                "url": "https://api.github.com/repos/iNiSiRe/react-bundle/zipball/93c3bfd4da888ca66fdf4a3f861cfd4d1af99ec1",
+                "reference": "93c3bfd4da888ca66fdf4a3f861cfd4d1af99ec1",
                 "shasum": ""
             },
             "require": {
@@ -1310,7 +1310,37 @@
                 "reactphp",
                 "symfony"
             ],
-            "time": "2018-03-16T14:49:41+00:00"
+            "time": "2018-03-20T18:05:24+00:00"
+        },
+        {
+            "name": "inisire/utils",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/iNiSiRe/utils.git",
+                "reference": "24b44e5bfa071eac5a205ccca64aec7c8b70864e"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/iNiSiRe/utils/zipball/24b44e5bfa071eac5a205ccca64aec7c8b70864e",
+                "reference": "24b44e5bfa071eac5a205ccca64aec7c8b70864e",
+                "shasum": ""
+            },
+            "require": {
+                "league/fractal": "~0.13"
+            },
+            "type": "utils",
+            "autoload": {
+                "psr-4": {
+                    "PrivateDev\\Utils\\": ""
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "license": [
+                "proprietary"
+            ],
+            "description": "Set of useful code",
+            "time": "2018-04-03T13:39:57+00:00"
         },
         {
             "name": "jdorn/sql-formatter",
@@ -1674,36 +1704,6 @@
                 "random"
             ],
             "time": "2017-09-27T21:40:39+00:00"
-        },
-        {
-            "name": "private-dev/utils",
-            "version": "v1.0.1",
-            "source": {
-                "type": "git",
-                "url": "https://github.com/PrivateDev/utils.git",
-                "reference": "c87687a3ab236eb4158f2963cd22a6b4d4b2a7ab"
-            },
-            "dist": {
-                "type": "zip",
-                "url": "https://api.github.com/repos/PrivateDev/utils/zipball/c87687a3ab236eb4158f2963cd22a6b4d4b2a7ab",
-                "reference": "c87687a3ab236eb4158f2963cd22a6b4d4b2a7ab",
-                "shasum": ""
-            },
-            "require": {
-                "league/fractal": "~0.13"
-            },
-            "type": "utils",
-            "autoload": {
-                "psr-4": {
-                    "PrivateDev\\Utils\\": ""
-                }
-            },
-            "notification-url": "https://packagist.org/downloads/",
-            "license": [
-                "proprietary"
-            ],
-            "description": "Set of useful code",
-            "time": "2017-06-29T23:18:40+00:00"
         },
         {
             "name": "psr/cache",
@@ -4256,7 +4256,8 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "inisire/react-bundle": 20,
-        "binsoul/net-mqtt-client-react": 20
+        "binsoul/net-mqtt-client-react": 20,
+        "inisire/utils": 20
     },
     "prefer-stable": false,
     "prefer-lowest": false,

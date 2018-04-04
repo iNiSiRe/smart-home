@@ -51,18 +51,18 @@ class Module
     private $code;
 
     /**
-     * @var Firmware
-     *
-     * @ORM\Embedded(class="HomeBundle\Entity\Firmware")
-     */
-    private $firmware;
-
-    /**
      * @var LogRecord[]
      *
      * @ORM\OneToMany(targetEntity="HomeBundle\Entity\LogRecord", mappedBy="module")
      */
     private $logs;
+
+    /**
+     * @var Firmware
+     *
+     * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Firmware")
+     */
+    private $firmware;
 
     /**
      * Get id
@@ -208,31 +208,11 @@ class Module
     }
 
     /**
-     * @return Firmware
-     */
-    public function getFirmware()
-    {
-        return $this->firmware;
-    }
-
-    /**
-     * @param Firmware $firmware
-     *
-     * @return $this
-     */
-    public function setFirmware($firmware)
-    {
-        $this->firmware = $firmware;
-
-        return $this;
-    }
-
-    /**
      * @return string
      */
     public function __toString()
     {
-        return '#' . (string) $this->id;
+        return '#' . (string) $this->id . '-' . (string) $this->name;
     }
 
     /**
@@ -275,6 +255,26 @@ class Module
     public function removeLog($log)
     {
         $this->logs->removeElement($log);
+
+        return $this;
+    }
+
+    /**
+     * @return Firmware
+     */
+    public function getFirmware()
+    {
+        return $this->firmware;
+    }
+
+    /**
+     * @param Firmware $firmware
+     *
+     * @return $this
+     */
+    public function setFirmware($firmware)
+    {
+        $this->firmware = $firmware;
 
         return $this;
     }

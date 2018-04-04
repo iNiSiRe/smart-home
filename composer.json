@@ -30,9 +30,9 @@
         "cboden/ratchet": "^0.4",
         "sonata-project/doctrine-orm-admin-bundle": "3.0.5",
         "symfony/psr-http-message-bridge": "^1.0",
-        "private-dev/utils": "^1.0",
         "inisire/react-bundle": "dev-master",
-        "binsoul/net-mqtt-client-react": "^1.0@dev"
+        "binsoul/net-mqtt-client-react": "^1.0@dev",
+        "inisire/utils": "dev-master"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

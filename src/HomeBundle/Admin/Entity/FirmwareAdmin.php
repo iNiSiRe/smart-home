@@ -1,13 +1,21 @@
 <?php
+/**
+ * Created by PhpStorm.
+ * User: inisire
+ * Date: 04.04.18
+ * Time: 19:49
+ */
 
 namespace HomeBundle\Admin\Entity;
 
-use HomeBundle\Form\FirmwareType;
+
 use Sonata\AdminBundle\Admin\AbstractAdmin;
 use Sonata\AdminBundle\Datagrid\ListMapper;
 use Sonata\AdminBundle\Form\FormMapper;
+use Symfony\Component\Form\Extension\Core\Type\FileType;
+use Symfony\Component\Form\Extension\Core\Type\TextType;
 
-class ModuleAdmin extends AbstractAdmin
+class FirmwareAdmin extends AbstractAdmin
 {
     /**
      * @param FormMapper $form
@@ -15,11 +23,9 @@ class ModuleAdmin extends AbstractAdmin
     protected function configureFormFields(FormMapper $form)
     {
         $form
-            ->add('name')
-            ->add('units')
-            ->add('room')
-            ->add('code')
-            ->add('firmware')
+            ->add('file', TextType::class, ['disabled' => true])
+            ->add('version')
+            ->add('uploadedFile', FileType::class)
         ;
     }
 
@@ -30,9 +36,8 @@ class ModuleAdmin extends AbstractAdmin
     {
         $list
             ->addIdentifier('id')
-            ->addIdentifier('name')
-            ->add('code')
+            ->addIdentifier('file')
+            ->add('version')
         ;
     }
-
 }

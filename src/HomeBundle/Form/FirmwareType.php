@@ -7,6 +7,8 @@ use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\Extension\Core\Type\FileType;
 use Symfony\Component\Form\Extension\Core\Type\TextType;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
+use Symfony\Component\Form\FormView;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 
 class FirmwareType extends AbstractType
@@ -22,6 +24,7 @@ class FirmwareType extends AbstractType
             ->add('uploadedFile', FileType::class)
             ->add('version');
     }
+
 
     /**
      * @param OptionsResolver $resolver

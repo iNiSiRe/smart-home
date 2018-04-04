@@ -46,3 +46,9 @@ services:
     arguments:
       - \AppKernel
       - "@logger"
+
+  home.admin.firmware:
+    class: HomeBundle\Admin\Entity\FirmwareAdmin
+    arguments: [~, 'HomeBundle\Entity\Firmware', ~]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Firmware }

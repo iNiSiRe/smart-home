@@ -39,39 +39,4 @@ class ModuleController extends Controller
 
         return new JsonResponse(['status' => true]);
     }
-
-    /**
-     * @Route("/update")
-     * @Method({"POST"})
-     *
-     * @param Request $request
-     * @param string  $id
-     *
-     * @return JsonResponse
-     */
-    public function updateAction(Request $request, $id)
-    {
-        $client = $this->get('home.client.storage')->get($id);
-
-        if (!$client) {
-            throw new NotFoundHttpException();
-        }
-
-        $module = $this->get('doctrine.orm.entity_manager')->getRepository('HomeBundle:Module')->find($id);
-
-        if (!$module) {
-            throw new NotFoundHttpException();
-        }
-
-        $client->getConnection()->send(json_encode([
-            'method' => 'post',
-            'action' => '/api/v1/firmware',
-            'data' => [
-                'file' => $module->getFirmware()->getFile(),
-                'version' => $module->getFirmware()->getVersion()
-            ]
-        ]));
-
-        return new JsonResponse(['status' => true]);
-    }
 }
