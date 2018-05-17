@@ -1,0 +1,62 @@
+<?php
+
+
+namespace HomeBundle\Service;
+
+
+use Doctrine\ORM\EntityManager;
+use React\EventLoop\LoopInterface;
+
+class FirmwareObserver
+{
+    /**
+     * @var EntityManager
+     */
+    private $manager;
+    /**
+     * @var LoopInterface
+     */
+    private $loop;
+    /**
+     * @var FirmwareUpdater
+     */
+    private $updater;
+
+    /**
+     * @param EntityManager   $manager
+     * @param LoopInterface   $loop
+     * @param FirmwareUpdater $updater
+     */
+    public function __construct(EntityManager $manager, LoopInterface $loop, FirmwareUpdater $updater)
+    {
+        $this->manager = $manager;
+        $this->loop = $loop;
+        $this->updater = $updater;
+    }
+
+    /**
+     * @throws \Doctrine\ORM\OptimisticLockException
+     */
+    public function observe()
+    {
+        $modules = $this->manager->getRepository('HomeBundle:Module')->findAll();
+        $firmware = $this->manager->getRepository('HomeBundle:Firmware')->findOneBy([], ['version' => 'DESC']);
+
+        foreach ($modules as $module) {
+
+            if ($module->getFirmware()->getVersion() == $firmware->getVersion()) {
+                continue;
+            }
+
+            if ($this->updater->update($module, $firmware)) {
+                $module->setFirmware($firmware);
+                $this->manager->flush($module);
+            }
+        }
+    }
+
+    public function start()
+    {
+        $this->loop->addPeriodicTimer(60, [$this, 'observe']);
+    }
+}

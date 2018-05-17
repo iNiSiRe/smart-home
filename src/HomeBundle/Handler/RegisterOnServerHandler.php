@@ -50,6 +50,8 @@ class RegisterOnServerHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     function onMessage(Message $message)
     {
@@ -62,6 +64,10 @@ class RegisterOnServerHandler extends AbstractHandler
             ->setIp($ip)
             ->setDeviceId($deviceId);
 
+        $this->unit->getModule()
+            ->setIp($ip);
+
+        $this->manager->flush($this->unit->getModule());
         $this->manager->flush($this->unit);
     }
 }

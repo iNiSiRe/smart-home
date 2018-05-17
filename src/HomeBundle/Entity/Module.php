@@ -65,6 +65,13 @@ class Module
     private $firmware;
 
     /**
+     * @var string
+     *
+     * @ORM\Column(type="string", length=128, nullable=true)
+     */
+    private $ip;
+
+    /**
      * Get id
      *
      * @return int
@@ -275,6 +282,26 @@ class Module
     public function setFirmware($firmware)
     {
         $this->firmware = $firmware;
+
+        return $this;
+    }
+
+    /**
+     * @return string
+     */
+    public function getIp()
+    {
+        return $this->ip;
+    }
+
+    /**
+     * @param string $ip
+     *
+     * @return $this
+     */
+    public function setIp(string $ip)
+    {
+        $this->ip = $ip;
 
         return $this;
     }

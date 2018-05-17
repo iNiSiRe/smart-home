@@ -45,7 +45,12 @@ services:
     public: true
     arguments:
       - \AppKernel
-      - "@logger"
+      - 2
+      - 1
+      -
+        0: [database_host: "127.0.0.1"]
+    calls:
+      - [setLogger, ["@logger"]]
 
   home.admin.firmware:
     class: HomeBundle\Admin\Entity\FirmwareAdmin

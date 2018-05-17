@@ -43,13 +43,17 @@ class DefaultController extends Controller
      */
     public function messageAction(Request $request)
     {
+        $this->get('logger')->debug('controller 1');
+
         $rooms = $this->get('doctrine.orm.entity_manager')->getRepository('HomeBundle:Room')->findAll();
 
         $dispatcher = $this->container->get(AsynchronousEventDispatcher::class);
 
+        $this->get('logger')->debug('controller 2');
+
         $dispatcher->dispatch('test', new Event());
 
-        echo 'end dispatch';
+        $this->get('logger')->debug('controller 3');
 
         return new JsonResponse(['success' => true, 'class' => get_class($this->container->get('react.loop')), 'rooms' => count($rooms)]);
     }
