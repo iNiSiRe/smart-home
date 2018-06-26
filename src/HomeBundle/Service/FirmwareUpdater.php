@@ -26,11 +26,27 @@ class FirmwareUpdater
         curl_setopt($curl, CURLOPT_POST, 1);
         curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
         curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-
-        $result = curl_exec($curl);
-
+        curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
         curl_close($curl);
 
-        return true;
+        return $code == 200;
+    }
+
+    /**
+     * @param Module $module
+     *
+     * @return bool
+     */
+    public function commit(Module $module)
+    {
+        $curl = curl_init(sprintf('http://%s/update/commit', $module->getIp()));
+        curl_setopt($curl, CURLOPT_POST, 1);
+        curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+        curl_exec($curl);
+        $code = curl_getinfo($curl, CURLINFO_RESPONSE_CODE);
+        curl_close($curl);
+
+        return $code == 200;
     }
 }

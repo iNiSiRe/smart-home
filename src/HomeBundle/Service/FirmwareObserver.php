@@ -5,6 +5,7 @@ namespace HomeBundle\Service;
 
 
 use Doctrine\ORM\EntityManager;
+use HomeBundle\Entity\Module;
 use React\EventLoop\LoopInterface;
 
 class FirmwareObserver
@@ -39,8 +40,13 @@ class FirmwareObserver
      */
     public function observe()
     {
-        $modules = $this->manager->getRepository('HomeBundle:Module')->findAll();
-        $firmware = $this->manager->getRepository('HomeBundle:Firmware')->findOneBy([], ['version' => 'DESC']);
+        // Update
+
+        $modules = $this->manager->getRepository('HomeBundle:Module')
+            ->findBy(['status' => Module::STATUS_READY]);
+
+        $firmware = $this->manager->getRepository('HomeBundle:Firmware')
+            ->findOneBy([], ['version' => 'DESC']);
 
         foreach ($modules as $module) {
 
@@ -48,8 +54,33 @@ class FirmwareObserver
                 continue;
             }
 
+            $module->setStatus(Module::STATUS_UPDATING);
+            $this->manager->flush($module);
+
             if ($this->updater->update($module, $firmware)) {
                 $module->setFirmware($firmware);
+                $module->setStatus(Module::STATUS_UPDATE_NOT_COMMITTED);
+                $module->setUpdatedAt(new \DateTime());
+                $this->manager->flush($module);
+            }
+        }
+
+
+        // Commit
+
+        $modules = $this->manager->getRepository('HomeBundle:Module')
+            ->findBy(['status' => Module::STATUS_UPDATE_NOT_COMMITTED]);
+
+        $now = new \DateTime();
+
+        foreach ($modules as $module) {
+
+            if ($now->getTimestamp() - $module->getUpdatedAt() < 300) {
+                continue;
+            }
+
+            if ($this->updater->commit($module)) {
+                $module->setStatus(Module::STATUS_READY);
                 $this->manager->flush($module);
             }
         }

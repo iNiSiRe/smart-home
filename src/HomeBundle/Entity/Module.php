@@ -13,6 +13,10 @@ use Doctrine\ORM\Mapping as ORM;
  */
 class Module
 {
+    const STATUS_READY = 1;
+    const STATUS_UPDATING = 2;
+    const STATUS_UPDATE_NOT_COMMITTED = 3;
+
     /**
      * @var int
      *
@@ -70,6 +74,20 @@ class Module
      * @ORM\Column(type="string", length=128, nullable=true)
      */
     private $ip;
+
+    /**
+     * @var int
+     *
+     * @ORM\Column(type="integer")
+     */
+    private $status = self::STATUS_READY;
+
+    /**
+     * @var \DateTime
+     *
+     * @ORM\Column(type="datetime", nullable=true)
+     */
+    private $updatedAt;
 
     /**
      * Get id
@@ -302,6 +320,46 @@ class Module
     public function setIp(string $ip)
     {
         $this->ip = $ip;
+
+        return $this;
+    }
+
+    /**
+     * @return int
+     */
+    public function getStatus()
+    {
+        return $this->status;
+    }
+
+    /**
+     * @param int $status
+     *
+     * @return $this
+     */
+    public function setStatus(int $status)
+    {
+        $this->status = $status;
+
+        return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getUpdatedAt()
+    {
+        return $this->updatedAt;
+    }
+
+    /**
+     * @param \DateTime $updatedAt
+     *
+     * @return $this
+     */
+    public function setUpdatedAt(\DateTime $updatedAt)
+    {
+        $this->updatedAt = $updatedAt;
 
         return $this;
     }
