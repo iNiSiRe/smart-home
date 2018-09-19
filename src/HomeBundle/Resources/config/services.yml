@@ -39,19 +39,6 @@ services:
     autowire: true
     public: true
 
-  inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher:
-    class: inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher
-    autowire: true
-    public: true
-    arguments:
-      - \AppKernel
-      - 2
-      - 1
-      -
-        0: [database_host: "127.0.0.1"]
-    calls:
-      - [setLogger, ["@logger"]]
-
   home.admin.firmware:
     class: HomeBundle\Admin\Entity\FirmwareAdmin
     arguments: [~, 'HomeBundle\Entity\Firmware', ~]

@@ -37,8 +37,6 @@ class TestListener implements ContainerAwareInterface
 
     function onEvent(Event $event)
     {
-        $a = new SomeDich();
-
         $this->logger->debug('start');
 
         sleep(3);

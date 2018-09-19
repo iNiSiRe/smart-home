@@ -18,16 +18,4 @@ $container->get('home.web_socket_server');
 $container->get('HomeBundle\Service\Bootstrap')->boot();
 $container->get('CommonBundle\Handler\MqttHandler')->start();
 
-$container->get('logger')->debug('1');
-
-$dispatcher = $container->get(AsynchronousEventDispatcher::class);
-$dispatcher->start();
-
-$container->get('logger')->debug('1.5');
-
-$listener = new TestListener($container->get('logger'));
-$dispatcher->addListener('test', [$listener, 'onEvent']);
-
-$container->get('logger')->debug('2');
-
 $container->get('react.loop')->run();
