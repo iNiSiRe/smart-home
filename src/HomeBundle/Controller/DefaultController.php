@@ -57,4 +57,15 @@ class DefaultController extends Controller
 
         return new JsonResponse(['success' => true, 'class' => get_class($this->container->get('react.loop')), 'rooms' => count($rooms)]);
     }
+
+    /**
+     * @Route("/inhabitants", methods={"GET"})
+     */
+    public function inhabitants()
+    {
+        return new JsonResponse([
+            'success' => true,
+            'data' => $this->get('home.inhabitants_monitor')->getInhabitants()
+        ]);
+    }
 }

@@ -44,3 +44,7 @@ services:
     arguments: [~, 'HomeBundle\Entity\Firmware', ~]
     tags:
       - { name: sonata.admin, manager_type: orm, label: Firmware }
+
+  home.inhabitants_monitor:
+    class: HomeBundle\Application\InhabitantsMonitorApplication
+    arguments: ["@react.loop", ["192.168.31.100"]]

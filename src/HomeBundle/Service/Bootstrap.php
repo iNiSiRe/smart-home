@@ -92,5 +92,7 @@ class Bootstrap
             }
 
         }
+
+        $this->container->get('home.inhabitants_monitor')->start();
     }
 }
