@@ -17,3 +17,4 @@
 /web/uploads/
 .idea
 composer.phar
+.bash_history

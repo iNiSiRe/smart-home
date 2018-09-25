@@ -47,4 +47,4 @@ services:
 
   home.inhabitants_monitor:
     class: HomeBundle\Application\InhabitantsMonitorApplication
-    arguments: ["@react.loop", ["192.168.31.100"]]
+    arguments: ["@react.loop", "%inhabitants_ips%"]

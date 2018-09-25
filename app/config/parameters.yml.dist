@@ -24,3 +24,5 @@ parameters:
     upload_dir: uploads
 
     mqtt_server: 'mosquitto'
+
+    inhabitants_ips: []
