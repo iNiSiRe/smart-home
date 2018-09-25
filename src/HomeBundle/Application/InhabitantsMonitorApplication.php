@@ -55,7 +55,7 @@ class InhabitantsMonitorApplication
             $ping->run();
             $ping->wait();
             $output = $ping->getOutput();
-            preg_match('#1 packets transmitted, (\d+) received, \d+% packet loss, time \d+ms#', $output, $matches);
+            preg_match('#1 packets transmitted, (\d+) packets received, \d+% packet loss#', $output, $matches);
 
             if (count($matches) > 1 && $matches[1] > 0) {
                 $inhabitants[] = $ip;
