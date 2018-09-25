@@ -1,8 +1,5 @@
 <?php
 
-use HomeBundle\Listener\TestListener;
-use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
-
 $loader = require __DIR__ . '/../app/autoload.php';
 
 require_once __DIR__ . '/../app/AppKernel.php';
