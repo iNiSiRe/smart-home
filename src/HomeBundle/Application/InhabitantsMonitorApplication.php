@@ -4,6 +4,7 @@
 namespace HomeBundle\Application;
 
 
+use Monolog\Logger;
 use React\EventLoop\LoopInterface;
 use Symfony\Component\Process\Process;
 
@@ -25,6 +26,11 @@ class InhabitantsMonitorApplication
     private $inhabitants = [];
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    /**
      * @param LoopInterface $loop
      * @param array         $ips
      */
@@ -32,6 +38,11 @@ class InhabitantsMonitorApplication
     {
         $this->ips = $ips;
         $this->loop = $loop;
+    }
+
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
     }
 
     public function loop()
@@ -48,6 +59,10 @@ class InhabitantsMonitorApplication
 
             if (count($matches) > 1 && $matches[1] > 0) {
                 $inhabitants[] = $ip;
+            }
+
+            if ($this->logger) {
+                $this->logger->debug(sprintf('%s::%s -> ping result', ['out' => $output]));
             }
         }
 
