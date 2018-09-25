@@ -48,3 +48,5 @@ services:
   home.inhabitants_monitor:
     class: HomeBundle\Application\InhabitantsMonitorApplication
     arguments: ["@react.loop", "%inhabitants_ips%"]
+    calls:
+      - [setLogger, ["@logger"]]
