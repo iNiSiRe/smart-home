@@ -62,7 +62,7 @@ class InhabitantsMonitorApplication
             }
 
             if ($this->logger) {
-                $this->logger->debug(sprintf('%s::%s -> ping result', ['out' => $output]));
+                $this->logger->debug(sprintf('%s::%s -> ping result', __CLASS__, __METHOD__), ['out' => $output]);
             }
         }
 
