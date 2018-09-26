@@ -1,8 +1,6 @@
 <?php
 
-
 namespace HomeBundle\Application\Boiler\Voter;
-
 
 use HomeBundle\Entity\BoilerUnit;
 use Voter\Vote;
