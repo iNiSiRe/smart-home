@@ -15,4 +15,12 @@ abstract class Voter implements VoterInterface
     {
         return true;
     }
+
+    /**
+     * @return bool
+     */
+    public function isForce(): bool
+    {
+        return false;
+    }
 }

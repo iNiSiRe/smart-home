@@ -13,7 +13,10 @@ use HomeBundle\Model\Boiler;
 use React\EventLoop\Timer\TimerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Voter\Manager\DecisionManager;
-use Voter\Strategy\UntilFirstDisagreementDecisionStrategy;
+use Voter\Strategy\AnyAgreeDecisionStrategy;
+use Voter\Strategy\ComplexDecisionStrategy;
+use Voter\Strategy\AllAgreeDecisionStrategy;
+use Voter\Vote;
 
 class BoilerApplication
 {
@@ -90,20 +93,23 @@ class BoilerApplication
 
         $logger->debug('BoilerApplication::loop -> begin');
 
-        $current = $this->boilerUnit->isEnabled() ? Votes::VOTE_ENABLE : Votes::VOTE_DISABLE;
-        $vote = $this->decisionManager->decide((new UntilFirstDisagreementDecisionStrategy($current))->setLogger($logger));
+        $logger->debug('Boiler', ['enabled' => $this->boilerUnit->isEnabled()]);
 
-        $logger->debug(sprintf('Current vote: %s, decided vote: %s', $current, $vote->getValue()));
+        if ($this->boilerUnit->isEnabled()) {
 
-        switch ($vote->getValue()) {
+            $vote = $this->decisionManager->decide((new AnyAgreeDecisionStrategy(Votes::VOTE_DISABLE))->setLogger($logger));
 
-           case Votes::VOTE_ENABLE:
-               $this->boiler->enable();
-               break;
+            if ($vote->getValue() == true) {
+                $this->boiler->disable();
+            }
 
-           case Votes::VOTE_DISABLE:
-               $this->boiler->disable();
-               break;
+        } else {
+
+            $vote = $this->decisionManager->decide((new AllAgreeDecisionStrategy(Votes::VOTE_ENABLE))->setLogger($logger));
+
+            if ($vote->getValue() == true) {
+                $this->boiler->enable();
+            }
         }
 
         $this->manager->flush($this->boilerUnit);

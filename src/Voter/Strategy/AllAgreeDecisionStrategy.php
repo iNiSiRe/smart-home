@@ -7,7 +7,7 @@ use Monolog\Logger;
 use Voter\Vote;
 use Voter\VoterInterface;
 
-class UntilFirstDisagreementDecisionStrategy implements DecisionStrategyInterface
+class AllAgreeDecisionStrategy implements DecisionStrategyInterface
 {
     /**
      * @var mixed
@@ -65,11 +65,14 @@ class UntilFirstDisagreementDecisionStrategy implements DecisionStrategyInterfac
                     $this->logger->debug(sprintf('Voter "%s" isn\'t agree with vote "%s"', get_class($voter), $this->vote));
                 }
 
-                return $vote;
+                return new Vote(false);
             }
 
+            if ($voter->isForce()) {
+                break;
+            }
         }
 
-        return new Vote($this->vote);
+        return new Vote(true);
     }
 }

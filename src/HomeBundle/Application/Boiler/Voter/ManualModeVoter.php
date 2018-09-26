@@ -4,9 +4,9 @@ namespace HomeBundle\Application\Boiler\Voter;
 
 use HomeBundle\Entity\BoilerUnit;
 use Voter\Vote;
-use Voter\VoterInterface;
+use Voter\Voter;
 
-class ManualModeVoter implements VoterInterface
+class ManualModeVoter extends Voter
 {
     /**
      * @var BoilerUnit
@@ -34,5 +34,10 @@ class ManualModeVoter implements VoterInterface
     public function isActive(): bool
     {
         return $this->boiler->getManual()->isEnabled();
+    }
+
+    public function isForce(): bool
+    {
+        return true;
     }
 }
