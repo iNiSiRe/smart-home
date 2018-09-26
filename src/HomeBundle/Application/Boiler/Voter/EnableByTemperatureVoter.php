@@ -1,8 +1,6 @@
 <?php
 
-
 namespace HomeBundle\Application\Boiler\Voter;
-
 
 use HomeBundle\Entity\BoilerUnit;
 use Voter\Vote;
@@ -16,11 +14,18 @@ class EnableByTemperatureVoter extends Voter
     private $boilerUnit;
 
     /**
-     * @param BoilerUnit $boilerUnit
+     * @var bool
      */
-    public function __construct(BoilerUnit $boilerUnit)
+    private $smartNight;
+
+    /**
+     * @param BoilerUnit $boilerUnit
+     * @param bool       $smartNight
+     */
+    public function __construct(BoilerUnit $boilerUnit, $smartNight = true)
     {
         $this->boilerUnit = $boilerUnit;
+        $this->smartNight = $smartNight;
     }
 
     /**
@@ -46,7 +51,17 @@ class EnableByTemperatureVoter extends Voter
             }
         }
 
-        if ($sensor->getTemperature() <= ($this->boilerUnit->getTemperature() - 1)) {
+        // Smart night mode
+        $now = new \DateTime('now', new \DateTimeZone('Europe/Kiev'));
+        $hours = (int) $now->format('G');
+
+        if ($this->smartNight && $hours > 23 && $hours < 6) {
+            $temperature = 19.5;
+        } else {
+            $temperature = $this->boilerUnit->getTemperature();
+        }
+
+        if ($sensor->getTemperature() <= ($temperature - 1)) {
             return new Vote(Votes::VOTE_ENABLE);
         }
 
