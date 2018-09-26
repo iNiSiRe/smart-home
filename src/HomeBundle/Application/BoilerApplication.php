@@ -99,6 +99,8 @@ class BoilerApplication
 
             $vote = $this->decisionManager->decide((new AnyAgreeDecisionStrategy(Votes::VOTE_DISABLE))->setLogger($logger));
 
+            $logger->debug('Vote for disable', ['vote' => $vote->getValue()]);
+
             if ($vote->getValue() == true) {
                 $this->boiler->disable();
             }
@@ -106,6 +108,8 @@ class BoilerApplication
         } else {
 
             $vote = $this->decisionManager->decide((new AllAgreeDecisionStrategy(Votes::VOTE_ENABLE))->setLogger($logger));
+
+            $logger->debug('Vote for enable', ['vote' => $vote->getValue()]);
 
             if ($vote->getValue() == true) {
                 $this->boiler->enable();
