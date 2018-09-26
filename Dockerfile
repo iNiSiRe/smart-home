@@ -37,15 +37,9 @@ RUN curl -XGET https://getcomposer.org/installer > composer-setup.php && \
     php composer-setup.php --install-dir=/bin --filename=composer && \
     rm composer-setup.php
 
-RUN groupadd -g 1000 user
-RUN useradd -ms /bin/bash -u 1000 -g 1000 user
-
-RUN mkdir -p /var/www/html
-RUN chown -R www-data:www-data /var/www/html
-RUN chown -R www-data:www-data /tmp/.composer
-
-# Add users to sudoers, so no need to ask for password
-RUN echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN mkdir -p /var/www/html && \
+    chown -R www-data:www-data /var/www/html && \
+    chown -R www-data:www-data /tmp/.composer
 
 EXPOSE 8080
 EXPOSE 8000
