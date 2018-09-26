@@ -44,9 +44,9 @@ class EnableByTemperatureVoter extends Voter
         $sensors = $this->boilerUnit->getSensors();
         $sensor = $sensors[0];
 
-        // Find sensor with lowest temp
+        // Find sensor with max temp
         for ($i = 1; $i < count($sensors); $i++) {
-            if ($sensors[$i]->getTemperature() < $sensor->getTemperature()) {
+            if ($sensors[$i]->getTemperature() > $sensor->getTemperature()) {
                 $sensor = $sensors[$i];
             }
         }
