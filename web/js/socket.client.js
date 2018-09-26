@@ -1,4 +1,4 @@
-var client = mqtt.connect('ws://' + WS_SERVER);
+var client = mqtt.connect(WS_SERVER);
 
 var room = $('[data-room]:first')[0];
 var units = $(room).find('[data-unit]');
