@@ -118,7 +118,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.js"></script>
 
     <script>
-        var WS_SERVER = "{{ ws_server }}";
+
+        var port = '';
+        var protocol = '';
+
+        if (location.protocol == 'https:') {
+            port = '1884';
+            protocol = 'ws';
+        } else {
+            port = '4884';
+            protocol = 'wss';
+        }
+
+        var WS_SERVER = protocol + '://' + location.hostname + ':' + port;
+
     </script>
 
     <script src="https://unpkg.com/mqtt@2.13.1/dist/mqtt.min.js"></script>
