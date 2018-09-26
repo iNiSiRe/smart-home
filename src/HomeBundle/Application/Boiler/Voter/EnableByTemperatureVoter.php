@@ -36,7 +36,15 @@ class EnableByTemperatureVoter extends Voter
      */
     public function vote(): Vote
     {
-        $sensor = $this->boilerUnit->getSensors()[0];
+        $sensors = $this->boilerUnit->getSensors();
+        $sensor = $sensors[0];
+
+        // Find sensor with lowest temp
+        for ($i = 1; $i < count($sensors); $i++) {
+            if ($sensors[$i]->getTemperature() < $sensor->getTemperature()) {
+                $sensor = $sensors[$i];
+            }
+        }
 
         if ($sensor->getTemperature() <= ($this->boilerUnit->getTemperature() - 1)) {
             return new Vote(Votes::VOTE_ENABLE);
