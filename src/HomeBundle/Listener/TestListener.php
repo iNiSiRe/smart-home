@@ -1,10 +1,4 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user18
- * Date: 15.03.18
- * Time: 11:46
- */
 
 namespace HomeBundle\Listener;
 
