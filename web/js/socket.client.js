@@ -34,7 +34,7 @@ client.on('connect', function () {
                       var message = {
                           enabled: this.checked
                       };
-                      client.publish(context.topic, JSON.stringify(message));
+                      client.publish(context.topic, JSON.stringify(message), {qos: 2});
 
                       return true;
                   }
@@ -88,7 +88,7 @@ client.on('connect', function () {
 
                         console.log(['publish', context.topic, message].join(':'));
 
-                        client.publish(context.topic, JSON.stringify(message));
+                        client.publish(context.topic, JSON.stringify(message), {qos: 2});
                     }
                 })(context);
 
