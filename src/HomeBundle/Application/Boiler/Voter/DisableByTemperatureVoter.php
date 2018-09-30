@@ -55,7 +55,7 @@ class DisableByTemperatureVoter extends Voter
         $now = new \DateTime('now', new \DateTimeZone('Europe/Kiev'));
         $hours = (int) $now->format('G');
 
-        if ($this->smartNight && $hours > 23 && $hours < 6) {
+        if ($this->smartNight && ($hours >= 23 || $hours <= 6)) {
             $temperature = 19.5;
         } else {
             $temperature = $this->boilerUnit->getTemperature();

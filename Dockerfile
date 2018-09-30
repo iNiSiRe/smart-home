@@ -46,4 +46,6 @@ EXPOSE 8000
 
 USER root
 
+RUN apt-get -y install inetutils-ping
+
 WORKDIR /var/www
