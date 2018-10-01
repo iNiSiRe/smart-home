@@ -22,7 +22,7 @@ class DebugTransformer extends TransformerAbstract
 
         foreach ($reflection->getProperties() as $property) {
             $property->setAccessible(true);
-            $result[$property->getName()] = $property->getValue();
+            $result[$property->getName()] = $property->getValue($object);
         }
 
         return $result;
