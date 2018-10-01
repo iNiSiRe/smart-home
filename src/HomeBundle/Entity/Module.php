@@ -57,7 +57,7 @@ class Module
     /**
      * @var LogRecord[]
      *
-     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\LogRecord", mappedBy="module")
+     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\LogRecord", mappedBy="module", cascade={"persist"})
      */
     private $logs;
 
