@@ -109,6 +109,7 @@ class BoilerApplication
                     'action' => 'disable',
                     'message' => $vote->getReason()
                 ])));
+                $this->manager->persist($this->boilerUnit);
             }
 
         } else {
@@ -124,6 +125,7 @@ class BoilerApplication
                     'action' => 'enable',
                     'message' => $vote->getReason()
                 ])));
+                $this->manager->persist($this->boilerUnit);
             }
         }
 
