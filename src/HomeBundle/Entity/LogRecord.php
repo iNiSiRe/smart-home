@@ -45,7 +45,7 @@ class LogRecord
      *
      * @param $message
      */
-    public function __construct($message)
+    public function __construct($message = '')
     {
         $this->message = $message;
         $this->createdAt = new \DateTime();
