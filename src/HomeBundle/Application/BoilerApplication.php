@@ -129,7 +129,7 @@ class BoilerApplication
             }
         }
 
-        $this->manager->flush($this->boilerUnit);
+        $this->manager->flush();
     }
 
     public function start()
