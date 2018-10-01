@@ -46,6 +46,8 @@ class AllAgreeDecisionStrategy implements DecisionStrategyInterface
      */
     public function decide($voters) : Vote
     {
+        $reasons = [];
+
         foreach ($voters as $voter) {
 
             if (!$voter->isActive()) {
@@ -65,7 +67,9 @@ class AllAgreeDecisionStrategy implements DecisionStrategyInterface
                     $this->logger->debug(sprintf('Voter "%s" isn\'t agree with vote "%s"', get_class($voter), $this->vote));
                 }
 
-                return new Vote(false);
+                return new Vote(false, $vote->getReason());
+            } else {
+                $reasons[] = $vote->getReason();
             }
 
             if ($voter->isForce()) {
@@ -73,6 +77,6 @@ class AllAgreeDecisionStrategy implements DecisionStrategyInterface
             }
         }
 
-        return new Vote(true);
+        return new Vote(true, json_encode($reasons));
     }
 }

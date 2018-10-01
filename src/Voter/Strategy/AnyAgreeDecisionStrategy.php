@@ -65,7 +65,7 @@ class AnyAgreeDecisionStrategy implements DecisionStrategyInterface
                     $this->logger->debug(sprintf('Voter "%s" is agree with vote "%s"', get_class($voter), $this->vote));
                 }
 
-                return new Vote(true);
+                return new Vote(true, $vote->getReason());
             }
 
             if ($voter->isForce()) {
