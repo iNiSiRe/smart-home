@@ -21,6 +21,7 @@ class DebugTransformer extends TransformerAbstract
         $result = [];
 
         foreach ($reflection->getProperties() as $property) {
+            $property->setAccessible(true);
             $result[$property->getName()] = $property->getValue();
         }
 
