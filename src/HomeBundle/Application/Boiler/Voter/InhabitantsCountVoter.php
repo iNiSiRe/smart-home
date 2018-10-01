@@ -30,6 +30,6 @@ class InhabitantsCountVoter extends Voter
         $inhabitants = $this->inhabitantsMonitor->getInhabitants();
         $value = count($inhabitants) > 0 ? Votes::VOTE_ENABLE : Votes::VOTE_DISABLE;
 
-        return new Vote($value);
+        return new Vote($value, sprintf('%s::%s -> %s', __CLASS__, __METHOD__, count($inhabitants)));
     }
 }

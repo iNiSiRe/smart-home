@@ -10,11 +10,18 @@ class Vote
     private $value;
 
     /**
-     * @param $value
+     * @var null
      */
-    public function __construct($value)
+    private $reason;
+
+    /**
+     * @param      $value
+     * @param null $reason
+     */
+    public function __construct($value, $reason = null)
     {
         $this->value = $value;
+        $this->reason = $reason;
     }
 
     /**
@@ -31,5 +38,25 @@ class Vote
     public function setValue($value)
     {
         $this->value = $value;
+    }
+
+    /**
+     * @return null
+     */
+    public function getReason()
+    {
+        return $this->reason;
+    }
+
+    /**
+     * @param null $reason
+     *
+     * @return $this
+     */
+    public function setReason($reason)
+    {
+        $this->reason = $reason;
+
+        return $this;
     }
 }

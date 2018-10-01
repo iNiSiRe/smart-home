@@ -62,7 +62,7 @@ class EnableByTemperatureVoter extends Voter
         }
 
         if ($sensor->getTemperature() <= ($temperature - 1)) {
-            return new Vote(Votes::VOTE_ENABLE);
+            return new Vote(Votes::VOTE_ENABLE, sprintf('%s::%s -> %s <= %s', __CLASS__, __METHOD__, $sensor->getTemperature(), $temperature - 1));
         }
 
         return new Vote(Votes::VOTE_DISABLE);

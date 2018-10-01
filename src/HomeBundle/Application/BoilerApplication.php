@@ -9,6 +9,7 @@ use HomeBundle\Application\Boiler\Voter\InhabitantsCountVoter;
 use HomeBundle\Application\Boiler\Voter\ManualModeVoter;
 use HomeBundle\Application\Boiler\Voter\Votes;
 use HomeBundle\Entity\BoilerUnit;
+use HomeBundle\Entity\LogRecord;
 use HomeBundle\Model\Boiler;
 use React\EventLoop\Timer\TimerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -103,6 +104,11 @@ class BoilerApplication
 
             if ($vote->getValue() == true) {
                 $this->boiler->disable();
+                $this->boilerUnit->getModule()->addLog(new LogRecord(json_encode([
+                    'unit' => 'boiler',
+                    'action' => 'disable',
+                    'message' => $vote->getReason()
+                ])));
             }
 
         } else {
@@ -113,6 +119,11 @@ class BoilerApplication
 
             if ($vote->getValue() == true) {
                 $this->boiler->enable();
+                $this->boilerUnit->getModule()->addLog(new LogRecord(json_encode([
+                    'unit' => 'boiler',
+                    'action' => 'enable',
+                    'message' => $vote->getReason()
+                ])));
             }
         }
 

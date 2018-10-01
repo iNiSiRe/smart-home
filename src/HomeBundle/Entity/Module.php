@@ -261,12 +261,13 @@ class Module
     }
 
     /**
-     * @param $log
+     * @param LogRecord $log
      *
      * @return $this
      */
     public function addLog($log)
     {
+        $log->setModule($this);
         $this->logs->add($log);
 
         return $this;
