@@ -6,7 +6,7 @@ var handlers = [];
 
 handlers['stdout'] = function (topic, message) {
 
-    $("#logs").append("<p>" + message + "</p>");
+    $("#logs").prepend("<p>" + message + "</p>");
 
 };
 
