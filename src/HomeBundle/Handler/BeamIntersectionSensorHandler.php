@@ -54,6 +54,8 @@ class BeamIntersectionSensorHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     function onMessage(Message $message)
     {
@@ -65,19 +67,21 @@ class BeamIntersectionSensorHandler extends AbstractHandler
         }
 
         if ($direction == 'in') {
-            $this->unit->getRoomTo()->incrementInhabitants(1);
+            $this->unit->getRoomTo()->incrementInhabitants(+1);
+            $this->unit->getRoomFrom()->incrementInhabitants(-1);
         } else {
             $this->unit->getRoomTo()->incrementInhabitants(-1);
+            $this->unit->getRoomFrom()->incrementInhabitants(+1);
         }
 
         if ($this->unit->getRoomTo()->getInhabitants() > 0 && $this->unit->getLight()->isEnabled() == false) {
             $topic = 'units/' . $this->unit->getLight()->getId();
             $payload = json_encode(['enabled' => true]);
-            $this->client->publish(new DefaultMessage($topic, $payload));
+            $this->client->publish(new DefaultMessage($topic, $payload, 2));
         } elseif ($this->unit->getRoomTo()->getInhabitants() <= 0 && $this->unit->getLight()->isEnabled() == true) {
             $topic = 'units/' . $this->unit->getLight()->getId();
             $payload = json_encode(['enabled' => false]);
-            $this->client->publish(new DefaultMessage($topic, $payload));
+            $this->client->publish(new DefaultMessage($topic, $payload, 2));
         }
 
         $this->manager->flush();
