@@ -49,7 +49,7 @@ ARG UID=1000
 ARG GID=1000
 
 RUN usermod -u $UID www-data \
-    groupmod -u $GID www-data
+    groupmod -g $GID www-data
 
 EXPOSE 8080
 EXPOSE 8000
