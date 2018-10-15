@@ -14,8 +14,12 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 # install extensions
 RUN docker-php-ext-install pdo_mysql
 
-RUN pecl install xdebug-2.5.0
-RUN docker-php-ext-enable xdebug
+ARG ENABLE_XDEBUG=0
+
+RUN if [ "$ENABLE_XDEBUG" -eq 1 ] then \
+    pecl install xdebug-2.5.0 \
+    docker-php-ext-enable xdebug \
+    fi
 
 RUN pecl install memcached-3.0.2
 RUN docker-php-ext-enable memcached
