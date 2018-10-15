@@ -48,7 +48,7 @@ RUN mkdir -p /var/www/html && \
 ARG UID=1000
 ARG GID=1000
 
-RUN groupmod -g $GID www-data \
+RUN groupmod -g $GID www-data && \
     usermod -u $UID www-data
 
 
