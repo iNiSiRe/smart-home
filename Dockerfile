@@ -16,9 +16,10 @@ RUN docker-php-ext-install pdo_mysql
 
 ARG ENABLE_XDEBUG=0
 
-RUN if [ "$ENABLE_XDEBUG" -eq 1 ] then \
-    pecl install xdebug-2.5.0 \
-    docker-php-ext-enable xdebug \
+RUN if [ "$ENABLE_XDEBUG" -eq 1 ] \
+    then \
+        pecl install xdebug-2.5.0 \
+        docker-php-ext-enable xdebug \
     fi
 
 RUN pecl install memcached-3.0.2
