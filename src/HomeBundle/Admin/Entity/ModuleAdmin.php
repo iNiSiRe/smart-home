@@ -31,7 +31,9 @@ class ModuleAdmin extends AbstractAdmin
         $list
             ->addIdentifier('id')
             ->addIdentifier('name')
+            ->add('ip')
             ->add('code')
+            ->add('lastPing')
         ;
     }
 

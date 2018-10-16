@@ -1,41 +1,34 @@
 <?php
-/**
- * Created by PhpStorm.
- * User: user18
- * Date: 07.03.18
- * Time: 4:46
- */
 
 namespace HomeBundle\Handler;
-
 
 use BinSoul\Net\Mqtt\Message;
 use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
-use HomeBundle\Entity\Unit;
+use HomeBundle\Entity\Module;
 
-class RegisterOnServerHandler extends AbstractHandler
+class ModuleRegisterHandler extends AbstractHandler
 {
-    /**
-     * @var Unit
-     */
-    private $unit;
-
     /**
      * @var EntityManager
      */
     private $manager;
 
     /**
+     * @var Module
+     */
+    private $module;
+
+    /**
      * RegisterOnServerHandler constructor.
      *
-     * @param Unit          $unit
+     * @param Module        $module
      * @param EntityManager $manager
      */
-    public function __construct(Unit $unit, EntityManager $manager)
+    public function __construct(Module $module, EntityManager $manager)
     {
-        $this->unit = $unit;
         $this->manager = $manager;
+        $this->module = $module;
     }
 
     /**
@@ -43,7 +36,7 @@ class RegisterOnServerHandler extends AbstractHandler
      */
     function getTopic()
     {
-        return 'units/' . $this->unit->getId() . '/register';
+        return 'modules/' . $this->module->getId() . '/register';
     }
 
     /**
@@ -60,14 +53,10 @@ class RegisterOnServerHandler extends AbstractHandler
         $ip = $data['ip'] ?? null;
         $deviceId = $data['device_id'] ?? null;
 
-        $this->unit
+        $this->module
             ->setIp($ip)
-            ->setDeviceId($deviceId);
+            ->setCode($deviceId);
 
-        $this->unit->getModule()
-            ->setIp($ip);
-
-        $this->manager->flush($this->unit->getModule());
-        $this->manager->flush($this->unit);
+        $this->manager->flush($this->module);
     }
 }

@@ -12,7 +12,9 @@ use HomeBundle\Entity\SwitchUnit;
 use HomeBundle\Entity\TemperatureHumidityUnit;
 use HomeBundle\Handler\BeamIntersectionSensorHandler;
 use HomeBundle\Handler\BoilerHandler;
-use HomeBundle\Handler\RegisterOnServerHandler;
+use HomeBundle\Handler\ModuleLogHandler;
+use HomeBundle\Handler\PingHandler;
+use HomeBundle\Handler\ModuleRegisterHandler;
 use HomeBundle\Handler\SwitchHandler;
 use HomeBundle\Handler\TemperatureHandler;
 use Symfony\Component\DependencyInjection\ContainerInterface;
@@ -54,11 +56,16 @@ class Bootstrap
 
     public function boot()
     {
+        $modules = $this->manager->getRepository('HomeBundle:Module')->findAll();
         $units = $this->manager->getRepository('HomeBundle:Unit')->findAll();
 
-        foreach ($units as $unit) {
+        foreach ($modules as $module) {
+            $this->handler->registerHandler(new PingHandler($module));
+            $this->handler->registerHandler(new ModuleRegisterHandler($module, $this->manager));
+            $this->handler->registerHandler(new ModuleLogHandler($module, $this->manager));
+        }
 
-            $this->handler->registerHandler(new RegisterOnServerHandler($unit, $this->manager));
+        foreach ($units as $unit) {
 
             switch (true) {
                 case ($unit instanceof BeamIntersectionSensor): {

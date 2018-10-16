@@ -13,7 +13,7 @@ use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
 use Symfony\Component\Form\FormInterface;
 
 /**
- * @Route("/api/v1/units")
+ * @Route("/units")
  */
 class UnitController extends CRUDController
 {

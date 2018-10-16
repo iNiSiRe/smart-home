@@ -13,10 +13,6 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
-  CommonBundle\Bridge\WebSocketHttpBridge:
-    arguments:
-      - "@service_container"
-
   CommonBundle\Handler\MqttHandler:
     autowire: true
     public: true

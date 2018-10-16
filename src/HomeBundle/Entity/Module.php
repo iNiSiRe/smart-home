@@ -90,6 +90,11 @@ class Module
     private $updatedAt;
 
     /**
+     * @var \DateTime
+     */
+    private $lastPing = null;
+
+    /**
      * Get id
      *
      * @return int
@@ -363,5 +368,21 @@ class Module
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastPing()
+    {
+        return $this->lastPing;
+    }
+
+    /**
+     * @param \DateTime $lastPing
+     */
+    public function setLastPing($lastPing)
+    {
+        $this->lastPing = $lastPing;
     }
 }

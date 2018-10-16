@@ -44,6 +44,8 @@ class SwitchHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
      */
     function onMessage(Message $message)
     {
