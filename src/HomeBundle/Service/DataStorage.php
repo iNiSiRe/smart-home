@@ -41,7 +41,7 @@ class DataStorage
                     'mappings' => [
                         '_doc' => [
                             'properties' => [
-                                'timestamp' => ['type' => 'text']
+                                'timestamp' => ['type' => 'date']
                             ]
                         ]
                     ]
