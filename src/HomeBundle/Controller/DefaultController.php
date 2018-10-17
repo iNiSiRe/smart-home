@@ -2,6 +2,7 @@
 
 namespace HomeBundle\Controller;
 
+use HomeBundle\Application\InhabitantsMonitorApplication;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -44,12 +45,16 @@ class DefaultController extends Controller
 
     /**
      * @Route("/inhabitants", methods={"GET"})
+     *
+     * @param InhabitantsMonitorApplication $inhabitantsMonitorApplication
+     *
+     * @return JsonResponse
      */
-    public function inhabitants()
+    public function inhabitants(InhabitantsMonitorApplication $inhabitantsMonitorApplication)
     {
         return new JsonResponse([
             'success' => true,
-            'data' => $this->get('home.inhabitants_monitor')->getInhabitants()
+            'data' => $inhabitantsMonitorApplication->getInhabitants()
         ]);
     }
 }

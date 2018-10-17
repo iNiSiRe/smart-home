@@ -6,6 +6,7 @@ use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
 use CommonBundle\Handler\MqttHandler;
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Application\BoilerApplication;
+use HomeBundle\Application\InhabitantsMonitorApplication;
 use HomeBundle\Entity\BeamIntersectionSensor;
 use HomeBundle\Entity\BoilerUnit;
 use HomeBundle\Entity\SwitchUnit;
@@ -42,16 +43,30 @@ class Bootstrap
     private $container;
 
     /**
+     * @var DataStorage
+     */
+    private $storage;
+
+    /**
+     * @var InhabitantsMonitorApplication
+     */
+    private $inhabitantsMonitorApplication;
+
+    /**
      * Bootstrap constructor.
      *
-     * @param ContainerInterface $container
+     * @param ContainerInterface            $container
+     * @param DataStorage                   $storage
+     * @param InhabitantsMonitorApplication $inhabitantsMonitorApplication
      */
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, DataStorage $storage, InhabitantsMonitorApplication $inhabitantsMonitorApplication)
     {
         $this->manager = $container->get(EntityManager::class);
         $this->handler = $container->get(MqttHandler::class);
         $this->client = $container->get(ReactMqttClient::class);
         $this->container = $container;
+        $this->storage = $storage;
+        $this->inhabitantsMonitorApplication = $inhabitantsMonitorApplication;
     }
 
     public function boot()
@@ -61,8 +76,8 @@ class Bootstrap
 
         foreach ($modules as $module) {
             $this->handler->registerHandler(new PingHandler($module));
-            $this->handler->registerHandler(new ModuleRegisterHandler($module, $this->manager));
-            $this->handler->registerHandler(new ModuleLogHandler($module, $this->manager));
+            $this->handler->registerHandler(new ModuleRegisterHandler($module, $this->manager, $this->storage));
+            $this->handler->registerHandler(new ModuleLogHandler($module, $this->storage));
         }
 
         foreach ($units as $unit) {
@@ -70,13 +85,13 @@ class Bootstrap
             switch (true) {
                 case ($unit instanceof BeamIntersectionSensor): {
 
-                    $this->handler->registerHandler(new BeamIntersectionSensorHandler($unit, $this->manager, $this->client));
+                    $this->handler->registerHandler(new BeamIntersectionSensorHandler($unit, $this->manager, $this->client, $this->storage));
 
                 } break;
 
                 case ($unit instanceof BoilerUnit): {
 
-                    $this->handler->registerHandler(new BoilerHandler($unit, $this->manager));
+                    $this->handler->registerHandler(new BoilerHandler($unit, $this->manager, $this->storage));
                     $application = new BoilerApplication($this->container, $unit);
                     $application->start();
 
@@ -84,13 +99,14 @@ class Bootstrap
 
                 case ($unit instanceof SwitchUnit): {
 
-                    $this->handler->registerHandler(new SwitchHandler($unit, $this->manager));
+                    $this->handler->registerHandler(new SwitchHandler($unit, $this->manager, $this->storage));
 
                 } break;
 
                 case ($unit instanceof TemperatureHumidityUnit): {
 
-                    $this->handler->registerHandler(new TemperatureHandler($unit, $this->manager));
+
+                    $this->handler->registerHandler(new TemperatureHandler($unit, $this->manager, $this->storage));
 
                 } break;
 
@@ -100,6 +116,6 @@ class Bootstrap
 
         }
 
-        $this->container->get('home.inhabitants_monitor')->start();
+        $this->inhabitantsMonitorApplication->start();
     }
 }

@@ -6,6 +6,7 @@ use BinSoul\Net\Mqtt\Message;
 use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\Module;
+use HomeBundle\Service\DataStorage;
 
 class ModuleRegisterHandler extends AbstractHandler
 {
@@ -20,15 +21,22 @@ class ModuleRegisterHandler extends AbstractHandler
     private $module;
 
     /**
+     * @var DataStorage
+     */
+    private $storage;
+
+    /**
      * RegisterOnServerHandler constructor.
      *
      * @param Module        $module
      * @param EntityManager $manager
+     * @param DataStorage   $storage
      */
-    public function __construct(Module $module, EntityManager $manager)
+    public function __construct(Module $module, EntityManager $manager, DataStorage $storage)
     {
         $this->manager = $manager;
         $this->module = $module;
+        $this->storage = $storage;
     }
 
     /**
@@ -58,5 +66,12 @@ class ModuleRegisterHandler extends AbstractHandler
             ->setCode($deviceId);
 
         $this->manager->flush($this->module);
+
+        $this->storage->store('log', [
+            'type' => 'register',
+            'module' => $this->module->getId(),
+            'ip' => $ip,
+            'device_id' => $deviceId
+        ]);
     }
 }

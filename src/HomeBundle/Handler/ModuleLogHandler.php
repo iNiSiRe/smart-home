@@ -8,6 +8,7 @@ use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\LogRecord;
 use HomeBundle\Entity\Module;
+use HomeBundle\Service\DataStorage;
 
 class ModuleLogHandler extends AbstractHandler
 {
@@ -17,18 +18,18 @@ class ModuleLogHandler extends AbstractHandler
     private $module;
 
     /**
-     * @var EntityManager
+     * @var DataStorage
      */
-    private $manager;
+    private $storage;
 
     /**
      * @param Module        $module
-     * @param EntityManager $manager
+     * @param DataStorage   $storage
      */
-    public function __construct(Module $module, EntityManager $manager)
+    public function __construct(Module $module, DataStorage $storage)
     {
         $this->module = $module;
-        $this->manager = $manager;
+        $this->storage = $storage;
     }
 
     /**
@@ -43,13 +44,13 @@ class ModuleLogHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
-     *
-     * @throws \Doctrine\ORM\OptimisticLockException
      */
     function onMessage(Message $message)
     {
-        $this->module->addLog(new LogRecord($message->getPayload()));
-        $this->manager->persist($this->module);
-        $this->manager->flush();
+        $this->storage->store('log', [
+            'type' => 'stdout',
+            'module' => $this->module->getId(),
+            'content' => $message->getPayload()
+        ]);
     }
 }

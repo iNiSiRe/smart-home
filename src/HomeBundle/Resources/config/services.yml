@@ -3,13 +3,30 @@ imports:
 
 services:
 
-  HomeBundle\Service\Bootstrap:
-    class: HomeBundle\Service\Bootstrap
+  _defaults:
     autowire: true
+    autoconfigure: true
+    public: false
+
+  HomeBundle\Service\:
+    resource: "../../Service/*"
+
+  HomeBundle\Controller\:
+    resource: '../../Controller'
+    tags: ['controller.service_arguments']
+
+  HomeBundle\Service\Bootstrap:
     public: true
 
-  home.inhabitants_monitor:
-    class: HomeBundle\Application\InhabitantsMonitorApplication
+  HomeBundle\Application\InhabitantsMonitorApplication:
     arguments: ["@react.loop", "%inhabitants_ips%"]
     calls:
       - [setLogger, ["@logger"]]
+
+  Elasticsearch\ClientBuilder:
+    calls:
+      - [setHosts, [["%elasticsearch_host%"]]]
+
+  Elasticsearch\Client:
+    factory: ['@Elasticsearch\ClientBuilder', "build"]
+

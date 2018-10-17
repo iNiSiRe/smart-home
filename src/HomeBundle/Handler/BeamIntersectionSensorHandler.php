@@ -10,6 +10,7 @@ use Doctrine\ORM\EntityManager;
 use HomeBundle\Bridge\BeamIntersectionSensorBridge;
 use HomeBundle\Entity\BeamIntersectionSensor;
 use HomeBundle\Entity\Unit;
+use HomeBundle\Service\DataStorage;
 
 class BeamIntersectionSensorHandler extends AbstractHandler
 {
@@ -29,17 +30,23 @@ class BeamIntersectionSensorHandler extends AbstractHandler
     private $client;
 
     /**
+     * @var DataStorage
+     */
+    private $storage;
+
+    /**
      * BeamIntersectionSensorHandler constructor.
      *
      * @param BeamIntersectionSensor $unit
      * @param EntityManager          $manager
      * @param ReactMqttClient        $client
      */
-    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client)
+    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, DataStorage $storage)
     {
         $this->unit = $unit;
         $this->manager = $manager;
         $this->client = $client;
+        $this->storage = $storage;
     }
 
     /**
@@ -85,5 +92,11 @@ class BeamIntersectionSensorHandler extends AbstractHandler
         }
 
         $this->manager->flush();
+
+        $this->storage->store('log', [
+            'unit' => $this->unit->getId(),
+            'type' => 'intersection',
+            'direction' => $direction
+        ]);
     }
 }
