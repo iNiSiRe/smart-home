@@ -33,7 +33,8 @@ class DataStorage
         $this->client->index([
             'index' => 'log-' . $date->format('Y.m.d'),
             'type' => $type,
-            'body' => $data
+            'body' => $data,
+            'timestamp' => time()
         ]);
     }
 }
