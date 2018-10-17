@@ -98,5 +98,11 @@ class BeamIntersectionSensorHandler extends AbstractHandler
             'type' => 'intersection',
             'direction' => $direction
         ]);
+
+        $this->storage->store('log', [
+            'room' => $this->unit->getRoomTo()->getId(),
+            'type' => 'inhabitants',
+            'count' => $this->unit->getRoomTo()->getInhabitants()
+        ]);
     }
 }
