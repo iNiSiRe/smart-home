@@ -32,8 +32,25 @@ class DataStorage
 
         $data['timestamp'] = time();
 
+        $index = 'log-' . $date->format('Y.m.d');
+
+        if (!$this->client->indices()->exists(['index' => $index])) {
+            $this->client->indices()->create([
+                'index' => $index,
+                'body' => [
+                    'mappings' => [
+                        '_all' => [
+                            'properties' => [
+                                'timestamp' => ['type' => 'text']
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
+        }
+
         $this->client->index([
-            'index' => 'log-' . $date->format('Y.m.d'),
+            'index' => $index,
             'type' => $type,
             'body' => $data
         ]);
