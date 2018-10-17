@@ -92,7 +92,7 @@ class Bootstrap
                 case ($unit instanceof BoilerUnit): {
 
                     $this->handler->registerHandler(new BoilerHandler($unit, $this->manager, $this->storage));
-                    $application = new BoilerApplication($this->container, $unit);
+                    $application = new BoilerApplication($this->container, $unit, $this->inhabitantsMonitorApplication);
                     $application->start();
 
                 } break;

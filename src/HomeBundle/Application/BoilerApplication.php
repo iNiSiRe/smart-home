@@ -54,10 +54,11 @@ class BoilerApplication
     /**
      * BoilerApplication constructor.
      *
-     * @param ContainerInterface $container
-     * @param BoilerUnit         $boiler
+     * @param ContainerInterface            $container
+     * @param BoilerUnit                    $boiler
+     * @param InhabitantsMonitorApplication $inhabitantsMonitorApplication
      */
-    public function __construct(ContainerInterface $container, BoilerUnit $boiler)
+    public function __construct(ContainerInterface $container, BoilerUnit $boiler, InhabitantsMonitorApplication $inhabitantsMonitorApplication)
     {
         $this->container = $container;
         $this->boilerUnit = $boiler;
@@ -66,7 +67,7 @@ class BoilerApplication
 
         $this->decisionManager = new DecisionManager([
             new ManualModeVoter($boiler),
-            new InhabitantsCountVoter($this->container->get('home.inhabitants_monitor')),
+            new InhabitantsCountVoter($inhabitantsMonitorApplication),
             new EnableByTemperatureVoter($boiler),
             new DisableByTemperatureVoter($boiler)
         ]);
