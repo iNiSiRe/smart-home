@@ -30,7 +30,7 @@ class DataStorage
     {
         $date = new \DateTime();
 
-        $data['timestamp'] = time();
+        $data['timestamp'] = time() * 1000;
 
         $index = 'log-' . $date->format('Y.m.d');
 
