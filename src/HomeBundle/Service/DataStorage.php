@@ -39,7 +39,7 @@ class DataStorage
                 'index' => $index,
                 'body' => [
                     'mappings' => [
-                        '_all' => [
+                        '_doc' => [
                             'properties' => [
                                 'timestamp' => ['type' => 'text']
                             ]
@@ -51,7 +51,7 @@ class DataStorage
 
         $this->client->index([
             'index' => $index,
-            'type' => $type,
+            'type' => '_doc',
             'body' => $data
         ]);
     }
