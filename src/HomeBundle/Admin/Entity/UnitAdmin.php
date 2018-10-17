@@ -23,7 +23,6 @@ class UnitAdmin extends AbstractAdmin
     {
         $form
             ->add('name')
-            ->add('class')
             ->add('module')
             ->add('room')
         ;
@@ -60,9 +59,6 @@ class UnitAdmin extends AbstractAdmin
         $list
             ->addIdentifier('id')
             ->addIdentifier('name')
-            ->add('class')
-            ->add('ip')
-            ->add('deviceId')
         ;
     }
 

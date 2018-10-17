@@ -49,7 +49,7 @@
 
                     <div class="col l4 m6 s12">
 
-                        {% if unit.class == 'TemperatureSensor' %}
+                        {% if unit.class == 'TemparatureHumidityUnit' %}
 
                             <div class="card" data-unit="TemperatureSensor" data-unit-id="{{ unit.id }}">
                                 <div class="card-content">
@@ -64,7 +64,7 @@
 
                         {% endif %}
 
-                        {% if unit.class == 'Switch' %}
+                        {% if unit.class == 'SwitchUnit' %}
 
                             <div class="card" data-unit="Switch" data-unit-id="{{ unit.id }}">
                                 <div class="card-content">
@@ -85,7 +85,7 @@
 
                         {% endif %}
 
-                        {% if unit.class == 'Boiler' %}
+                        {% if unit.class == 'BoilerUnit' %}
                             <div class="card" data-unit="Boiler" data-unit-id="{{ unit.id }}">
                                 <div class="card-content">
                                     <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
