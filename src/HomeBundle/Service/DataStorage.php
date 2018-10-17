@@ -30,11 +30,12 @@ class DataStorage
     {
         $date = new \DateTime();
 
+        $data['timestamp'] = time();
+
         $this->client->index([
             'index' => 'log-' . $date->format('Y.m.d'),
             'type' => $type,
-            'body' => $data,
-            'timestamp' => time()
+            'body' => $data
         ]);
     }
 }
