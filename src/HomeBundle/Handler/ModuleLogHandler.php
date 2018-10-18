@@ -47,7 +47,7 @@ class ModuleLogHandler extends AbstractHandler
      */
     function onMessage(Message $message)
     {
-        if (!preg_match('^(\w+)\s(\d+)\s([\d\.]+)\s(\d+)\|(\w+)\s+(.+)$', $message->getPayload(), $matches)) {
+        if (!preg_match('#^(\w+)\s(\d+)\s([\d\.]+)\s(\d+)\|(\w+)\s+(.+)$#', $message->getPayload(), $matches)) {
             return;
         }
 
