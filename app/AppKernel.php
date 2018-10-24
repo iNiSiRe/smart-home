@@ -3,8 +3,15 @@
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
-class AppKernel extends Kernel
+class AppKernel extends Kernel implements \inisire\ReactBundle\EventDispatcher\ThreadedKernelInterface
 {
+    /**
+     * Thread number
+     *
+     * @var int
+     */
+    private $number = self::MAIN_THREAD;
+
     public function registerBundles()
     {
         $bundles = [
@@ -28,8 +35,6 @@ class AppKernel extends Kernel
         ];
 
         if (in_array($this->getEnvironment(), ['dev', 'test'], true)) {
-//            $bundles[] = new Symfony\Bundle\DebugBundle\DebugBundle();
-//            $bundles[] = new Symfony\Bundle\WebProfilerBundle\WebProfilerBundle();
             $bundles[] = new Sensio\Bundle\DistributionBundle\SensioDistributionBundle();
             $bundles[] = new Sensio\Bundle\GeneratorBundle\SensioGeneratorBundle();
         }
@@ -55,5 +60,15 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
+    }
+
+    public function setThreadNumber(int $number)
+    {
+        $this->number = $number;
+    }
+
+    public function getThreadNumber()
+    {
+        return $this->number;
     }
 }

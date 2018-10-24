@@ -3,6 +3,9 @@
 namespace HomeBundle\Controller;
 
 use HomeBundle\Application\InhabitantsMonitorApplication;
+use HomeBundle\Listener\DataStorageListener;
+use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -56,5 +59,23 @@ class DefaultController extends Controller
             'success' => true,
             'data' => $inhabitantsMonitorApplication->getInhabitants()
         ]);
+    }
+
+    /**
+     * @Route("test", methods={"GET"})
+     *
+     * @param AsynchronousEventDispatcher $dispatcher
+     *
+     * @param DataStorage                 $storage
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function test(AsynchronousEventDispatcher $dispatcher, DataStorage $storage)
+    {
+        $storage->store('test', ['test' => 'sometestdata']);
+
+        return new JsonResponse($dispatcher->getStatus());
     }
 }

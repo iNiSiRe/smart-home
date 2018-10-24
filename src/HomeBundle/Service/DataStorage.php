@@ -3,56 +3,32 @@
 
 namespace HomeBundle\Service;
 
-use Elasticsearch\Client;
+use HomeBundle\Listener\DataStorageListener;
+use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
 
 class DataStorage
 {
     /**
-     * @var Client
+     * @var AsynchronousEventDispatcher
      */
-    private $client;
+    private $dispatcher;
 
     /**
-     * DataStorage constructor.
-     *
-     * @param Client $client
+     * @param AsynchronousEventDispatcher $dispatcher
      */
-    public function __construct(Client $client)
+    public function __construct(AsynchronousEventDispatcher $dispatcher)
     {
-        $this->client = $client;
+        $this->dispatcher = $dispatcher;
     }
 
     /**
      * @param string $type
      * @param array  $data
+     *
+     * @throws \Exception
      */
     public function store(string $type, array $data)
     {
-        $date = new \DateTime();
-
-        $data['timestamp'] = time() * 1000;
-
-        $index = 'log-' . $date->format('Y.m.d');
-
-        if (!$this->client->indices()->exists(['index' => $index])) {
-            $this->client->indices()->create([
-                'index' => $index,
-                'body' => [
-                    'mappings' => [
-                        '_doc' => [
-                            'properties' => [
-                                'timestamp' => ['type' => 'date']
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
-        }
-
-        $this->client->index([
-            'index' => $index,
-            'type' => '_doc',
-            'body' => $data
-        ]);
+        $this->dispatcher->dispatch(DataStorageListener::EVENT_DATA_STORAGE_STORE, $data);
     }
 }

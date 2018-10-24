@@ -14,4 +14,6 @@ $container->get('react.http.server')->start();
 $container->get('HomeBundle\Service\Bootstrap')->boot();
 $container->get('CommonBundle\Handler\MqttHandler')->start();
 
+$container->get('async.event_dispatcher')->start();
+
 $container->get('react.loop')->run();

@@ -1,4 +1,4 @@
-FROM php:7.0-zts
+FROM php:7.2-zts
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-sockets
 
@@ -17,7 +17,7 @@ RUN docker-php-ext-install pdo_mysql
 ARG ENABLE_XDEBUG=0
 
 RUN if [ "$ENABLE_XDEBUG" -eq 1 ]; then \
-    pecl install xdebug-2.5.0 \
+    pecl install xdebug-2.6.1 \
     docker-php-ext-enable xdebug; \
 fi
 
@@ -27,9 +27,9 @@ RUN docker-php-ext-enable memcached
 RUN docker-php-ext-install sockets
 RUN docker-php-ext-enable sockets
 
-#RUN docker-php-ext-enable maintainer-zts
-RUN pecl install pthreads
-RUN docker-php-ext-enable pthreads
+RUN git clone https://github.com/krakjoe/pthreads -b master /tmp/pthreads
+RUN docker-php-ext-configure /tmp/pthreads --enable-pthreads
+RUN docker-php-ext-install /tmp/pthreads
 
 RUN pecl install event
 RUN docker-php-ext-enable event
