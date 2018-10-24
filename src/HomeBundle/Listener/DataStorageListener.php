@@ -34,10 +34,12 @@ class DataStorageListener extends EventListener
     }
 
     /**
-     * @param mixed $event
+     * @param mixed $data
      */
-    public function onEvent($event)
+    public function onEvent($data)
     {
+        usleep(10000);
+
         $date = new \DateTime();
 
         $data['timestamp'] = time() * 1000;

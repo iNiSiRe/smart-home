@@ -34,5 +34,5 @@ services:
     class: HomeBundle\Listener\DataStorageListener
     arguments:
       - '@Elasticsearch\Client'
-    tags: ["async.event_listener"]
+    public: true
 

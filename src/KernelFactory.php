@@ -1,6 +1,6 @@
 <?php
 
-class KernelFactory implements \inisire\ReactBundle\EventDispatcher\KernelFactoryInterface
+class KernelFactory implements \inisire\ReactBundle\Threaded\KernelFactoryInterface
 {
     private $env;
 
@@ -13,11 +13,11 @@ class KernelFactory implements \inisire\ReactBundle\EventDispatcher\KernelFactor
     }
 
     /**
-     * @return \inisire\ReactBundle\EventDispatcher\ThreadedKernelInterface
+     * @return \inisire\ReactBundle\Threaded\ThreadedKernelInterface
      */
     public function create()
     {
-        $kernel = new AppKernel($this->env, false);
+        $kernel = new AppKernel($this->env, $this->env == 'dev');
         $kernel->boot();
 
         return $kernel;

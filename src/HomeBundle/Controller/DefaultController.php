@@ -6,6 +6,8 @@ use HomeBundle\Application\InhabitantsMonitorApplication;
 use HomeBundle\Listener\DataStorageListener;
 use HomeBundle\Service\DataStorage;
 use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
+use inisire\ReactBundle\Threaded\ExecuteServiceMethodTask;
+use inisire\ReactBundle\Threaded\MonitoredPool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
@@ -64,18 +66,34 @@ class DefaultController extends Controller
     /**
      * @Route("test", methods={"GET"})
      *
-     * @param AsynchronousEventDispatcher $dispatcher
-     *
-     * @param DataStorage                 $storage
+     * @param MonitoredPool $pool
      *
      * @return JsonResponse
-     *
-     * @throws \Exception
      */
-    public function test(AsynchronousEventDispatcher $dispatcher, DataStorage $storage)
+    public function test(MonitoredPool $pool)
     {
-        $storage->store('test', ['test' => 'sometestdata']);
+        for ($i = 0; $i < 1000; $i++) {
+            $pool->submit(new ExecuteServiceMethodTask(DataStorageListener::class, 'onEvent', [ ['test' => 1] ]));
+        }
 
-        return new JsonResponse($dispatcher->getStatus());
+        return new JsonResponse([
+            'success' => true,
+            'status' => $pool->getStatus()
+        ]);
+    }
+
+    /**
+     * @Route("/status", methods={"GET"})
+     *
+     * @param MonitoredPool $pool
+     *
+     * @return JsonResponse
+     */
+    public function status(MonitoredPool $pool)
+    {
+        return new JsonResponse([
+            'success' => true,
+            'status' => $pool->getStatus()
+        ]);
     }
 }

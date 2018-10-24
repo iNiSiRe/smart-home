@@ -3,7 +3,7 @@
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
-class AppKernel extends Kernel implements \inisire\ReactBundle\EventDispatcher\ThreadedKernelInterface
+class AppKernel extends Kernel implements \inisire\ReactBundle\Threaded\ThreadedKernelInterface
 {
     /**
      * Thread number

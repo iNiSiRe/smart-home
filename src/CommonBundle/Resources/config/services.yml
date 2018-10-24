@@ -20,18 +20,6 @@ services:
       $mqttServer: "%mqtt_server%"
       $logger: "@logger"
 
-  kernel.factory:
+  inisire\ReactBundle\Threaded\KernelFactoryInterface:
     class: KernelFactory
     arguments: ["%kernel.environment%"]
-
-  inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher:
-    class: inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher
-    arguments:
-      - "@kernel.factory"
-      - 1
-    calls:
-      - [setLogger, ["@logger"]]
-
-  async.event_dispatcher:
-    alias: inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher
-    public: true

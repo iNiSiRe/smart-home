@@ -16,9 +16,9 @@ class DataStorage
     /**
      * @param AsynchronousEventDispatcher $dispatcher
      */
-    public function __construct(AsynchronousEventDispatcher $dispatcher)
+    public function __construct()
     {
-        $this->dispatcher = $dispatcher;
+
     }
 
     /**
