@@ -30,9 +30,3 @@ services:
   Elasticsearch\Client:
     factory: ['@Elasticsearch\ClientBuilder', "build"]
 
-  HomeBundle\Listener\DataStorageListener:
-    class: HomeBundle\Listener\DataStorageListener
-    arguments:
-      - '@Elasticsearch\Client'
-    public: true
-

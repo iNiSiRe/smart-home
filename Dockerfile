@@ -14,13 +14,6 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 # install extensions
 RUN docker-php-ext-install pdo_mysql
 
-ARG ENABLE_XDEBUG=0
-
-RUN if [ "$ENABLE_XDEBUG" -eq 1 ]; then \
-    pecl install xdebug-2.6.1 \
-    docker-php-ext-enable xdebug; \
-fi
-
 RUN pecl install memcached-3.0.2
 RUN docker-php-ext-enable memcached
 
@@ -40,6 +33,13 @@ ENV COMPOSER_HOME=/tmp/.composer
 RUN curl -XGET https://getcomposer.org/installer > composer-setup.php && \
     php composer-setup.php --install-dir=/bin --filename=composer && \
     rm composer-setup.php
+
+ARG ENABLE_XDEBUG=0
+
+RUN if [ "$ENABLE_XDEBUG" -eq 1 ]; then \
+    pecl install xdebug-2.6.1 && \
+    docker-php-ext-enable xdebug; \
+fi
 
 RUN mkdir -p /var/www/html && \
     chown -R www-data:www-data /var/www/html && \
