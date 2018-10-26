@@ -71,4 +71,34 @@ class AppKernel extends Kernel implements \inisire\ReactBundle\Threaded\Threaded
     {
         return $this->number;
     }
+
+    public function buildContainer()
+    {
+        $container = parent::buildContainer();
+
+        $ids = $container->getServiceIds();
+
+        foreach ($ids as $id) {
+
+            if ($container->hasDefinition($id)) {
+
+                $definition = $container->getDefinition($id);
+
+                $definition
+                    ->setPublic(true)
+                    ->setPrivate(false);
+
+            } elseif ($container->hasAlias($id)) {
+
+                $alias = $container->getAlias($id);
+                $alias
+                    ->setPrivate(false)
+                    ->setPublic(true);
+
+            }
+
+        }
+
+        return $container;
+    }
 }
