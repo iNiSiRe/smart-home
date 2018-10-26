@@ -6,7 +6,7 @@ use HomeBundle\Application\InhabitantsMonitorApplication;
 use HomeBundle\Listener\DataStorageListener;
 use HomeBundle\Service\DataStorage;
 use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
-use inisire\ReactBundle\Threaded\ExecuteServiceMethodTask;
+use inisire\ReactBundle\Threaded\ServiceMethodCall;
 use inisire\ReactBundle\Threaded\MonitoredPool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
@@ -70,10 +70,12 @@ class DefaultController extends Controller
      *
      * @return JsonResponse
      */
-    public function test(MonitoredPool $pool)
+    public function test(MonitoredPool $pool, DataStorage $storage)
     {
-        for ($i = 0; $i < 1000; $i++) {
-            $pool->submit(new ExecuteServiceMethodTask(DataStorageListener::class, 'onEvent', [ ['test' => 1] ]));
+        $storage->store('1', ['1']);
+
+        for ($i = 0; $i < 5; $i++) {
+            $pool->submit(new ServiceMethodCall(DataStorage::class, 'store', [ '', ['test' => 1] ]));
         }
 
         return new JsonResponse([

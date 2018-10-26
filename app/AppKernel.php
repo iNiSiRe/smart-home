@@ -3,15 +3,8 @@
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\Config\Loader\LoaderInterface;
 
-class AppKernel extends Kernel implements \inisire\ReactBundle\Threaded\ThreadedKernelInterface
+class AppKernel extends Kernel
 {
-    /**
-     * Thread number
-     *
-     * @var int
-     */
-    private $number = self::MAIN_THREAD;
-
     public function registerBundles()
     {
         $bundles = [
@@ -60,15 +53,5 @@ class AppKernel extends Kernel implements \inisire\ReactBundle\Threaded\Threaded
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
-    }
-
-    public function setThreadNumber(int $number)
-    {
-        $this->number = $number;
-    }
-
-    public function getThreadNumber()
-    {
-        return $this->number;
     }
 }
