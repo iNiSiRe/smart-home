@@ -17,9 +17,6 @@ class KernelFactory implements \inisire\ReactBundle\Threaded\KernelFactoryInterf
      */
     public function create()
     {
-        $kernel = new ThreadKernel($this->env, $this->env == 'dev');
-        $kernel->boot();
-
-        return $kernel;
+        return new AppKernel($this->env, $this->env == 'dev');
     }
 }

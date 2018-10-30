@@ -11,6 +11,8 @@ use HomeBundle\Bridge\BeamIntersectionSensorBridge;
 use HomeBundle\Entity\BeamIntersectionSensor;
 use HomeBundle\Entity\Unit;
 use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\Threaded\MonitoredPool;
+use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class BeamIntersectionSensorHandler extends AbstractHandler
 {
@@ -30,9 +32,9 @@ class BeamIntersectionSensorHandler extends AbstractHandler
     private $client;
 
     /**
-     * @var DataStorage
+     * @var MonitoredPool
      */
-    private $storage;
+    private $pool;
 
     /**
      * BeamIntersectionSensorHandler constructor.
@@ -40,13 +42,14 @@ class BeamIntersectionSensorHandler extends AbstractHandler
      * @param BeamIntersectionSensor $unit
      * @param EntityManager          $manager
      * @param ReactMqttClient        $client
+     * @param MonitoredPool          $pool
      */
-    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, DataStorage $storage)
+    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, MonitoredPool $pool)
     {
         $this->unit = $unit;
         $this->manager = $manager;
         $this->client = $client;
-        $this->storage = $storage;
+        $this->pool = $pool;
     }
 
     /**
@@ -93,16 +96,20 @@ class BeamIntersectionSensorHandler extends AbstractHandler
 
         $this->manager->flush();
 
-        $this->storage->store('log', [
+        $data = [
             'unit' => $this->unit->getId(),
             'type' => 'intersection',
             'direction' => $direction
-        ]);
+        ];
 
-        $this->storage->store('log', [
+        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', $data]));
+
+        $data = [
             'room' => $this->unit->getRoomTo()->getId(),
             'type' => 'inhabitants',
             'count' => $this->unit->getRoomTo()->getInhabitants()
-        ]);
+        ];
+
+        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', $data]));
     }
 }

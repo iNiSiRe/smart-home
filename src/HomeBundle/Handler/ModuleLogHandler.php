@@ -9,6 +9,8 @@ use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\LogRecord;
 use HomeBundle\Entity\Module;
 use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\Threaded\MonitoredPool;
+use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class ModuleLogHandler extends AbstractHandler
 {
@@ -18,18 +20,18 @@ class ModuleLogHandler extends AbstractHandler
     private $module;
 
     /**
-     * @var DataStorage
+     * @var MonitoredPool
      */
-    private $storage;
+    private $pool;
 
     /**
      * @param Module        $module
-     * @param DataStorage   $storage
+     * @param MonitoredPool $pool
      */
-    public function __construct(Module $module, DataStorage $storage)
+    public function __construct(Module $module, MonitoredPool $pool)
     {
         $this->module = $module;
-        $this->storage = $storage;
+        $this->pool = $pool;
     }
 
     /**
@@ -51,12 +53,12 @@ class ModuleLogHandler extends AbstractHandler
             return;
         }
 
-        $this->storage->store('log', [
+        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', [
             'type' => 'stdout',
             'module' => $this->module->getId(),
             'level' => $matches[4],
             'method' => $matches[5],
             'content' => $matches[6]
-        ]);
+        ]]));
     }
 }

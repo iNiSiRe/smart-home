@@ -1438,12 +1438,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/iNiSiRe/react-bundle.git",
-                "reference": "0f74ff3f93a3b9e230ca71bd4dccce74d10de395"
+                "reference": "7cfc2946dcac89cfe59463b89fbe6647735be9d4"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/iNiSiRe/react-bundle/zipball/0f74ff3f93a3b9e230ca71bd4dccce74d10de395",
-                "reference": "0f74ff3f93a3b9e230ca71bd4dccce74d10de395",
+                "url": "https://api.github.com/repos/iNiSiRe/react-bundle/zipball/7cfc2946dcac89cfe59463b89fbe6647735be9d4",
+                "reference": "7cfc2946dcac89cfe59463b89fbe6647735be9d4",
                 "shasum": ""
             },
             "require": {
@@ -1468,7 +1468,7 @@
                 "reactphp",
                 "symfony"
             ],
-            "time": "2018-10-24T09:24:29+00:00"
+            "time": "2018-10-26T19:27:01+00:00"
         },
         {
             "name": "inisire/utils",

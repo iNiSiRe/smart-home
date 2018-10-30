@@ -4,8 +4,9 @@
 namespace HomeBundle\Service;
 
 use Elasticsearch\Client;
+use inisire\ReactBundle\Threaded\ThreadedServiceInterface;
 
-class DataStorage
+class DataStorage implements ThreadedServiceInterface
 {
     /**
      * @var Client
@@ -26,7 +27,7 @@ class DataStorage
      *
      * @throws \Exception
      */
-    public function store(string $type, array $data)
+    public function store($type, array $data)
     {
         $date = new \DateTime();
 

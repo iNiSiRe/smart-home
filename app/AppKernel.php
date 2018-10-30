@@ -5,6 +5,9 @@ use Symfony\Component\Config\Loader\LoaderInterface;
 
 class AppKernel extends Kernel
 {
+    /**
+     * @return array|iterable|\Symfony\Component\HttpKernel\Bundle\BundleInterface[]
+     */
     public function registerBundles()
     {
         $bundles = [
@@ -53,35 +56,5 @@ class AppKernel extends Kernel
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
         $loader->load($this->getRootDir().'/config/config_'.$this->getEnvironment().'.yml');
-    }
-
-    public function buildContainer()
-    {
-        $container = parent::buildContainer();
-
-        $ids = $container->getServiceIds();
-
-        foreach ($ids as $id) {
-
-            if ($container->hasDefinition($id)) {
-
-                $definition = $container->getDefinition($id);
-
-                $definition
-                    ->setPublic(true)
-                    ->setPrivate(false);
-
-            } elseif ($container->hasAlias($id)) {
-
-                $alias = $container->getAlias($id);
-                $alias
-                    ->setPrivate(false)
-                    ->setPublic(true);
-
-            }
-
-        }
-
-        return $container;
     }
 }

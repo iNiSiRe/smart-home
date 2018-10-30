@@ -69,18 +69,16 @@ class DefaultController extends Controller
      * @param MonitoredPool $pool
      *
      * @return JsonResponse
+     *
      */
-    public function test(MonitoredPool $pool, DataStorage $storage)
+    public function test(MonitoredPool $pool)
     {
-        $storage->store('1', ['1']);
-
         for ($i = 0; $i < 5; $i++) {
-            $pool->submit(new ServiceMethodCall(DataStorage::class, 'store', [ '', ['test' => 1] ]));
+            $pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['', ['test' => 2]]));
         }
 
         return new JsonResponse([
-            'success' => true,
-            'status' => $pool->getStatus()
+            'success' => true
         ]);
     }
 

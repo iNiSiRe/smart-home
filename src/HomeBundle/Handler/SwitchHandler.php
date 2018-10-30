@@ -8,6 +8,8 @@ use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\SwitchUnit;
 use HomeBundle\Entity\Unit;
 use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\Threaded\MonitoredPool;
+use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class SwitchHandler extends AbstractHandler
 {
@@ -22,22 +24,22 @@ class SwitchHandler extends AbstractHandler
     private $manager;
 
     /**
-     * @var DataStorage
+     * @var MonitoredPool
      */
-    private $storage;
+    private $pool;
 
     /**
      * SwitchHandler constructor.
      *
      * @param SwitchUnit    $unit
      * @param EntityManager $manager
-     * @param DataStorage   $storage
+     * @param MonitoredPool $pool
      */
-    public function __construct(SwitchUnit $unit, EntityManager $manager, DataStorage $storage)
+    public function __construct(SwitchUnit $unit, EntityManager $manager, MonitoredPool $pool)
     {
         $this->unit = $unit;
         $this->manager = $manager;
-        $this->storage = $storage;
+        $this->pool = $pool;
     }
 
     /**
@@ -65,10 +67,12 @@ class SwitchHandler extends AbstractHandler
         $this->unit->setEnabled($enabled);
         $this->manager->flush($this->unit);
 
-        $this->storage->store('log', [
-            'unit' => $this->unit->getId(),
-            'type' => 'switch',
+        $data = [
+            'unit'    => $this->unit->getId(),
+            'type'    => 'switch',
             'enabled' => $enabled
-        ]);
+        ];
+
+        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', $data]));
     }
 }
