@@ -24,22 +24,22 @@ class SwitchHandler extends AbstractHandler
     private $manager;
 
     /**
-     * @var Pool
+     * @var DataStorage
      */
-    private $pool;
+    private $storage;
 
     /**
      * SwitchHandler constructor.
      *
      * @param SwitchUnit    $unit
      * @param EntityManager $manager
-     * @param Pool          $pool
+     * @param DataStorage   $storage
      */
-    public function __construct(SwitchUnit $unit, EntityManager $manager, Pool $pool)
+    public function __construct(SwitchUnit $unit, EntityManager $manager, DataStorage $storage)
     {
         $this->unit = $unit;
         $this->manager = $manager;
-        $this->pool = $pool;
+        $this->storage = $storage;
     }
 
     /**
@@ -56,6 +56,7 @@ class SwitchHandler extends AbstractHandler
      * @return void
      *
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     function onMessage(Message $message)
     {
@@ -73,6 +74,6 @@ class SwitchHandler extends AbstractHandler
             'enabled' => $enabled
         ];
 
-        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', $data]));
+        $this->storage->store('log', $data);
     }
 }

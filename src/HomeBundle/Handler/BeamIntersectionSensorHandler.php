@@ -32,9 +32,9 @@ class BeamIntersectionSensorHandler extends AbstractHandler
     private $client;
 
     /**
-     * @var Pool
+     * @var DataStorage
      */
-    private $pool;
+    private $storage;
 
     /**
      * BeamIntersectionSensorHandler constructor.
@@ -42,14 +42,14 @@ class BeamIntersectionSensorHandler extends AbstractHandler
      * @param BeamIntersectionSensor $unit
      * @param EntityManager          $manager
      * @param ReactMqttClient        $client
-     * @param Pool                   $pool
+     * @param DataStorage            $storage
      */
-    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, Pool $pool)
+    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, DataStorage $storage)
     {
         $this->unit = $unit;
         $this->manager = $manager;
         $this->client = $client;
-        $this->pool = $pool;
+        $this->storage = $storage;
     }
 
     /**
@@ -66,6 +66,7 @@ class BeamIntersectionSensorHandler extends AbstractHandler
      * @return void
      *
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     function onMessage(Message $message)
     {
@@ -102,7 +103,7 @@ class BeamIntersectionSensorHandler extends AbstractHandler
             'direction' => $direction
         ];
 
-        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', $data]));
+        $this->storage->store('log', $data);
 
         $data = [
             'room' => $this->unit->getRoomTo()->getId(),
@@ -110,6 +111,6 @@ class BeamIntersectionSensorHandler extends AbstractHandler
             'count' => $this->unit->getRoomTo()->getInhabitants()
         ];
 
-        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', $data]));
+        $this->storage->store('log', $data);
     }
 }
