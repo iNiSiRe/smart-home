@@ -9,7 +9,7 @@ use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\LogRecord;
 use HomeBundle\Entity\Module;
 use HomeBundle\Service\DataStorage;
-use inisire\ReactBundle\Threaded\MonitoredPool;
+use inisire\ReactBundle\Threaded\Pool;
 use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class ModuleLogHandler extends AbstractHandler
@@ -20,18 +20,18 @@ class ModuleLogHandler extends AbstractHandler
     private $module;
 
     /**
-     * @var MonitoredPool
+     * @var DataStorage
      */
-    private $pool;
+    private $storage;
 
     /**
-     * @param Module        $module
-     * @param MonitoredPool $pool
+     * @param Module      $module
+     * @param DataStorage $storage
      */
-    public function __construct(Module $module, MonitoredPool $pool)
+    public function __construct(Module $module, DataStorage $storage)
     {
         $this->module = $module;
-        $this->pool = $pool;
+        $this->storage = $storage;
     }
 
     /**
@@ -46,6 +46,8 @@ class ModuleLogHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
+     *
+     * @throws \Exception
      */
     function onMessage(Message $message)
     {
@@ -53,12 +55,12 @@ class ModuleLogHandler extends AbstractHandler
             return;
         }
 
-        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', [
+        $this->storage->store('log', [
             'type' => 'stdout',
             'module' => $this->module->getId(),
             'level' => $matches[4],
             'method' => $matches[5],
             'content' => $matches[6]
-        ]]));
+        ]);
     }
 }

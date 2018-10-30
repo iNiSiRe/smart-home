@@ -13,7 +13,7 @@ use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\TemperatureHumidityUnit;
 use HomeBundle\Service\DataStorage;
-use inisire\ReactBundle\Threaded\MonitoredPool;
+use inisire\ReactBundle\Threaded\Pool;
 use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class TemperatureHandler extends AbstractHandler
@@ -29,22 +29,22 @@ class TemperatureHandler extends AbstractHandler
     private $manager;
 
     /**
-     * @var MonitoredPool
+     * @var DataStorage
      */
-    private $pool;
+    private $storage;
 
     /**
      * TemperatureHandler constructor.
      *
      * @param TemperatureHumidityUnit $unit
      * @param EntityManager           $manager
-     * @param MonitoredPool           $pool
+     * @param DataStorage             $storage
      */
-    public function __construct(TemperatureHumidityUnit $unit, EntityManager $manager, MonitoredPool $pool)
+    public function __construct(TemperatureHumidityUnit $unit, EntityManager $manager, DataStorage $storage)
     {
         $this->unit = $unit;
         $this->manager = $manager;
-        $this->pool = $pool;
+        $this->storage = $storage;
     }
 
     /**
@@ -61,6 +61,7 @@ class TemperatureHandler extends AbstractHandler
      * @return void
      *
      * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     function onMessage(Message $message)
     {
@@ -85,6 +86,6 @@ class TemperatureHandler extends AbstractHandler
             'humidity'    => $this->unit->getHumidity()
         ];
 
-        $this->pool->submit(new ServiceMethodCall(DataStorage::class, 'store', ['log', $data]));
+        $this->storage->store('log', $data);
     }
 }

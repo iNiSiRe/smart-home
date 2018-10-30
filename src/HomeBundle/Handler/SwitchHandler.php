@@ -8,7 +8,7 @@ use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\SwitchUnit;
 use HomeBundle\Entity\Unit;
 use HomeBundle\Service\DataStorage;
-use inisire\ReactBundle\Threaded\MonitoredPool;
+use inisire\ReactBundle\Threaded\Pool;
 use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class SwitchHandler extends AbstractHandler
@@ -24,7 +24,7 @@ class SwitchHandler extends AbstractHandler
     private $manager;
 
     /**
-     * @var MonitoredPool
+     * @var Pool
      */
     private $pool;
 
@@ -33,9 +33,9 @@ class SwitchHandler extends AbstractHandler
      *
      * @param SwitchUnit    $unit
      * @param EntityManager $manager
-     * @param MonitoredPool $pool
+     * @param Pool          $pool
      */
-    public function __construct(SwitchUnit $unit, EntityManager $manager, MonitoredPool $pool)
+    public function __construct(SwitchUnit $unit, EntityManager $manager, Pool $pool)
     {
         $this->unit = $unit;
         $this->manager = $manager;

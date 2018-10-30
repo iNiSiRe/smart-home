@@ -11,7 +11,7 @@ use HomeBundle\Bridge\BeamIntersectionSensorBridge;
 use HomeBundle\Entity\BeamIntersectionSensor;
 use HomeBundle\Entity\Unit;
 use HomeBundle\Service\DataStorage;
-use inisire\ReactBundle\Threaded\MonitoredPool;
+use inisire\ReactBundle\Threaded\Pool;
 use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class BeamIntersectionSensorHandler extends AbstractHandler
@@ -32,7 +32,7 @@ class BeamIntersectionSensorHandler extends AbstractHandler
     private $client;
 
     /**
-     * @var MonitoredPool
+     * @var Pool
      */
     private $pool;
 
@@ -42,9 +42,9 @@ class BeamIntersectionSensorHandler extends AbstractHandler
      * @param BeamIntersectionSensor $unit
      * @param EntityManager          $manager
      * @param ReactMqttClient        $client
-     * @param MonitoredPool          $pool
+     * @param Pool                   $pool
      */
-    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, MonitoredPool $pool)
+    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, Pool $pool)
     {
         $this->unit = $unit;
         $this->manager = $manager;

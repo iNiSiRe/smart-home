@@ -4,9 +4,10 @@
 namespace HomeBundle\Application;
 
 
+use HomeBundle\Application\Task\PingTask;
+use inisire\ReactBundle\Threaded\Pool;
 use Monolog\Logger;
 use React\EventLoop\LoopInterface;
-use Symfony\Component\Process\Process;
 
 class InhabitantsMonitorApplication
 {
@@ -31,13 +32,20 @@ class InhabitantsMonitorApplication
     private $logger;
 
     /**
+     * @var Pool
+     */
+    private $pool;
+
+    /**
      * @param LoopInterface $loop
      * @param array         $ips
+     * @param Pool          $pool
      */
-    public function __construct(LoopInterface $loop, $ips = [])
+    public function __construct(LoopInterface $loop, $ips, Pool $pool)
     {
         $this->ips = $ips;
         $this->loop = $loop;
+        $this->pool = $pool;
     }
 
     public function setLogger(Logger $logger)
@@ -47,26 +55,18 @@ class InhabitantsMonitorApplication
 
     public function loop()
     {
-        $inhabitants = [];
+        $this->pool->submit(new PingTask($this->ips), function ($result) {
 
-        foreach ($this->ips as $ip) {
-            $ping = new Process(['ping', '-w 1', '-c 1', $ip]);
-            $ping->setTimeout(3000);
-            $ping->run();
-            $ping->wait();
-            $output = $ping->getOutput();
-            preg_match('#1 packets transmitted, (\d+) packets received, \d+% packet loss#', $output, $matches);
+            $inhabitants = [];
 
-            if (count($matches) > 1 && $matches[1] > 0) {
-                $inhabitants[] = $ip;
+            foreach ($result as $ip => $alive) {
+                if ($alive === true) {
+                    $inhabitants[] = $ip;
+                }
             }
 
-            if ($this->logger) {
-                $this->logger->debug(sprintf('%s::%s -> ping result', __CLASS__, __METHOD__), ['out' => $output]);
-            }
-        }
-
-        $this->inhabitants = $inhabitants;
+            $this->inhabitants = $inhabitants;
+        });
     }
 
     public function start()

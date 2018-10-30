@@ -18,3 +18,4 @@
 .idea
 composer.phar
 .bash_history
+phpstorm-stubs

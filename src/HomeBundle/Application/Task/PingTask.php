@@ -2,15 +2,12 @@
 
 namespace HomeBundle\Application\Task;
 
-class PingTask
+use inisire\ReactBundle\Threaded\Task;
+use Symfony\Component\Process\Process;
+
+class PingTask extends Task
 {
-    public $id;
-
     private $ips;
-
-    private $result;
-
-    private $completed;
 
     /**
      * PingTask constructor.
@@ -20,5 +17,26 @@ class PingTask
     public function __construct($ips)
     {
         $this->ips = $ips;
+        parent::__construct();
+    }
+
+    protected function doRun()
+    {
+        foreach ($this->ips as $ip) {
+            $ping = new Process(['ping', '-w 1', '-c 1', $ip]);
+            $ping->setTimeout(3000);
+            $ping->run();
+            $ping->wait();
+            $output = $ping->getOutput();
+            preg_match('#1 packets transmitted, (\d+) packets received, \d+% packet loss#', $output, $matches);
+
+            if (count($matches) > 1 && $matches[1] > 0) {
+                $this->result[$ip] = true;
+            } else {
+                $this->result[$ip] = false;
+            }
+        }
+
+        $this->completed = true;
     }
 }

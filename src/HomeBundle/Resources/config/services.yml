@@ -8,10 +8,6 @@ services:
     autoconfigure: true
     public: false
 
-  _instanceof:
-    inisire\ReactBundle\Threaded\ThreadedServiceInterface:
-      tags: ['threaded']
-
   HomeBundle\Service\:
     resource: "../../Service/*"
 
@@ -23,7 +19,11 @@ services:
     public: true
 
   HomeBundle\Application\InhabitantsMonitorApplication:
-    arguments: ["@react.loop", "%inhabitants_ips%"]
+    arguments:
+      - "@react.loop"
+      - "%inhabitants_ips%"
+      - '@inisire\ReactBundle\Threaded\Pool'
+    shared: true
     calls:
       - [setLogger, ["@logger"]]
 
@@ -33,4 +33,5 @@ services:
 
   Elasticsearch\Client:
     factory: ['@Elasticsearch\ClientBuilder', "build"]
+    public: true
 
