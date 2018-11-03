@@ -29,8 +29,7 @@ services:
       - mongodata:/data/db/
 
   supervisor:
-    build:
-      context: .
+    image: inisire/php:7.2-zts
     command: /usr/bin/supervisord
     links:
      - mysql

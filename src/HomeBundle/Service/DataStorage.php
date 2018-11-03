@@ -3,22 +3,22 @@
 
 namespace HomeBundle\Service;
 
-use Elasticsearch\Client;
-use inisire\ReactBundle\Threaded\ThreadedServiceInterface;
+use HomeBundle\Task\ElasticWriteTask;
+use inisire\ReactBundle\Threaded\Pool;
 
-class DataStorage implements ThreadedServiceInterface
+class DataStorage
 {
     /**
-     * @var Client
+     * @var Pool
      */
-    private $client;
+    private $pool;
 
     /**
-     * @param Client        $client
+     * @param Pool $pool
      */
-    public function __construct(Client $client)
+    public function __construct(Pool $pool)
     {
-        $this->client = $client;
+        $this->pool = $pool;
     }
 
     /**
@@ -29,31 +29,6 @@ class DataStorage implements ThreadedServiceInterface
      */
     public function store($type, array $data)
     {
-        $date = new \DateTime();
-
-        $data['timestamp'] = time() * 1000;
-
-        $index = 'log-' . $date->format('Y.m.d');
-
-        if (!$this->client->indices()->exists(['index' => $index])) {
-            $this->client->indices()->create([
-                'index' => $index,
-                'body' => [
-                    'mappings' => [
-                        '_doc' => [
-                            'properties' => [
-                                'timestamp' => ['type' => 'date']
-                            ]
-                        ]
-                    ]
-                ]
-            ]);
-        }
-
-        $this->client->index([
-            'index' => $index,
-            'type' => '_doc',
-            'body' => $data
-        ]);
+        $this->pool->submit(new ElasticWriteTask($data));
     }
 }

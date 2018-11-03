@@ -18,6 +18,7 @@ use HomeBundle\Handler\PingHandler;
 use HomeBundle\Handler\ModuleRegisterHandler;
 use HomeBundle\Handler\SwitchHandler;
 use HomeBundle\Handler\TemperatureHandler;
+use inisire\ReactBundle\Threaded\Pool;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Bootstrap
@@ -59,7 +60,8 @@ class Bootstrap
      * @param DataStorage                   $storage
      * @param InhabitantsMonitorApplication $inhabitantsMonitorApplication
      */
-    public function __construct(ContainerInterface $container, DataStorage $storage, InhabitantsMonitorApplication $inhabitantsMonitorApplication)
+    public function __construct(ContainerInterface $container, DataStorage $storage,
+                                InhabitantsMonitorApplication $inhabitantsMonitorApplication)
     {
         $this->manager = $container->get(EntityManager::class);
         $this->handler = $container->get(MqttHandler::class);

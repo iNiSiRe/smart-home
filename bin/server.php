@@ -4,7 +4,9 @@ $loader = require __DIR__ . '/../app/autoload.php';
 
 require_once __DIR__ . '/../app/AppKernel.php';
 
-$kernel = new AppKernel('dev', true);
+$env = $argv[1] == 'prod' ? 'prod' : 'dev';
+
+$kernel = new AppKernel($env, $env == 'dev');
 $kernel->boot();
 
 $container = $kernel->getContainer();
@@ -15,6 +17,5 @@ $container->get('HomeBundle\Service\Bootstrap')->boot();
 $container->get('CommonBundle\Handler\MqttHandler')->start();
 
 $pool = $container->get('worker.pool');
-$monitor = $container->get('inisire\ReactBundle\Threaded\PoolMonitor');
 
 $container->get('react.loop')->run();
