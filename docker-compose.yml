@@ -92,7 +92,8 @@ services:
       dockerfile: docker/motion/Dockerfile
       context: .
     volumes:
-      - ./docker/motion/conf.d:/etc/motion/conf.d
+      - ./docker/motion/conf.d:/usr/local/etc/motion/conf.d
+      - ./docker/motion/motion.conf:/usr/local/etc/motion/motion.conf
     ports:
       - "8091:8091"
 
