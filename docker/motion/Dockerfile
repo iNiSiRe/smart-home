@@ -20,7 +20,7 @@ RUN apt update && apt install -y \
 ADD "https://github.com/Motion-Project/motion/archive/release-4.1.1.zip" motion.zip
 
 RUN unzip motion.zip \
-    && cd motion-release-4.2.1 \
+    && cd motion-release-4.1.1 \
     && autoreconf -fiv \
     && ./configure \
     && make \
