@@ -93,6 +93,8 @@ services:
       context: .
     volumes:
       - ./docker/motion/conf.d:/etc/motion/conf.d
+    ports:
+      - "8091:8091"
 
 volumes:
   mysqldata: {}
