@@ -1,0 +1,33 @@
+version: "3"
+services:
+
+  mysql:
+    restart: always
+
+  memcached:
+    restart: always
+
+  redis:
+    restart: always
+
+  mongo:
+    restart: always
+
+  supervisor:
+    restart: always
+
+  mosquitto:
+    restart: always
+
+  nginx:
+    restart: always
+
+  elasticsearch:
+    restart: always
+
+  kibana:
+    restart: always
+
+  camera-motion:
+    restart: always
+
