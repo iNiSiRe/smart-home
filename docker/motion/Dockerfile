@@ -17,7 +17,7 @@ RUN apt update && apt install -y \
         unzip \
         libavutil-dev libavformat-dev libavcodec-dev libswscale-dev libavdevice-dev
 
-ADD "https://github.com/Motion-Project/motion/archive/release-4.2.1.zip" motion.zip
+ADD "https://github.com/Motion-Project/motion/archive/release-4.1.1.zip" motion.zip
 
 RUN unzip motion.zip \
     && cd motion-release-4.2.1 \
