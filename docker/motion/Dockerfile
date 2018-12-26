@@ -1,28 +1,35 @@
-FROM ubuntu:xenial
+FROM ubuntu:latest
 
 ENV DEBIAN_FRONTEND noninteractive
 
-# Pre-install packages
-RUN apt update && apt install -y \
- software-properties-common
+RUN apt update
 
-RUN add-apt-repository -y ppa:jonathonf/ffmpeg-4
+RUN apt install -y \
+    autoconf automake
 
-# Install packages
-RUN apt update && apt install -y \
-        tzdata \
-        curl \
-        ffmpeg \
-        autoconf automake pkgconf libtool libjpeg8-dev build-essential libzip-dev gettext libmicrohttpd-dev \
-        unzip \
-        libavutil-dev libavformat-dev libavcodec-dev libswscale-dev libavdevice-dev
+RUN cd /
+ADD "https://ffmpeg.org/releases/ffmpeg-4.1.tar.bz2" .
+RUN tar -xf ffmpeg-4.1.tar.bz2
 
-ADD "https://github.com/Motion-Project/motion/archive/release-4.0.1.zip" motion.zip
+RUN apt install -y build-essential g++
 
-RUN unzip motion.zip \
-    && cd motion-release-4.0.1 \
-    && autoreconf -fiv \
-    && ./configure \
+RUN cd ffmpeg-4.1 \
+    && ./configure --disable-x86asm \
+    && make \
+    && make install
+
+RUN cd /
+ADD "https://github.com/Motion-Project/motion/archive/release-4.2.1.tar.gz" .
+RUN tar -xf release-4.2.1.tar.gz
+
+# Pre-install motion dependencies
+RUN apt install -y \
+    autoconf automake build-essential pkgconf libtool libzip-dev \
+    libjpeg-dev git libwebp-dev gettext libmicrohttpd-dev
+
+RUN cd motion-release-4.2.1 \
+    && autoreconf -fiv  \
+    && ./configure --with-ffmpeg=./ffmpeg-4.1 \
     && make \
     && make install
 
