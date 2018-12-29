@@ -102,7 +102,7 @@ services:
       dockerfile: docker/jsmpeg/Dockerfile
       context: .
     ports:
-      - "10800:8092"
+      - "10800:8082"
     command: ["websocket-relay.js", "secret", "8081", "8082"]
     entrypoint: node
 
