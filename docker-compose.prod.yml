@@ -28,6 +28,6 @@ services:
   kibana:
     restart: always
 
-  camera-motion:
-    restart: always
+#  motion:
+#    restart: always
 

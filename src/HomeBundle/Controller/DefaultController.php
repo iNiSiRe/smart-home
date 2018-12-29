@@ -34,6 +34,16 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/camera")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function cameraAction()
+    {
+        return $this->render('@Home/Default/camera.html.twig');
+    }
+
+    /**
      * @Route("/message")
      * @Method({"GET"})
      *

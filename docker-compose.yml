@@ -87,15 +87,30 @@ services:
     ports:
       - "5601:5601"
 
-  camera-motion:
+#  motion:
+#    build:
+#      dockerfile: docker/motion/Dockerfile
+#      context: .
+#    volumes:
+#      - ./docker/motion/conf.d:/usr/local/etc/motion/conf.d
+#      - ./docker/motion/motion.conf:/usr/local/etc/motion/motion.conf
+#    ports:
+#      - "8091:8091"
+
+  jsmpeg:
     build:
-      dockerfile: docker/motion/Dockerfile
+      dockerfile: docker/jsmpeg/Dockerfile
       context: .
-    volumes:
-      - ./docker/motion/conf.d:/usr/local/etc/motion/conf.d
-      - ./docker/motion/motion.conf:/usr/local/etc/motion/motion.conf
     ports:
-      - "8091:8091"
+      - "10800:8092"
+    command: ["websocket-relay.js", "secret", "8081", "8082"]
+    entrypoint: node
+
+  ffmpeg:
+    image: jrottenberg/ffmpeg:4.0-ubuntu
+    command: -i rtsp://192.168.31.197:554/onvif1 -f mpegts -vcodec mpeg1video -b:v 10000k -r 25 -s hd720 http://jsmpeg:8081/secret
+#    command: "60000"
+#    entrypoint: sleep
 
 volumes:
   mysqldata: {}
