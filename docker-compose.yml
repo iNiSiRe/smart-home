@@ -97,18 +97,18 @@ services:
 #    ports:
 #      - "8091:8091"
 
-  jsmpeg:
-    build:
-      dockerfile: docker/jsmpeg/Dockerfile
-      context: .
-    ports:
-      - "10800:8082"
-    command: ["websocket-relay.js", "secret", "8081", "8082"]
-    entrypoint: node
+#  jsmpeg:
+#    build:
+#      dockerfile: docker/jsmpeg/Dockerfile
+#      context: .
+#    ports:
+#      - "10800:8082"
+#    command: ["websocket-relay.js", "secret", "8081", "8082"]
+#    entrypoint: node
 
-  ffmpeg:
-    image: jrottenberg/ffmpeg:4.0-ubuntu
-    command: -i rtsp://192.168.31.197:554/onvif1 -f mpegts -vcodec mpeg1video -b:v 10000k -r 25 -s hd720 http://jsmpeg:8081/secret
+#  ffmpeg:
+#    image: jrottenberg/ffmpeg:4.0-ubuntu
+#    command: -i rtsp://192.168.31.197:554/onvif1 -f mpegts -vcodec mpeg1video -b:v 10000k -r 25 -s hd720 http://jsmpeg:8081/secret
 #    command: "60000"
 #    entrypoint: sleep
 
