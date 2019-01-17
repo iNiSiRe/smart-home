@@ -35,7 +35,9 @@
         "inisire/react-bundle": "dev-master",
         "binsoul/net-mqtt-client-react": "^1.0@dev",
         "inisire/utils": "dev-master",
-        "elasticsearch/elasticsearch": "^6.0"
+        "elasticsearch/elasticsearch": "^6.0",
+        "bunny/bunny": "^0.4.1",
+        "react/child-process": "^0.6.0"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
