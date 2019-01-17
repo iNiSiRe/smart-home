@@ -12,6 +12,8 @@ $ffmpeg->stdout->pipe($stream);
 
 $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterface $request) use ($stream) {
 
+    $stream->resume();
+
     return new React\Http\Response(
         200,
         [
