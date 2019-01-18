@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "8c1ca35c7f76e81324ea2b101ab22968",
+    "content-hash": "c447dbf5a01ce5c7312679f085f334ca",
     "packages": [
         {
             "name": "binsoul/net-mqtt",
@@ -60,16 +60,16 @@
         },
         {
             "name": "binsoul/net-mqtt-client-react",
-            "version": "dev-master",
+            "version": "0.3.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/binsoul/net-mqtt-client-react.git",
-                "reference": "091bee26c230bafffd8fade5efdda1d1ff040591"
+                "reference": "6a80fea50e927ebb8bb8a631ea7903c22742ded5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/binsoul/net-mqtt-client-react/zipball/091bee26c230bafffd8fade5efdda1d1ff040591",
-                "reference": "091bee26c230bafffd8fade5efdda1d1ff040591",
+                "url": "https://api.github.com/repos/binsoul/net-mqtt-client-react/zipball/6a80fea50e927ebb8bb8a631ea7903c22742ded5",
+                "reference": "6a80fea50e927ebb8bb8a631ea7903c22742ded5",
                 "shasum": ""
             },
             "require": {
@@ -112,7 +112,7 @@
                 "mqtt",
                 "net"
             ],
-            "time": "2017-05-17T18:12:43+00:00"
+            "time": "2017-08-20T08:06:53+00:00"
         },
         {
             "name": "bunny/bunny",
@@ -2690,27 +2690,28 @@
         },
         {
             "name": "react/event-loop",
-            "version": "v1.0.0",
+            "version": "v0.4.3",
             "source": {
                 "type": "git",
                 "url": "https://github.com/reactphp/event-loop.git",
-                "reference": "0266aff7aa7b0613b1f38a723e14a0ebc55cfca3"
+                "reference": "8bde03488ee897dc6bb3d91e4e17c353f9c5252f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/reactphp/event-loop/zipball/0266aff7aa7b0613b1f38a723e14a0ebc55cfca3",
-                "reference": "0266aff7aa7b0613b1f38a723e14a0ebc55cfca3",
+                "url": "https://api.github.com/repos/reactphp/event-loop/zipball/8bde03488ee897dc6bb3d91e4e17c353f9c5252f",
+                "reference": "8bde03488ee897dc6bb3d91e4e17c353f9c5252f",
                 "shasum": ""
             },
             "require": {
-                "php": ">=5.3.0"
+                "php": ">=5.4.0"
             },
             "require-dev": {
-                "phpunit/phpunit": "~4.8.35 || ^5.7 || ^6.4"
+                "phpunit/phpunit": "~4.8"
             },
             "suggest": {
-                "ext-event": "~1.0 for ExtEventLoop",
-                "ext-pcntl": "For signal handling support when using the StreamSelectLoop"
+                "ext-event": "~1.0",
+                "ext-libev": "*",
+                "ext-libevent": ">=0.1.0"
             },
             "type": "library",
             "autoload": {
@@ -2722,12 +2723,12 @@
             "license": [
                 "MIT"
             ],
-            "description": "ReactPHP's core reactor event loop that libraries can use for evented I/O.",
+            "description": "Event loop abstraction layer that libraries can use for evented I/O.",
             "keywords": [
                 "asynchronous",
                 "event-loop"
             ],
-            "time": "2018-07-11T14:37:46+00:00"
+            "time": "2017-04-27T10:56:23+00:00"
         },
         {
             "name": "react/http",
@@ -5031,7 +5032,6 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "inisire/react-bundle": 20,
-        "binsoul/net-mqtt-client-react": 20,
         "inisire/utils": 20
     },
     "prefer-stable": false,
