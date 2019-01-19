@@ -4,13 +4,16 @@ $loader = require __DIR__ . '/../app/autoload.php';
 
 $loop = React\EventLoop\Factory::create();
 
-$ffmpeg = new \React\ChildProcess\Process('ffmpeg -i "rtsp://admin:ju789lki@192.168.31.197:554/onvif1" -f mpjpeg pipe:');
+$uri = getenv('RTSP_URI');
+$cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
+
+$ffmpeg = new \React\ChildProcess\Process($cmd);
 $ffmpeg->start($loop);
 
 $received = 0;
 $working = false;
 
-$handle = fopen('dev.log', 'a');
+$handle = fopen('var/logs/rtsp.log', 'a');
 $file = new \React\Stream\WritableResourceStream($handle, $loop);
 
 $ffmpeg->on('exit', function () use ($file) {

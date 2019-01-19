@@ -102,7 +102,13 @@ services:
 #      context: .
     ports:
       - "9001:9001"
-    command: /var/www/bin/rtsp_server.php
+    entrypoint: sleep
+    command: "90000"
+#    command: ./bin/rtsp_server.php
+    env_file:
+      - .env
+    user: 1000:1000
+    working_dir: /var/www
     volumes:
       - .:/var/www/
 
