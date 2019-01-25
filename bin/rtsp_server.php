@@ -7,32 +7,13 @@ $loop = React\EventLoop\Factory::create();
 $uri = getenv('RTSP_URI');
 $cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
 
-$ffmpeg = new \React\ChildProcess\Process($cmd);
+$ffmpeg = new \Service\FFmpeg($cmd);
 $ffmpeg->start($loop);
-
-$received = 0;
-$working = false;
 
 $handle = fopen('var/logs/rtsp.log', 'a');
 $file = new \React\Stream\WritableResourceStream($handle, $loop);
 
-$ffmpeg->on('exit', function () use ($file) {
-    $file->write('ffmpeg exit' . PHP_EOL);
-});
-
-$loop->addPeriodicTimer(1, function () use (&$received, &$working, $file) {
-
-    $file->write($received . PHP_EOL);
-    $working = $received > 0;
-    $received = 0;
-
-});
-
-$ffmpeg->stdout->on('data', function ($chunk) use (&$received) {
-    $received += strlen($chunk);
-});
-
-$server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterface $request) use ($ffmpeg, $loop, &$working, $file) {
+$server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterface $request) use ($ffmpeg, $loop, $file) {
 
     $file->write('request' . PHP_EOL);
 
@@ -43,7 +24,7 @@ $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterfac
             [
                 'Content-Type' => 'application/json'
             ],
-            json_encode(['working' => $working])
+            json_encode(['working' => $ffmpeg->isWorking()])
         );
 
     } else {
