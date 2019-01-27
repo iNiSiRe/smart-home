@@ -36,6 +36,10 @@ class FFmpeg extends Process
                 $this->working = $this->received > 0;
                 $this->received = 0;
 
+            });
+
+            $loop->addPeriodicTimer(15, function () use ($loop, $interval) {
+
                 if (!$this->working) {
                     $this->close();
                     $this->start($loop, $interval);
