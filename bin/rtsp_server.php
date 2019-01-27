@@ -10,12 +10,11 @@ $cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
 $ffmpeg = new \Service\FFmpeg($cmd);
 $ffmpeg->start($loop);
 
-$handle = fopen('var/logs/rtsp.log', 'a');
-$file = new \React\Stream\WritableResourceStream($handle, $loop);
+$logger = new \Service\Logger($loop, 'var/logs/rtsp.log');
 
-$server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterface $request) use ($ffmpeg, $loop, $file) {
+$server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterface $request) use ($ffmpeg, $loop, $logger) {
 
-    $file->write('request' . PHP_EOL);
+    $logger->write('info', 'request');
 
     if ($request->getUri()->getPath() == '/status') {
 
@@ -50,8 +49,8 @@ $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterfac
     }
 });
 
-$server->on('error', function ($error) use ($file) {
-    $file->write('error ' . get_class($error) . PHP_EOL);
+$server->on('error', function ($error) use ($logger) {
+    $logger->write('error ', get_class($error));
 });
 
 $socket = new React\Socket\Server('0.0.0.0:9001', $loop);

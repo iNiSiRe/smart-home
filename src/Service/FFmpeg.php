@@ -3,6 +3,7 @@
 namespace Service;
 
 use React\ChildProcess\Process;
+use React\EventLoop\LoopInterface;
 
 class FFmpeg extends Process
 {
@@ -21,26 +22,28 @@ class FFmpeg extends Process
      */
     private $monitor;
 
-    public function start(\React\EventLoop\LoopInterface $loop, $interval = 0.1)
+    /**
+     * @inheritdoc
+     */
+    public function start(LoopInterface $loop, $interval = 0.1)
     {
         parent::start($loop, $interval);
 
         if (!$this->monitor) {
 
-            $this->monitor = $loop->addPeriodicTimer(1, function () {
+            $this->monitor = $loop->addPeriodicTimer(1, function () use ($loop, $interval) {
+
                 $this->working = $this->received > 0;
                 $this->received = 0;
+
+                if (!$this->working) {
+                    $this->close();
+                    $this->start($loop, $interval);
+                }
+
             });
 
         }
-
-        $this->on('exit', function () use ($loop) {
-
-            $this->terminate(SIGTERM);
-            $this->removeAllListeners();
-            $this->start($loop);
-
-        });
 
         $this->stdout->on('data', function ($chunk) use (&$received) {
             $this->received += strlen($chunk);
