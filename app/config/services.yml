@@ -22,3 +22,9 @@ services:
     class: BinSoul\Net\Mqtt\Client\React\ReactMqttClient
     arguments: ["@react_connector", "@react.loop"]
     public: true
+
+  Bunny\Async\Client:
+    class: Bunny\Async\Client
+    arguments:
+      - '@react.loop'
+      - {host:"rabbitmq", }

@@ -18,7 +18,6 @@ use HomeBundle\Handler\PingHandler;
 use HomeBundle\Handler\ModuleRegisterHandler;
 use HomeBundle\Handler\SwitchHandler;
 use HomeBundle\Handler\TemperatureHandler;
-use inisire\ReactBundle\Threaded\Pool;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 class Bootstrap
