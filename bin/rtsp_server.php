@@ -23,7 +23,7 @@ $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterfac
             [
                 'Content-Type' => 'application/json'
             ],
-            json_encode(['working' => $ffmpeg->isWorking()])
+            json_encode($ffmpeg->getStatus())
         );
 
     } else {
@@ -31,6 +31,10 @@ $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterfac
 
         $ffmpeg->stdout->on('data', $w = function ($chunk) use ($stream) {
             $stream->write($chunk);
+        });
+
+        $ffmpeg->stdout->on('close', function () use ($stream) {
+            $stream->end();
         });
 
         $stream->on('close', function () use ($ffmpeg, $w) {
@@ -51,6 +55,10 @@ $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterfac
 
 $server->on('error', function ($error) use ($logger) {
     $logger->write('error ', get_class($error));
+});
+
+$ffmpeg->on('exit', function () use ($logger) {
+    $logger->write('info ', 'exit');
 });
 
 $socket = new React\Socket\Server('0.0.0.0:9001', $loop);
