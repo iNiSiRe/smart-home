@@ -37,6 +37,10 @@ $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterfac
             $stream->end();
         });
 
+        $ffmpeg->on('exit', function () use ($stream) {
+            $stream->end();
+        });
+
         $stream->on('close', function () use ($ffmpeg, $w) {
             $ffmpeg->stdout->removeListener('data', $w);
         });
@@ -54,11 +58,11 @@ $server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterfac
 });
 
 $server->on('error', function ($error) use ($logger) {
-    $logger->write('error ', get_class($error));
+    $logger->write('error', get_class($error));
 });
 
 $ffmpeg->on('exit', function () use ($logger) {
-    $logger->write('info ', 'exit');
+    $logger->write('info', 'exit');
 });
 
 $socket = new React\Socket\Server('0.0.0.0:9001', $loop);

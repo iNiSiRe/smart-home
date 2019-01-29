@@ -96,7 +96,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   rtsp:
-    image: inisire/php-ffmpeg
+    image: inisire/php-ffmpeg-opencv
 #    build:
 #      dockerfile: docker/rtsp/Dockerfile
 #      context: .

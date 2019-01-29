@@ -41,11 +41,11 @@ class FFmpeg extends Process
 
         if (!$this->monitor) {
 
-            $this->monitor = $loop->addPeriodicTimer(1, function () use ($loop, $interval) {
+            $this->monitor = $loop->addPeriodicTimer(5, function () use ($loop, $interval) {
 
                 $this->working = $this->received > 0;
                 $this->received = 0;
-                $this->uptime++;
+                $this->uptime += 5;
 
             });
 
