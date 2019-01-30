@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "84ca4fbc050e278d7133ea7e1a6a1e43",
+    "content-hash": "7cdefd520ce3a70ce4ea52c938515d30",
     "packages": [
         {
             "name": "binsoul/net-mqtt",
@@ -63,12 +63,12 @@
             "version": "0.3.2",
             "source": {
                 "type": "git",
-                "url": "https://github.com/binsoul/net-mqtt-client-react.git",
+                "url": "https://github.com/iNiSiRe/net-mqtt-client-react.git",
                 "reference": "6a80fea50e927ebb8bb8a631ea7903c22742ded5"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/binsoul/net-mqtt-client-react/zipball/6a80fea50e927ebb8bb8a631ea7903c22742ded5",
+                "url": "https://api.github.com/repos/iNiSiRe/net-mqtt-client-react/zipball/6a80fea50e927ebb8bb8a631ea7903c22742ded5",
                 "reference": "6a80fea50e927ebb8bb8a631ea7903c22742ded5",
                 "shasum": ""
             },
