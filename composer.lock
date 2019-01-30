@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "7cdefd520ce3a70ce4ea52c938515d30",
+    "content-hash": "55c55361f1f915e65475e3ccbf699145",
     "packages": [
         {
             "name": "binsoul/net-mqtt",
@@ -60,21 +60,22 @@
         },
         {
             "name": "binsoul/net-mqtt-client-react",
-            "version": "0.3.2",
+            "version": "dev-master",
             "source": {
                 "type": "git",
                 "url": "https://github.com/iNiSiRe/net-mqtt-client-react.git",
-                "reference": "6a80fea50e927ebb8bb8a631ea7903c22742ded5"
+                "reference": "20e7465f03b44199259e735af7d25582cc5135f7"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/iNiSiRe/net-mqtt-client-react/zipball/6a80fea50e927ebb8bb8a631ea7903c22742ded5",
-                "reference": "6a80fea50e927ebb8bb8a631ea7903c22742ded5",
+                "url": "https://api.github.com/repos/iNiSiRe/net-mqtt-client-react/zipball/20e7465f03b44199259e735af7d25582cc5135f7",
+                "reference": "20e7465f03b44199259e735af7d25582cc5135f7",
                 "shasum": ""
             },
             "require": {
                 "binsoul/net-mqtt": "~0.2",
                 "php": "~5.6|~7.0",
+                "react/event-loop": "^0.5",
                 "react/promise": "~2.0",
                 "react/socket": "~0.8"
             },
@@ -93,7 +94,20 @@
                     "BinSoul\\Net\\Mqtt\\Client\\React\\": "src"
                 }
             },
-            "notification-url": "https://packagist.org/downloads/",
+            "autoload-dev": {
+                "psr-4": {
+                    "BinSoul\\Test\\Net\\Mqtt\\Client\\React\\": "tests"
+                }
+            },
+            "scripts": {
+                "test": [
+                    "phpunit"
+                ],
+                "fix-style": [
+                    "php-cs-fixer fix src",
+                    "php-cs-fixer fix tests"
+                ]
+            },
             "license": [
                 "MIT"
             ],
@@ -112,7 +126,10 @@
                 "mqtt",
                 "net"
             ],
-            "time": "2017-08-20T08:06:53+00:00"
+            "support": {
+                "source": "https://github.com/iNiSiRe/net-mqtt-client-react/tree/master"
+            },
+            "time": "2019-01-30T23:18:58+00:00"
         },
         {
             "name": "bunny/bunny",
@@ -5031,6 +5048,7 @@
     "minimum-stability": "stable",
     "stability-flags": {
         "inisire/react-bundle": 20,
+        "binsoul/net-mqtt-client-react": 20,
         "inisire/utils": 20
     },
     "prefer-stable": false,
