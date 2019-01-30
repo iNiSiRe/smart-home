@@ -96,7 +96,7 @@ services:
       - rabbitmq_data:/var/lib/rabbitmq
 
   rtsp:
-    image: inisire/php-ffmpeg-opencv
+    image: inisire/php-rtsp
 #    build:
 #      dockerfile: docker/rtsp/Dockerfile
 #      context: .
@@ -109,6 +109,7 @@ services:
     working_dir: /var/www
     volumes:
       - .:/var/www/
+      - ./docker/php.ini:/usr/local/etc/php/conf.d/25-configuration-php.ini
 
 volumes:
   mysqldata: {}

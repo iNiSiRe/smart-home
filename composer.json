@@ -38,7 +38,7 @@
         "elasticsearch/elasticsearch": "^6.0",
         "bunny/bunny": "^0.4.1",
         "react/child-process": "^0.6.0",
-        "react/event-loop": "^0.4"
+        "react/event-loop": "^0.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",

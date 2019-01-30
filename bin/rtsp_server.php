@@ -2,68 +2,25 @@
 
 $loader = require __DIR__ . '/../app/autoload.php';
 
-$loop = React\EventLoop\Factory::create();
-
 $uri = getenv('RTSP_URI');
 $cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
 
-$ffmpeg = new \Service\FFmpeg($cmd);
-$ffmpeg->start($loop);
-
+$loop = React\EventLoop\Factory::create();
 $logger = new \Service\Logger($loop, 'var/logs/rtsp.log');
-
-$server = new React\Http\Server(function (Psr\Http\Message\ServerRequestInterface $request) use ($ffmpeg, $loop, $logger) {
-
-    $logger->write('info', 'request');
-
-    if ($request->getUri()->getPath() == '/status') {
-
-        return new React\Http\Response(
-            200,
-            [
-                'Content-Type' => 'application/json'
-            ],
-            json_encode($ffmpeg->getStatus())
-        );
-
-    } else {
-        $stream = new \React\Stream\ThroughStream();
-
-        $ffmpeg->stdout->on('data', $w = function ($chunk) use ($stream) {
-            $stream->write($chunk);
-        });
-
-        $ffmpeg->stdout->on('close', function () use ($stream) {
-            $stream->end();
-        });
-
-        $ffmpeg->on('exit', function () use ($stream) {
-            $stream->end();
-        });
-
-        $stream->on('close', function () use ($ffmpeg, $w) {
-            $ffmpeg->stdout->removeListener('data', $w);
-        });
-
-        return new React\Http\Response(
-            200,
-            [
-                'Accept-Ranges' => 'bytes',
-                'Connection' => 'keep-alive',
-                'Content-Type' => 'multipart/x-mixed-replace;boundary=ffmpeg'
-            ],
-            $stream
-        );
-    }
-});
+$ffmpeg = new \Service\FFmpeg($cmd);
+$handler = new \Handler\RtspRequestHandler($loop, $logger, $ffmpeg);
+$server = new React\Http\Server([$handler, 'handleRequest']);
 
 $server->on('error', function ($error) use ($logger) {
     $logger->write('error', get_class($error));
 });
 
-$ffmpeg->on('exit', function () use ($logger) {
-    $logger->write('info', 'exit');
+$loop->addSignal(15, function () use ($loop, $logger) {
+    $logger->write('info', 'handle sigterm');
+    $loop->stop();
 });
+
+$ffmpeg->start($loop);
 
 $socket = new React\Socket\Server('0.0.0.0:9001', $loop);
 $server->listen($socket);

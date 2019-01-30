@@ -33,6 +33,13 @@ RUN cd php-opencv \
     && make \
     && make install
 
+# Install ext-event (depends on ext-sockets)
+RUN apt install -y libevent-dev libssl-dev \
+    && docker-php-ext-install sockets \
+    && docker-php-ext-enable sockets \
+    && pecl install event \
+    && docker-php-ext-enable event
+
 EXPOSE 9001
 
 ENTRYPOINT ["php"]
