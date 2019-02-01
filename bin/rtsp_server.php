@@ -15,6 +15,10 @@ $server->on('error', function ($error) use ($logger) {
     $logger->write('error', get_class($error));
 });
 
+$loop->addPeriodicTimer(60 * 15, function () use ($logger) {
+    $logger->write('info', "it's 15m tick");
+});
+
 $loop->addSignal(15, function () use ($loop, $logger) {
     $logger->write('info', 'handle sigterm');
     $loop->stop();

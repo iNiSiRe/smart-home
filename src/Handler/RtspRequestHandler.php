@@ -60,6 +60,8 @@ class RtspRequestHandler
 
                 if ($stream->isWritable()) {
                     $stream->write($chunk);
+                } else {
+                    $stream->end();
                 }
 
             });
