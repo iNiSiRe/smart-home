@@ -26,6 +26,11 @@ class RtspRequestHandler
     private $loop;
 
     /**
+     * @var int
+     */
+    private $count = 0;
+
+    /**
      * RtspRequestHandler constructor.
      *
      * @param LoopInterface $loop
@@ -41,7 +46,9 @@ class RtspRequestHandler
 
     public function handleRequest(ServerRequestInterface $request)
     {
-        $this->logger->write('info', 'request');
+        $count = $this->count++;
+
+        $this->logger->write('info', 'request ' . $count);
 
         if ($request->getUri()->getPath() == '/status') {
 
@@ -66,15 +73,25 @@ class RtspRequestHandler
 
             });
 
-            $stream->on('close', function () use ($w) {
+            $stream->on('close', function () use ($w, $count) {
+
                 $this->ffmpeg->stdout->removeListener('data', $w);
+                $this->logger->write('info', 'response stream close' . $count);
+
             });
 
             $this->ffmpeg->stdout->on('close', function () use ($stream) {
+
+                $this->logger->write('info', 'ffmpeg stdout is closed');
+
                 $stream->end();
+
             });
 
             $this->ffmpeg->on('exit', function () use ($stream) {
+
+                $this->logger->write('info', 'ffmpeg exit');
+
                 $stream->end();
             });
 
