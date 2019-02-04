@@ -33,6 +33,16 @@ class FFmpeg extends Process
     private $uptime = 0;
 
     /**
+     * @var Logger
+     */
+    private $logger;
+
+    public function setLogger(Logger $logger)
+    {
+        $this->logger = $logger;
+    }
+
+    /**
      * @inheritdoc
      */
     public function start(LoopInterface $loop, $interval = 0.1)
@@ -52,10 +62,14 @@ class FFmpeg extends Process
             $loop->addPeriodicTimer(30, function () use ($loop, $interval) {
 
                 if (!$this->working) {
+
+                    $this->logger->write('error', "ffmpeg isn't working, trying to restart");
+
                     $this->restarts++;
                     $this->uptime = 0;
                     $this->close();
                     $this->start($loop, $interval);
+
                 }
 
             });

@@ -75,8 +75,8 @@ class RtspRequestHandler
 
             $stream->on('close', function () use ($w, $count) {
 
-                $this->ffmpeg->stdout->removeListener('data', $w);
                 $this->logger->write('info', 'response stream close ' . $count);
+                $this->ffmpeg->stdout->removeListener('data', $w);
 
             });
 
