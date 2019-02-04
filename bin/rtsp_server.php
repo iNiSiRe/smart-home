@@ -7,7 +7,10 @@ $cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
 
 $loop = React\EventLoop\Factory::create();
 $logger = new \Service\Logger($loop, 'var/logs/rtsp.log');
+
 $ffmpeg = new \Service\FFmpeg($cmd);
+$ffmpeg->setLogger($logger);
+
 $handler = new \Handler\RtspRequestHandler($loop, $logger, $ffmpeg);
 $server = new React\Http\Server([$handler, 'handleRequest']);
 
