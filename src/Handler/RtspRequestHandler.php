@@ -6,12 +6,13 @@ namespace Handler;
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\LoopInterface;
 use Service\FFmpeg;
+use Service\FFmpegWatcher;
 use Service\Logger;
 
 class RtspRequestHandler
 {
     /**
-     * @var \Service\FFmpeg
+     * @var \Service\FFmpegWatcher
      */
     private $ffmpeg;
 
@@ -35,9 +36,9 @@ class RtspRequestHandler
      *
      * @param LoopInterface $loop
      * @param Logger $logger
-     * @param FFmpeg $ffmpeg
+     * @param FFmpegWatcher $ffmpeg
      */
-    public function __construct(LoopInterface $loop, Logger $logger, FFmpeg $ffmpeg)
+    public function __construct(LoopInterface $loop, Logger $logger, FFmpegWatcher $ffmpeg)
     {
         $this->loop = $loop;
         $this->logger = $logger;
@@ -63,7 +64,7 @@ class RtspRequestHandler
         } else {
             $stream = new \React\Stream\ThroughStream();
 
-            $this->ffmpeg->stdout->on('data', $w = function ($chunk) use ($stream) {
+            $this->ffmpeg->getStream()->on('data', $w = function ($chunk) use ($stream) {
 
                 if ($stream->isWritable()) {
                     $stream->write($chunk);
@@ -76,25 +77,9 @@ class RtspRequestHandler
             $stream->on('close', function () use ($w, $count) {
 
                 $this->logger->write('info', 'response stream close ' . $count);
-                $this->ffmpeg->stdout->removeListener('data', $w);
+                $this->ffmpeg->getStream()->removeListener('data', $w);
 
             });
-
-            $this->ffmpeg->stdout->on('close', function () use ($stream) {
-
-                $this->logger->write('info', 'ffmpeg stdout is closed');
-
-                $stream->end();
-
-            });
-
-            $this->ffmpeg->on('exit', function () use ($stream) {
-
-                $this->logger->write('info', 'ffmpeg exit');
-
-                $stream->end();
-            });
-
 
             return new \React\Http\Response(
                 200,

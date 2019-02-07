@@ -8,8 +8,8 @@ $cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
 $loop = React\EventLoop\Factory::create();
 $logger = new \Service\Logger($loop, 'var/logs/rtsp.log');
 
-$ffmpeg = new \Service\FFmpeg($cmd);
-$ffmpeg->setLogger($logger);
+$ffmpeg = new \Service\FFmpegWatcher($cmd, $loop, $logger);
+$ffmpeg->start();
 
 $handler = new \Handler\RtspRequestHandler($loop, $logger, $ffmpeg);
 $server = new React\Http\Server([$handler, 'handleRequest']);
@@ -33,8 +33,6 @@ $loop->addSignal(15, function () use ($loop, $logger) {
     $logger->write('info', 'handle sigterm');
     $loop->stop();
 });
-
-$ffmpeg->start($loop);
 
 $socket = new React\Socket\Server('0.0.0.0:9001', $loop);
 $server->listen($socket);
