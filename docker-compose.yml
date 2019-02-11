@@ -102,7 +102,11 @@ services:
 #      context: .
     ports:
       - "9001:9001"
-    command: ./bin/rtsp_server.php
+      - "9002:9002"
+      - "40300:40300/udp"
+#    command: ./bin/rtsp_server.php
+    entrypoint: "sleep"
+    command: "9999999999"
     env_file:
       - .env
     user: 1000:1000

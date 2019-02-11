@@ -2,39 +2,61 @@
 
 $loader = require __DIR__ . '/../app/autoload.php';
 
-$uri = getenv('RTSP_URI');
-$cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
-
 $loop = React\EventLoop\Factory::create();
-$logger = new \Service\Logger($loop, 'var/logs/rtsp.log');
 
-$ffmpeg = new \Service\FFmpegWatcher($cmd, $loop, $logger);
-$ffmpeg->start();
+$uri = getenv('RTSP_URI');
 
-$handler = new \Handler\RtspRequestHandler($loop, $logger, $ffmpeg);
-$server = new React\Http\Server([$handler, 'handleRequest']);
+//$cmd = sprintf('ffmpeg -i "%s" -f mpjpeg pipe:', $uri);
 
-set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($logger) {
+//$logger = new \Service\Logger($loop, 'var/logs/rtsp.log');
+//
+//$ffmpeg = new \Service\FFmpegWatcher($cmd, $loop, $logger);
+//$ffmpeg->start();
+//
+//$handler = new \Handler\RtspRequestHandler($loop, $logger, $ffmpeg);
+//$server = new React\Http\Server([$handler, 'handleRequest']);
+//
 
-    $error = sprintf('[error] %s %s in %s:%s', $errno, $errstr, $errfile, $errline);
-    file_put_contents('var/logs/rtsp.log', $error);
+//
+//$server->on('error', function ($error) use ($logger) {
+//    $logger->write('error', get_class($error));
+//});
+//
+//$loop->addPeriodicTimer(60 * 15, function () use ($logger) {
+//    $logger->write('info', "it's 15m tick");
+//});
+//
+//$loop->addSignal(15, function () use ($loop, $logger) {
+//    $logger->write('info', 'handle sigterm');
+//    $loop->stop();
+//});
+//
+//$socket = new React\Socket\Server('0.0.0.0:9001', $loop);
+//$server->listen($socket);
 
-});
+//$size = 0;
 
-$server->on('error', function ($error) use ($logger) {
-    $logger->write('error', get_class($error));
-});
+//$factory = new \React\Datagram\Factory($loop);
+//$factory->createServer('0.0.0.0:40300')->then(function (\React\Datagram\Socket $socket) use (&$size) {
+//
+//    $socket->on('message', function ($message, $address, $server) use (&$size) {
+//
+//        $size += strlen($message);
+//
+//    });
+//
+//});
+//
+//$loop->addPeriodicTimer(15, function () use (&$size) {
+//
+//    if ($size > 0) {
+//        echo 'UDP received: '. $size . PHP_EOL;
+//    }
+//
+//});
 
-$loop->addPeriodicTimer(60 * 15, function () use ($logger) {
-    $logger->write('info', "it's 15m tick");
-});
-
-$loop->addSignal(15, function () use ($loop, $logger) {
-    $logger->write('info', 'handle sigterm');
-    $loop->stop();
-});
-
-$socket = new React\Socket\Server('0.0.0.0:9001', $loop);
-$server->listen($socket);
+//$client = new \RTSP\Client($loop);
+//
+//$client->connect($uri);
 
 $loop->run();
