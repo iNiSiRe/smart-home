@@ -26,6 +26,7 @@
         "php": ">=5.5.9",
         "ext-json": "*",
         "ext-pthreads": "*",
+        "ext-posix": "*",
         "symfony/symfony": "^3.4",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",

@@ -60,22 +60,28 @@ class FFmpegWatcher
      */
     private $logger;
 
+    /**
+     * @var SafeCallableWrapper
+     */
+    private $callableWrapper;
+
     public function __construct($cmd, LoopInterface $loop, Logger $logger)
     {
         $this->cmd = $cmd;
         $this->loop = $loop;
         $this->stream = new ThroughStream();
         $this->logger = $logger;
+        $this->callableWrapper = new SafeCallableWrapper($this->logger);
 
-        $this->loop->addPeriodicTimer(5, function () {
+        $this->loop->addPeriodicTimer(5, $this->callableWrapper->wrap(function () {
 
             $this->working = $this->received > 0;
             $this->received = 0;
             $this->uptime += 5;
 
-        });
+        }));
 
-        $loop->addPeriodicTimer(10, function () {
+        $loop->addPeriodicTimer(30, $this->callableWrapper->wrap(function () {
 
             if (!$this->working) {
 
@@ -85,21 +91,38 @@ class FFmpegWatcher
                 $this->uptime = 0;
 
                 if ($this->ffmpeg !== null) {
-                    $this->ffmpeg->terminate(9);
-                    $this->ffmpeg->close();
+                    $this->stop();
                     $this->ffmpeg = null;
-                    $this->start();
+
+                    // Delayed start
+                    $this->loop->addTimer(5, function () {
+                        $this->start();
+                    });
                 }
 
             }
 
-        });
+        }));
+    }
+
+    public function stop()
+    {
+        do {
+            $this->logger->write('info', sprintf("Trying to kill PID '%s'", $this->ffmpeg->getPid()));
+            $this->ffmpeg->close();
+        } while ($this->ffmpeg->isRunning());
     }
 
     public function start()
     {
         $this->ffmpeg = new Process($this->cmd);
         $this->ffmpeg->start($this->loop);
+
+        $this->ffmpeg->stderr->on('data', function ($chunk) {
+
+            $this->logger->write('error', $chunk);
+
+        });
 
         $this->ffmpeg->stdout->on('data', function ($chunk) {
 
