@@ -66,10 +66,8 @@ class RtspRequestHandler
 
             $this->ffmpeg->getStream()->on('data', $w = function ($chunk) use ($stream) {
 
-                if ($stream->isWritable()) {
-                    $stream->write($chunk);
-                } else {
-                    $stream->end();
+                if ($stream->write($chunk)) {
+                    $stream->close();
                 }
 
             });

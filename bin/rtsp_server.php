@@ -18,7 +18,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($logger) {
 
     $trace = debug_backtrace();
     $error = sprintf('[error] %s %s in %s:%s' . PHP_EOL . json_encode($trace), $errno, $errstr, $errfile, $errline);
-    file_put_contents('var/logs/rtsp.log', $error);
+    file_put_contents('var/logs/rtsp.log', $error, FILE_APPEND);
 
 });
 
@@ -40,7 +40,7 @@ register_shutdown_function(function () {
         json_encode($trace)
     );
 
-    file_put_contents('var/logs/rtsp.log', $error);
+    file_put_contents('var/logs/rtsp.log', $error, FILE_APPEND);
 });
 
 $server->on('error', function ($error) use ($logger) {
