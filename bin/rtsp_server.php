@@ -3,7 +3,7 @@
 $loader = require __DIR__ . '/../app/autoload.php';
 
 $uri = getenv('RTSP_URI');
-$cmd = sprintf('ffmpeg -min_port 40300 -max_port 40302 -i "%s" -vcodec mjpeg -s hd480 -qscale 0 -f mpjpeg pipe:', $uri);
+$cmd = sprintf('ffmpeg -min_port 40300 -max_port 40302 -i "%s" -vcodec mjpeg -s hd480 -qscale 0 -loglevel error -f mpjpeg pipe:', $uri);
 
 $loop = React\EventLoop\Factory::create();
 $logger = new \Service\Logger($loop, 'var/logs/rtsp.log');

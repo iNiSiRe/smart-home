@@ -110,6 +110,7 @@ class FFmpegWatcher
         do {
             $this->logger->write('info', sprintf("Trying to kill PID '%s'", $this->ffmpeg->getPid()));
             $this->ffmpeg->close();
+            $this->logger->write('info', 'After close');
         } while ($this->ffmpeg->isRunning());
     }
 
