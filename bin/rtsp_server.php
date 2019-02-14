@@ -16,9 +16,31 @@ $server = new React\Http\Server([$handler, 'handleRequest']);
 
 set_error_handler(function ($errno, $errstr, $errfile, $errline) use ($logger) {
 
-    $error = sprintf('[error] %s %s in %s:%s', $errno, $errstr, $errfile, $errline);
+    $trace = debug_backtrace();
+    $error = sprintf('[error] %s %s in %s:%s' . PHP_EOL . json_encode($trace), $errno, $errstr, $errfile, $errline);
     file_put_contents('var/logs/rtsp.log', $error);
 
+});
+
+register_shutdown_function(function () {
+
+    $error = error_get_last();
+
+    if ($error == null) {
+        return;
+    }
+
+    $trace = debug_backtrace();
+
+    $error = sprintf(
+        '[fatal] %s in %s:%s' . PHP_EOL . '%s',
+        $error['message'],
+        $error['file'],
+        $error['line'],
+        json_encode($trace)
+    );
+
+    file_put_contents('var/logs/rtsp.log', $error);
 });
 
 $server->on('error', function ($error) use ($logger) {
