@@ -102,7 +102,7 @@ services:
 #      context: .
     ports:
       - "9001:9001"
-      - "8080:8080"
+      - "9002:9002"
       - "40300-40400:40300-40400/udp"
     command: ./bin/rtsp_server.php
     env_file:
