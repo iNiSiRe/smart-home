@@ -11,15 +11,11 @@ namespace Service;
 
 use React\ChildProcess\Process;
 use React\EventLoop\LoopInterface;
+use React\Stream\ReadableStreamInterface;
 use React\Stream\ThroughStream;
 
 class FFmpegWatcher
 {
-    /**
-     * @var ThroughStream
-     */
-    private $stream;
-
     /**
      * @var Process
      */
@@ -69,7 +65,7 @@ class FFmpegWatcher
     {
         $this->cmd = $cmd;
         $this->loop = $loop;
-        $this->stream = new ThroughStream();
+
         $this->logger = $logger;
         $this->callableWrapper = new SafeCallableWrapper($this->logger);
 
@@ -128,7 +124,6 @@ class FFmpegWatcher
         $this->ffmpeg->stdout->on('data', function ($chunk) {
 
             $this->received += strlen($chunk);
-            $this->stream->write($chunk);
 
         });
     }
@@ -151,10 +146,10 @@ class FFmpegWatcher
     }
 
     /**
-     * @return ThroughStream
+     * @return ReadableStreamInterface
      */
     public function getStream()
     {
-        return $this->stream;
+        return $this->ffmpeg->stdout;
     }
 }

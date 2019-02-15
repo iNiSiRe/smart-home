@@ -3,7 +3,8 @@
 $loader = require __DIR__ . '/../app/autoload.php';
 
 $uri = getenv('RTSP_URI');
-$cmd = sprintf('ffmpeg -min_port 40300 -max_port 40302 -i "%s" -vcodec mjpeg -s hd480 -qscale 0 -loglevel error -f mpjpeg pipe:', $uri);
+$cmd = sprintf('ffmpeg -min_port 40300 -max_port 40400 -i "%s" -vcodec mjpeg -s hd480 -qscale 0 -loglevel error -f mpjpeg pipe:', $uri);
+//$cmd = sprintf('ffmpeg -min_port 40300 -max_port 40400 -i "%s" -vcodec mjpeg -s 10x10 -qscale 0 -loglevel error -f mpjpeg pipe:', $uri);
 
 $loop = React\EventLoop\Factory::create();
 $logger = new \Service\Logger($loop, 'var/logs/rtsp.log');
@@ -43,8 +44,8 @@ register_shutdown_function(function () {
     file_put_contents('var/logs/rtsp.log', $error, FILE_APPEND);
 });
 
-$server->on('error', function ($error) use ($logger) {
-    $logger->write('error', get_class($error));
+$server->on('error', function (Exception $error) use ($logger) {
+    $logger->write('error', \Service\ExceptionDecorator::decorate($error));
 });
 
 $loop->addPeriodicTimer(60 * 15, function () use ($logger) {

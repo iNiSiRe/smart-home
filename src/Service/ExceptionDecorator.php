@@ -4,7 +4,7 @@ namespace Service;
 
 class ExceptionDecorator
 {
-    public static function decorate(\Exception $e) : string
+    public static function decorate(\Throwable $e) : string
     {
         return sprintf(
             'Exception %s with message "%s" in %s:%s',

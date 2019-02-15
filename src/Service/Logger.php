@@ -72,7 +72,7 @@ class Logger implements LoggerInterface
      */
     public function error($message, array $context = array())
     {
-        $this->log('debug', $message);
+        $this->log('error', $message);
     }
 
     /**
@@ -80,7 +80,7 @@ class Logger implements LoggerInterface
      */
     public function warning($message, array $context = array())
     {
-        $this->log('debug', $message);
+        $this->log('warning', $message);
     }
 
     /**

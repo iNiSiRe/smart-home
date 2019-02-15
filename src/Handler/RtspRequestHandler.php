@@ -5,9 +5,11 @@ namespace Handler;
 
 use Psr\Http\Message\ServerRequestInterface;
 use React\EventLoop\LoopInterface;
+use Service\ExceptionDecorator;
 use Service\FFmpeg;
 use Service\FFmpegWatcher;
 use Service\Logger;
+use Stream\ReadableStream;
 
 class RtspRequestHandler
 {
@@ -47,47 +49,44 @@ class RtspRequestHandler
 
     public function handleRequest(ServerRequestInterface $request)
     {
-        $count = $this->count++;
+        try {
 
-        $this->logger->write('info', 'request ' . $count);
+            $count = $this->count++;
 
-        if ($request->getUri()->getPath() == '/status') {
+            $this->logger->write('info', 'request ' . $count);
 
-            return new \React\Http\Response(
-                200,
-                [
-                    'Content-Type' => 'application/json'
-                ],
-                json_encode($this->ffmpeg->getStatus())
-            );
+            if ($request->getUri()->getPath() == '/status') {
 
-        } else {
-            $stream = new \React\Stream\ThroughStream();
+                return new \React\Http\Response(
+                    200,
+                    [
+                        'Content-Type' => 'application/json'
+                    ],
+                    json_encode($this->ffmpeg->getStatus())
+                );
 
-            $this->ffmpeg->getStream()->on('data', $w = function ($chunk) use ($stream) {
+            } else {
+                $stream = new ReadableStream($this->ffmpeg->getStream(), $this->loop, $this->logger);
 
-                if ($stream->write($chunk)) {
-                    $stream->close();
-                }
+                $stream->on('close', function () use ($count) {
+                    $this->logger->write('info', 'close request ' . $count);
+                });
 
-            });
+                return new \React\Http\Response(
+                    200,
+                    [
+                        'Accept-Ranges' => 'bytes',
+                        'Connection' => 'keep-alive',
+                        'Content-Type' => 'multipart/x-mixed-replace;boundary=ffmpeg'
+                    ],
+                    $stream
+                );
+            }
 
-            $stream->on('close', function () use ($w, $count) {
+        } catch (\Throwable $error) {
 
-                $this->logger->write('info', 'response stream close ' . $count);
-                $this->ffmpeg->getStream()->removeListener('data', $w);
+            $this->logger->error(ExceptionDecorator::decorate($error));
 
-            });
-
-            return new \React\Http\Response(
-                200,
-                [
-                    'Accept-Ranges' => 'bytes',
-                    'Connection' => 'keep-alive',
-                    'Content-Type' => 'multipart/x-mixed-replace;boundary=ffmpeg'
-                ],
-                $stream
-            );
         }
     }
 }
