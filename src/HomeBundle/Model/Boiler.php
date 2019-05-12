@@ -40,7 +40,8 @@ class Boiler
 
         $this->client->publish(new DefaultMessage(
             'units/' . $this->boiler->getId(),
-            json_encode(['enabled' => true])
+            json_encode(['enabled' => true]),
+            2
         ));
     }
 
@@ -54,7 +55,8 @@ class Boiler
 
         $this->client->publish(new DefaultMessage(
             'units/' . $this->boiler->getId(),
-            json_encode(['enabled' => false])
+            json_encode(['enabled' => false]),
+            2
         ));
     }
 }

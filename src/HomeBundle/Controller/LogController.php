@@ -5,7 +5,7 @@ namespace HomeBundle\Controller;
 use Doctrine\ORM\EntityRepository;
 use HomeBundle\Entity\LogRecord;
 use HomeBundle\Form\LogType;
-use HomeBundle\Transformer\DummyTransformer;
+use HomeBundle\Transformer\DebugTransformer;
 use PrivateDev\Utils\Controller\CRUDLController;
 use PrivateDev\Utils\Fractal\TransformerAbstract;
 use PrivateDev\Utils\Json\TransformableJsonResponseBuilder;
@@ -14,7 +14,7 @@ use Symfony\Component\Form\FormInterface;
 use Symfony\Component\HttpKernel\Exception\AccessDeniedHttpException;
 
 /**
- * @Route("/api/v1/modules/self/logs")
+ * @Route("/api/v1/modules/logs")
  */
 class LogController extends CRUDLController
 {
@@ -49,7 +49,7 @@ class LogController extends CRUDLController
      */
     protected function createEntityTransformer()
     {
-        return new DummyTransformer();
+        return new DebugTransformer();
     }
 
     /**
@@ -59,26 +59,7 @@ class LogController extends CRUDLController
      */
     protected function createEntity()
     {
-        $request = $this->get('request_stack')->getCurrentRequest();
-        $connection = $request->server->get('WS_CONNECTION');
-
-        if (!$connection) {
-            throw new AccessDeniedHttpException();
-        }
-
-        $client = $this->get('home.client.storage')->getByConnection($connection);
-
-        if (!$client) {
-            throw new AccessDeniedHttpException();
-        }
-
-        $module = $this->get('doctrine.orm.entity_manager')
-            ->getRepository('HomeBundle:Module')
-            ->find($client->getId());
-
-        return (new LogRecord())
-            ->setModule($module)
-            ->setCreatedAt(new \DateTime());
+        return (new LogRecord());
     }
 
     /**

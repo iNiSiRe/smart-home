@@ -17,3 +17,7 @@
 /web/uploads/
 .idea
 composer.phar
+.bash_history
+phpstorm-stubs
+phpstorm-stubs/*
+.env

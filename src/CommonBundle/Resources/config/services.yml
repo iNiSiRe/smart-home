@@ -13,13 +13,13 @@ services:
     tags:
       - { name: doctrine.event_subscriber }
 
-  CommonBundle\Bridge\WebSocketHttpBridge:
-    arguments:
-      - "@service_container"
-
   CommonBundle\Handler\MqttHandler:
     autowire: true
     public: true
     arguments:
       $mqttServer: "%mqtt_server%"
       $logger: "@logger"
+
+  inisire\ReactBundle\Threaded\KernelFactoryInterface:
+    class: KernelFactory
+    arguments: ["%kernel.environment%"]

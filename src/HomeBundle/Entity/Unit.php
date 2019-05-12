@@ -32,13 +32,6 @@ class Unit
     private $name;
 
     /**
-     * @var string
-     *
-     * @ORM\Column(name="class", type="string", length=255)
-     */
-    private $class;
-
-    /**
      * @var Module
      *
      * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Module", inversedBy="units")
@@ -51,40 +44,6 @@ class Unit
      * @ORM\ManyToOne(targetEntity="HomeBundle\Entity\Room", inversedBy="units")
      */
     private $room;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $ip;
-
-    /**
-     * @var string
-     *
-     * @ORM\Column(type="string", nullable=true)
-     */
-    private $deviceId;
-
-    /**
-     * @return string
-     */
-    public function getIp()
-    {
-        return $this->ip;
-    }
-
-    /**
-     * @param string $ip
-     *
-     * @return Unit
-     */
-    public function setIp($ip)
-    {
-        $this->ip = $ip;
-
-        return $this;
-    }
 
     /**
      * Get id
@@ -118,30 +77,6 @@ class Unit
     public function getName()
     {
         return $this->name;
-    }
-
-    /**
-     * Set class
-     *
-     * @param string $class
-     *
-     * @return Unit
-     */
-    public function setClass($class)
-    {
-        $this->class = $class;
-
-        return $this;
-    }
-
-    /**
-     * Get class
-     *
-     * @return string
-     */
-    public function getClass()
-    {
-        return $this->class;
     }
 
     /**
@@ -202,21 +137,11 @@ class Unit
 
     /**
      * @return string
-     */
-    public function getDeviceId()
-    {
-        return $this->deviceId;
-    }
-
-    /**
-     * @param string $deviceId
      *
-     * @return Unit
+     * @throws \ReflectionException
      */
-    public function setDeviceId($deviceId)
+    public function getClass()
     {
-        $this->deviceId = $deviceId;
-
-        return $this;
+        return (new \ReflectionClass($this))->getShortName();
     }
 }

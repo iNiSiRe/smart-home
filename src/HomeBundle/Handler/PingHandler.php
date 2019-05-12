@@ -4,16 +4,30 @@ namespace HomeBundle\Handler;
 
 use BinSoul\Net\Mqtt\Message;
 use CommonBundle\Handler\AbstractHandler;
+use Doctrine\ORM\EntityManager;
+use HomeBundle\Entity\Module;
 
 class PingHandler extends AbstractHandler
 {
+    /**
+     * @var Module
+     */
+    private $module;
+
+    /**
+     * @param Module        $module
+     */
+    public function __construct(Module $module)
+    {
+        $this->module = $module;
+    }
 
     /**
      * @return string
      */
     function getTopic()
     {
-        return 'ping';
+        return 'modules/'. $this->module->getId() . '/ping';
     }
 
     /**
@@ -23,10 +37,6 @@ class PingHandler extends AbstractHandler
      */
     function onMessage(Message $message)
     {
-        $data = json_decode($message->getPayload(), true);
-
-        $source = $data['source'] ?? null;
-
-        
+        $this->module->setLastPing(new \DateTime());
     }
 }

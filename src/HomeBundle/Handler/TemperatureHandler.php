@@ -12,6 +12,9 @@ use BinSoul\Net\Mqtt\Message;
 use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\TemperatureHumidityUnit;
+use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\Threaded\Pool;
+use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class TemperatureHandler extends AbstractHandler
 {
@@ -26,15 +29,22 @@ class TemperatureHandler extends AbstractHandler
     private $manager;
 
     /**
+     * @var DataStorage
+     */
+    private $storage;
+
+    /**
      * TemperatureHandler constructor.
      *
      * @param TemperatureHumidityUnit $unit
      * @param EntityManager           $manager
+     * @param DataStorage             $storage
      */
-    public function __construct(TemperatureHumidityUnit $unit, EntityManager $manager)
+    public function __construct(TemperatureHumidityUnit $unit, EntityManager $manager, DataStorage $storage)
     {
         $this->unit = $unit;
         $this->manager = $manager;
+        $this->storage = $storage;
     }
 
     /**
@@ -49,6 +59,9 @@ class TemperatureHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     function onMessage(Message $message)
     {
@@ -65,5 +78,14 @@ class TemperatureHandler extends AbstractHandler
         }
 
         $this->manager->flush($this->unit);
+
+        $data = [
+            'unit'        => $this->unit->getId(),
+            'type'        => 'temperature',
+            'temperature' => $this->unit->getTemperature(),
+            'humidity'    => $this->unit->getHumidity()
+        ];
+
+        $this->storage->store('log', $data);
     }
 }

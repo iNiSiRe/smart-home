@@ -1,4 +1,4 @@
-FROM php:7.0-zts
+FROM php:7.2-zts
 
 ENV PHP_EXTRA_CONFIGURE_ARGS --enable-sockets
 
@@ -14,18 +14,15 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
 # install extensions
 RUN docker-php-ext-install pdo_mysql
 
-RUN pecl install xdebug-2.5.0
-RUN docker-php-ext-enable xdebug
-
 RUN pecl install memcached-3.0.2
 RUN docker-php-ext-enable memcached
 
 RUN docker-php-ext-install sockets
 RUN docker-php-ext-enable sockets
 
-#RUN docker-php-ext-enable maintainer-zts
-RUN pecl install pthreads
-RUN docker-php-ext-enable pthreads
+RUN git clone https://github.com/krakjoe/pthreads -b master /tmp/pthreads
+RUN docker-php-ext-configure /tmp/pthreads --enable-pthreads
+RUN docker-php-ext-install /tmp/pthreads
 
 RUN pecl install event
 RUN docker-php-ext-enable event
@@ -37,17 +34,29 @@ RUN curl -XGET https://getcomposer.org/installer > composer-setup.php && \
     php composer-setup.php --install-dir=/bin --filename=composer && \
     rm composer-setup.php
 
-RUN usermod -u 1000 www-data && \
-    mkdir -p /var/www/html && \
+ARG ENABLE_XDEBUG=0
+
+RUN if [ "$ENABLE_XDEBUG" -eq 1 ]; then \
+    pecl install xdebug-2.6.1 && \
+    docker-php-ext-enable xdebug; \
+fi
+
+RUN mkdir -p /var/www/html && \
     chown -R www-data:www-data /var/www/html && \
     chown -R www-data:www-data /tmp/.composer
 
-# Add users to sudoers, so no need to ask for password
-RUN echo "user ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+ARG UID=1000
+ARG GID=1000
+
+RUN groupmod -g $GID www-data && \
+    usermod -u $UID www-data
+
 
 EXPOSE 8080
 EXPOSE 8000
 
 USER root
+
+RUN apt-get -y install inetutils-ping
 
 WORKDIR /var/www

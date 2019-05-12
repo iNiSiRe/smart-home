@@ -10,6 +10,9 @@ use Doctrine\ORM\EntityManager;
 use HomeBundle\Bridge\BeamIntersectionSensorBridge;
 use HomeBundle\Entity\BeamIntersectionSensor;
 use HomeBundle\Entity\Unit;
+use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\Threaded\Pool;
+use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class BeamIntersectionSensorHandler extends AbstractHandler
 {
@@ -29,17 +32,24 @@ class BeamIntersectionSensorHandler extends AbstractHandler
     private $client;
 
     /**
+     * @var DataStorage
+     */
+    private $storage;
+
+    /**
      * BeamIntersectionSensorHandler constructor.
      *
      * @param BeamIntersectionSensor $unit
      * @param EntityManager          $manager
      * @param ReactMqttClient        $client
+     * @param DataStorage            $storage
      */
-    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client)
+    function __construct(BeamIntersectionSensor $unit, EntityManager $manager, ReactMqttClient $client, DataStorage $storage)
     {
         $this->unit = $unit;
         $this->manager = $manager;
         $this->client = $client;
+        $this->storage = $storage;
     }
 
     /**
@@ -54,6 +64,9 @@ class BeamIntersectionSensorHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     function onMessage(Message $message)
     {
@@ -65,21 +78,39 @@ class BeamIntersectionSensorHandler extends AbstractHandler
         }
 
         if ($direction == 'in') {
-            $this->unit->getRoomTo()->incrementInhabitants(1);
+            $this->unit->getRoomTo()->incrementInhabitants(+1);
+            $this->unit->getRoomFrom()->incrementInhabitants(-1);
         } else {
             $this->unit->getRoomTo()->incrementInhabitants(-1);
+            $this->unit->getRoomFrom()->incrementInhabitants(+1);
         }
 
         if ($this->unit->getRoomTo()->getInhabitants() > 0 && $this->unit->getLight()->isEnabled() == false) {
             $topic = 'units/' . $this->unit->getLight()->getId();
             $payload = json_encode(['enabled' => true]);
-            $this->client->publish(new DefaultMessage($topic, $payload));
+            $this->client->publish(new DefaultMessage($topic, $payload, 2));
         } elseif ($this->unit->getRoomTo()->getInhabitants() <= 0 && $this->unit->getLight()->isEnabled() == true) {
             $topic = 'units/' . $this->unit->getLight()->getId();
             $payload = json_encode(['enabled' => false]);
-            $this->client->publish(new DefaultMessage($topic, $payload));
+            $this->client->publish(new DefaultMessage($topic, $payload, 2));
         }
 
         $this->manager->flush();
+
+        $data = [
+            'unit' => $this->unit->getId(),
+            'type' => 'intersection',
+            'direction' => $direction
+        ];
+
+        $this->storage->store('log', $data);
+
+        $data = [
+            'room' => $this->unit->getRoomTo()->getId(),
+            'type' => 'inhabitants',
+            'count' => $this->unit->getRoomTo()->getInhabitants()
+        ];
+
+        $this->storage->store('log', $data);
     }
 }

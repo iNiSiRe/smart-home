@@ -18,7 +18,6 @@ class ModuleAdmin extends AbstractAdmin
             ->add('name')
             ->add('units')
             ->add('room')
-            ->add('code')
             ->add('firmware')
         ;
     }
@@ -31,7 +30,9 @@ class ModuleAdmin extends AbstractAdmin
         $list
             ->addIdentifier('id')
             ->addIdentifier('name')
+            ->add('ip')
             ->add('code')
+            ->add('lastPing', 'datetime')
         ;
     }
 

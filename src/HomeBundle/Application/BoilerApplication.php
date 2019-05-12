@@ -3,10 +3,21 @@
 namespace HomeBundle\Application;
 
 use BinSoul\Net\Mqtt\Client\React\ReactMqttClient;
+use HomeBundle\Application\Boiler\Voter\DisableByTemperatureVoter;
+use HomeBundle\Application\Boiler\Voter\EnableByTemperatureVoter;
+use HomeBundle\Application\Boiler\Voter\InhabitantsCountVoter;
+use HomeBundle\Application\Boiler\Voter\ManualModeVoter;
+use HomeBundle\Application\Boiler\Voter\Votes;
 use HomeBundle\Entity\BoilerUnit;
+use HomeBundle\Entity\LogRecord;
 use HomeBundle\Model\Boiler;
 use React\EventLoop\Timer\TimerInterface;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Voter\Manager\DecisionManager;
+use Voter\Strategy\AnyAgreeDecisionStrategy;
+use Voter\Strategy\ComplexDecisionStrategy;
+use Voter\Strategy\AllAgreeDecisionStrategy;
+use Voter\Vote;
 
 class BoilerApplication
 {
@@ -36,32 +47,30 @@ class BoilerApplication
     private $manager;
 
     /**
+     * @var DecisionManager
+     */
+    private $decisionManager;
+
+    /**
      * BoilerApplication constructor.
      *
-     * @param ContainerInterface $container
-     * @param BoilerUnit         $boiler
+     * @param ContainerInterface            $container
+     * @param BoilerUnit                    $boiler
+     * @param InhabitantsMonitorApplication $inhabitantsMonitorApplication
      */
-    public function __construct(ContainerInterface $container, BoilerUnit $boiler)
+    public function __construct(ContainerInterface $container, BoilerUnit $boiler, InhabitantsMonitorApplication $inhabitantsMonitorApplication)
     {
         $this->container = $container;
         $this->boilerUnit = $boiler;
         $this->manager = $this->container->get('doctrine.orm.entity_manager');
         $this->boiler = new Boiler($boiler, $this->container->get(ReactMqttClient::class));
-    }
 
-    public function isSatisfiedByTemperature()
-    {
-        $sensor = $this->boilerUnit->getSensors()[0];
-
-        if ($sensor->getTemperature() > $this->boilerUnit->getTemperature()) {
-            return true;
-        }
-
-        if (!$this->boilerUnit->isEnabled() && $sensor->getTemperature() <= ($this->boilerUnit->getTemperature() - 1)) {
-            return false;
-        }
-
-        return !$this->boilerUnit->isEnabled();
+        $this->decisionManager = new DecisionManager([
+            new ManualModeVoter($boiler),
+            new InhabitantsCountVoter($inhabitantsMonitorApplication),
+            new EnableByTemperatureVoter($boiler),
+            new DisableByTemperatureVoter($boiler)
+        ]);
     }
 
     public function isSatisfiedBySchedule()
@@ -78,43 +87,50 @@ class BoilerApplication
         return false;
     }
 
-    /**
-     * @return bool
-     */
-    public function isSatisfiedByInhabitantsCount()
-    {
-        return true;
-    }
-
-    /**
-     * @return bool
-     */
-    public function isSatisfiedByManualMode()
-    {
-        return $this->boilerUnit->getManual()->isEnabled();
-    }
-
     public function loop()
     {
-       $this->manager->refresh($this->boilerUnit);
+        $logger = $this->container->get('logger');
 
+        $this->manager->refresh($this->boilerUnit);
 
-       $this->container->get('logger')->debug('BoilerApplication::loop -> begin');
+        $logger->debug('BoilerApplication::loop -> begin');
 
-       if ($this->boilerUnit->getManual()->isEnabled()) {
-           $this->container->get('logger')->debug('BoilerApplication::loop -> manual mode');
-           return;
-       }
+        $logger->debug('Boiler', ['enabled' => $this->boilerUnit->isEnabled()]);
 
-       if (!$this->isSatisfiedByTemperature()) {
-           $this->container->get('logger')->debug('BoilerApplication::loop -> not satisfied by temp');
-           $this->boiler->enable();
-       } else {
-           $this->container->get('logger')->debug('BoilerApplication::loop -> satisfied by temp');
-           $this->boiler->disable();
-       }
+        if ($this->boilerUnit->isEnabled()) {
 
-       $this->manager->flush($this->boilerUnit);
+            $vote = $this->decisionManager->decide((new AnyAgreeDecisionStrategy(Votes::VOTE_DISABLE))->setLogger($logger));
+
+            $logger->debug('Vote for disable', ['vote' => $vote->getValue()]);
+
+            if ($vote->getValue() == true) {
+                $this->boiler->disable();
+                $this->boilerUnit->getModule()->addLog(new LogRecord(json_encode([
+                    'unit' => 'boiler',
+                    'action' => 'disable',
+                    'message' => $vote->getReason()
+                ])));
+                $this->manager->persist($this->boilerUnit);
+            }
+
+        } else {
+
+            $vote = $this->decisionManager->decide((new AllAgreeDecisionStrategy(Votes::VOTE_ENABLE))->setLogger($logger));
+
+            $logger->debug('Vote for enable', ['vote' => $vote->getValue()]);
+
+            if ($vote->getValue() == true) {
+                $this->boiler->enable();
+                $this->boilerUnit->getModule()->addLog(new LogRecord(json_encode([
+                    'unit' => 'boiler',
+                    'action' => 'enable',
+                    'message' => $vote->getReason()
+                ])));
+                $this->manager->persist($this->boilerUnit);
+            }
+        }
+
+        $this->manager->flush();
     }
 
     public function start()

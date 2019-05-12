@@ -1,0 +1,31 @@
+services:
+  home.admin.module:
+    class: HomeBundle\Admin\Entity\ModuleAdmin
+    arguments: [~, 'HomeBundle\Entity\Module', ~]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Module }
+
+  home.admin.room:
+    class: HomeBundle\Admin\Entity\RoomAdmin
+    arguments: [~, 'HomeBundle\Entity\Room', ~]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Room }
+
+  home.admin.unit:
+    class: HomeBundle\Admin\Entity\UnitAdmin
+    arguments: [~, 'HomeBundle\Entity\Unit', ~]
+    calls:
+      - [setSubClasses, [{
+          'Switch':'HomeBundle\Entity\SwitchUnit',
+          'BeamIntersection':'HomeBundle\Entity\BeamIntersectionSensor',
+          'Temperature': 'HomeBundle\Entity\TemperatureHumidityUnit',
+          'Boiler': 'HomeBundle\Entity\BoilerUnit'
+        }]]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Unit }
+
+  home.admin.firmware:
+    class: HomeBundle\Admin\Entity\FirmwareAdmin
+    arguments: [~, 'HomeBundle\Entity\Firmware', ~]
+    tags:
+      - { name: sonata.admin, manager_type: orm, label: Firmware }

@@ -7,6 +7,9 @@ use CommonBundle\Handler\AbstractHandler;
 use Doctrine\ORM\EntityManager;
 use HomeBundle\Entity\SwitchUnit;
 use HomeBundle\Entity\Unit;
+use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\Threaded\Pool;
+use inisire\ReactBundle\Threaded\ServiceMethodCall;
 
 class SwitchHandler extends AbstractHandler
 {
@@ -21,15 +24,22 @@ class SwitchHandler extends AbstractHandler
     private $manager;
 
     /**
+     * @var DataStorage
+     */
+    private $storage;
+
+    /**
      * SwitchHandler constructor.
      *
      * @param SwitchUnit    $unit
      * @param EntityManager $manager
+     * @param DataStorage   $storage
      */
-    public function __construct(SwitchUnit $unit, EntityManager $manager)
+    public function __construct(SwitchUnit $unit, EntityManager $manager, DataStorage $storage)
     {
         $this->unit = $unit;
         $this->manager = $manager;
+        $this->storage = $storage;
     }
 
     /**
@@ -44,6 +54,9 @@ class SwitchHandler extends AbstractHandler
      * @param Message $message
      *
      * @return void
+     *
+     * @throws \Doctrine\ORM\OptimisticLockException
+     * @throws \Exception
      */
     function onMessage(Message $message)
     {
@@ -51,8 +64,16 @@ class SwitchHandler extends AbstractHandler
 
         $this->manager->refresh($this->unit);
 
-        $this->unit->setEnabled((bool) ($data['enabled'] ?? false));
-
+        $enabled = (bool) ($data['enabled'] ?? false);
+        $this->unit->setEnabled($enabled);
         $this->manager->flush($this->unit);
+
+        $data = [
+            'unit'    => $this->unit->getId(),
+            'type'    => 'switch',
+            'enabled' => $enabled
+        ];
+
+        $this->storage->store('log', $data);
     }
 }

@@ -7,6 +7,8 @@
 
     <title>Home</title>
 
+    <link rel="manifest" href="manifest.json">
+
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet" media="screen,projection">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/css/materialize.min.css">
@@ -21,11 +23,13 @@
 
             <ul class="left hide-on-med-and-down">
                 <li><a href="{{ path('home_default_index') }}">Kitchen</a></li>
+                <li><a href="{{ path('home_default_camera') }}">Camera</a></li>
                 <li><a href="{{ path('home_default_debug') }}">Debug</a></li>
             </ul>
 
             <ul id="nav-mobile" class="left side-nav">
                 <li><a href="{{ path('home_default_index') }}">Kitchen</a></li>
+                <li><a href="{{ path('home_default_camera') }}">Camera</a></li>
                 <li><a href="{{ path('home_default_debug') }}">Debug</a></li>
             </ul>
 
@@ -45,62 +49,64 @@
 
                 {% for unit in room.units %}
 
-                    <div class="col l4 m6 s12">
+                        {% if unit.class == 'TemperatureHumidityUnit' %}
 
-                        {% if unit.class == 'TemperatureSensor' %}
-
-                            <div class="card" data-unit="TemperatureSensor" data-unit-id="{{ unit.id }}">
-                                <div class="card-content">
-                                    <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
-                                    <p>
-                                        <span id="temperature">{{ unit.temperature }}</span>&#8451
-                                        <span> / </span>
-                                        <span id="humidity">{{ unit.humidity }}</span>%
-                                    </p>
-                                </div>
-                            </div>
-
-                        {% endif %}
-
-                        {% if unit.class == 'Switch' %}
-
-                            <div class="card" data-unit="Switch" data-unit-id="{{ unit.id }}">
-                                <div class="card-content">
-
-                                    <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
-                                    <div class="switch">
-                                        <label>
-                                            Off
-                                            <input type="checkbox" {% if unit.enabled %}checked="checked"{% endif %}>
-                                            <span class="lever"></span> On
-                                        </label>
+                            <div class="col l4 m6 s12">
+                                <div class="card" data-unit="TemperatureSensor" data-unit-id="{{ unit.id }}">
+                                    <div class="card-content">
+                                        <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
+                                        <p>
+                                            <span id="temperature">{{ unit.temperature }}</span>&#8451
+                                            <span> / </span>
+                                            <span id="humidity">{{ unit.humidity }}</span>%
+                                        </p>
                                     </div>
-
-                                    {#<input type="checkbox" {% if unit.enabled %}checked{% endif %} data-toggle="toggle" name="{{ unit.name }}" data-size="large" data-onstyle="success" data-width="100%">#}
-                                    {#<input type="range" min="0" max="1" step="1" value="{{ unit.variables.enabled == true ? 1 : 0 }}" name="{{ unit.name }}">#}
                                 </div>
                             </div>
 
                         {% endif %}
 
-                        {% if unit.class == 'Boiler' %}
-                            <div class="card" data-unit="Boiler" data-unit-id="{{ unit.id }}">
-                                <div class="card-content">
-                                    <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
+                        {% if unit.class == 'SwitchUnit' %}
 
-                                    <div class="switch">
-                                        <label>
-                                            Off
-                                            <input type="checkbox" {% if unit.enabled %}checked="checked"{% endif %}>
-                                            <span class="lever"></span> On
-                                        </label>
+                            <div class="col l4 m6 s12">
+                                <div class="card" data-unit="Switch" data-unit-id="{{ unit.id }}">
+                                    <div class="card-content">
+
+                                        <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
+                                        <div class="switch">
+                                            <label>
+                                                Off
+                                                <input type="checkbox" {% if unit.enabled %}checked="checked"{% endif %}>
+                                                <span class="lever"></span> On
+                                            </label>
+                                        </div>
+
+                                        {#<input type="checkbox" {% if unit.enabled %}checked{% endif %} data-toggle="toggle" name="{{ unit.name }}" data-size="large" data-onstyle="success" data-width="100%">#}
+                                        {#<input type="range" min="0" max="1" step="1" value="{{ unit.variables.enabled == true ? 1 : 0 }}" name="{{ unit.name }}">#}
                                     </div>
+                                </div>
+                            </div>
 
+                        {% endif %}
+
+                        {% if unit.class == 'BoilerUnit' %}
+                            <div class="col l4 m6 s12">
+                                <div class="card" data-unit="Boiler" data-unit-id="{{ unit.id }}">
+                                    <div class="card-content">
+                                        <span class="card-title"><i class="material-icons">extension</i>{{ unit.name }}</span>
+
+                                        <div class="switch">
+                                            <label>
+                                                Off
+                                                <input type="checkbox" {% if unit.enabled %}checked="checked"{% endif %}>
+                                                <span class="lever"></span> On
+                                            </label>
+                                        </div>
+
+                                    </div>
                                 </div>
                             </div>
                         {% endif %}
-
-                    </div>
 
                     {% endfor %}
 
@@ -116,7 +122,20 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/0.100.2/js/materialize.js"></script>
 
     <script>
-        var WS_SERVER = "{{ ws_server }}";
+
+        var port = '';
+        var protocol = '';
+
+        if (location.protocol == 'http:') {
+            port = '1884';
+            protocol = 'ws';
+        } else {
+            port = '4884';
+            protocol = 'wss';
+        }
+
+        var WS_SERVER = protocol + '://' + location.hostname + ':' + port;
+
     </script>
 
     <script src="https://unpkg.com/mqtt@2.13.1/dist/mqtt.min.js"></script>

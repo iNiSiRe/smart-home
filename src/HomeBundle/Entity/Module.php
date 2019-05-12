@@ -50,14 +50,14 @@ class Module
     /**
      * @var string
      *
-     * @ORM\Column(type="string")
+     * @ORM\Column(type="string", nullable=true)
      */
     private $code;
 
     /**
      * @var LogRecord[]
      *
-     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\LogRecord", mappedBy="module")
+     * @ORM\OneToMany(targetEntity="HomeBundle\Entity\LogRecord", mappedBy="module", cascade={"persist"})
      */
     private $logs;
 
@@ -88,6 +88,11 @@ class Module
      * @ORM\Column(type="datetime", nullable=true)
      */
     private $updatedAt;
+
+    /**
+     * @var \DateTime
+     */
+    private $lastPing = null;
 
     /**
      * Get id
@@ -261,12 +266,13 @@ class Module
     }
 
     /**
-     * @param $log
+     * @param LogRecord $log
      *
      * @return $this
      */
     public function addLog($log)
     {
+        $log->setModule($this);
         $this->logs->add($log);
 
         return $this;
@@ -362,5 +368,21 @@ class Module
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    /**
+     * @return \DateTime
+     */
+    public function getLastPing()
+    {
+        return $this->lastPing;
+    }
+
+    /**
+     * @param \DateTime $lastPing
+     */
+    public function setLastPing($lastPing)
+    {
+        $this->lastPing = $lastPing;
     }
 }

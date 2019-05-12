@@ -16,9 +16,18 @@
             "Tests\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/iNiSiRe/net-mqtt-client-react.git"
+        }
+    ],
     "require": {
         "php": ">=5.5.9",
-        "symfony/symfony": "3.3.*",
+        "ext-json": "*",
+        "ext-pthreads": "*",
+        "ext-posix": "*",
+        "symfony/symfony": "^3.4",
         "doctrine/orm": "^2.5",
         "doctrine/doctrine-bundle": "^1.6",
         "doctrine/doctrine-cache-bundle": "^1.2",
@@ -31,8 +40,12 @@
         "sonata-project/doctrine-orm-admin-bundle": "3.0.5",
         "symfony/psr-http-message-bridge": "^1.0",
         "inisire/react-bundle": "dev-master",
-        "binsoul/net-mqtt-client-react": "^1.0@dev",
-        "inisire/utils": "dev-master"
+        "binsoul/net-mqtt-client-react": "dev-master",
+        "inisire/utils": "dev-master",
+        "elasticsearch/elasticsearch": "^6.0",
+        "bunny/bunny": "^0.4.1",
+        "react/child-process": "^0.6.0",
+        "react/event-loop": "^0.5"
     },
     "require-dev": {
         "sensio/generator-bundle": "^3.0",
@@ -55,11 +68,6 @@
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::installRequirementsFile",
             "Sensio\\Bundle\\DistributionBundle\\Composer\\ScriptHandler::prepareDeploymentTarget"
         ]
-    },
-    "config": {
-        "platform": {
-            "php": "7.0"
-        }
     },
     "extra": {
         "symfony-app-dir": "app",

@@ -1,4 +1,4 @@
-var client = mqtt.connect('ws://' + WS_SERVER);
+var client = mqtt.connect(WS_SERVER);
 
 var room = $('[data-room]:first')[0];
 var units = $(room).find('[data-unit]');
@@ -6,7 +6,7 @@ var handlers = [];
 
 handlers['stdout'] = function (topic, message) {
 
-    $("#logs").append("<p>" + message + "</p>");
+    $("#logs").prepend("<p>" + message + "</p>");
 
 };
 
@@ -34,7 +34,7 @@ client.on('connect', function () {
                       var message = {
                           enabled: this.checked
                       };
-                      client.publish(context.topic, JSON.stringify(message));
+                      client.publish(context.topic, JSON.stringify(message), {qos: 2});
 
                       return true;
                   }
@@ -88,7 +88,7 @@ client.on('connect', function () {
 
                         console.log(['publish', context.topic, message].join(':'));
 
-                        client.publish(context.topic, JSON.stringify(message));
+                        client.publish(context.topic, JSON.stringify(message), {qos: 2});
                     }
                 })(context);
 

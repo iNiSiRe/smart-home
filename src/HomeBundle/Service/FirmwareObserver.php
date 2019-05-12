@@ -50,7 +50,7 @@ class FirmwareObserver
 
         foreach ($modules as $module) {
 
-            if ($module->getFirmware()->getVersion() == $firmware->getVersion()) {
+            if ($module->getFirmware() == null || $module->getFirmware()->getVersion() == $firmware->getVersion()) {
                 continue;
             }
 

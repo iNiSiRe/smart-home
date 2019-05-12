@@ -2,13 +2,12 @@
 
 namespace HomeBundle\Controller;
 
-use HomeBundle\Listener\TestListener;
-use inisire\ReactBundle\EventDispatcher\AsynchronousEventDispatcher;
+use HomeBundle\Application\InhabitantsMonitorApplication;
+use HomeBundle\Service\DataStorage;
+use inisire\ReactBundle\Threaded\Pool;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Method;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Sensio\Bundle\FrameworkExtraBundle\Configuration\Route;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -35,6 +34,16 @@ class DefaultController extends Controller
     }
 
     /**
+     * @Route("/camera")
+     *
+     * @return \Symfony\Component\HttpFoundation\Response
+     */
+    public function cameraAction()
+    {
+        return $this->render('@Home/Default/camera.html.twig');
+    }
+
+    /**
      * @Route("/message")
      * @Method({"GET"})
      *
@@ -43,18 +52,57 @@ class DefaultController extends Controller
      */
     public function messageAction(Request $request)
     {
-        $this->get('logger')->debug('controller 1');
+        return new JsonResponse(['success' => true]);
+    }
 
-        $rooms = $this->get('doctrine.orm.entity_manager')->getRepository('HomeBundle:Room')->findAll();
+    /**
+     * @Route("/inhabitants", methods={"GET"})
+     *
+     * @param InhabitantsMonitorApplication $inhabitantsMonitorApplication
+     *
+     * @return JsonResponse
+     */
+    public function inhabitants(InhabitantsMonitorApplication $inhabitantsMonitorApplication)
+    {
+        return new JsonResponse([
+            'success' => true,
+            'data' => $inhabitantsMonitorApplication->getInhabitants()
+        ]);
+    }
 
-        $dispatcher = $this->container->get(AsynchronousEventDispatcher::class);
+    /**
+     * @Route("test", methods={"GET"})
+     *
+     * @param Pool        $pool
+     * @param DataStorage $storage
+     *
+     * @return JsonResponse
+     *
+     * @throws \Exception
+     */
+    public function test(Pool $pool, DataStorage $storage)
+    {
+        for ($i = 0; $i < 1000; $i++) {
+            $storage->store('log', ['test' => 4]);
+        }
 
-        $this->get('logger')->debug('controller 2');
+        return new JsonResponse([
+            'success' => true
+        ]);
+    }
 
-        $dispatcher->dispatch('test', new Event());
-
-        $this->get('logger')->debug('controller 3');
-
-        return new JsonResponse(['success' => true, 'class' => get_class($this->container->get('react.loop')), 'rooms' => count($rooms)]);
+    /**
+     * @Route("/status", methods={"GET"})
+     *
+     * @param Pool $pool
+     *
+     * @return JsonResponse
+     */
+    public function status(Pool $pool)
+    {
+        return new JsonResponse([
+            'success' => true,
+            'status' => $pool->getStatus()
+        ]);
     }
 }
