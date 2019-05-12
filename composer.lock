@@ -1,7 +1,7 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
     "content-hash": "a53d5dbb28008138af8369a9c50fd5bd",
@@ -1280,12 +1280,12 @@
             "source": {
                 "type": "git",
                 "url": "https://github.com/iNiSiRe/react-bundle.git",
-                "reference": "93c3bfd4da888ca66fdf4a3f861cfd4d1af99ec1"
+                "reference": "13a4ff2c7c6fb79f82871ce1e24527b1c0621e5b"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/iNiSiRe/react-bundle/zipball/93c3bfd4da888ca66fdf4a3f861cfd4d1af99ec1",
-                "reference": "93c3bfd4da888ca66fdf4a3f861cfd4d1af99ec1",
+                "url": "https://api.github.com/repos/iNiSiRe/react-bundle/zipball/13a4ff2c7c6fb79f82871ce1e24527b1c0621e5b",
+                "reference": "13a4ff2c7c6fb79f82871ce1e24527b1c0621e5b",
                 "shasum": ""
             },
             "require": {
@@ -1310,7 +1310,7 @@
                 "reactphp",
                 "symfony"
             ],
-            "time": "2018-03-20T18:05:24+00:00"
+            "time": "2018-04-13T17:04:43+00:00"
         },
         {
             "name": "inisire/utils",
