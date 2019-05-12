@@ -51,7 +51,6 @@ ARG GID=1000
 RUN groupmod -g $GID www-data && \
     usermod -u $UID www-data
 
-
 EXPOSE 8080
 EXPOSE 8000
 
